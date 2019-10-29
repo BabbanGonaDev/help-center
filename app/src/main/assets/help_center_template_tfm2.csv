@@ -1,0 +1,62 @@
+unique_question_id,app_id,activity_group_id,activity_id,resource_id,issue_question,issue_answer,faq_status
+1,tfm,Sync,Download application data,gif1.gif,No Ik number coming up after syncing down,"<p>1. Ensure you have data and your data connection is on
+  <br>
+  <br>2. Try to browse on browser to ensure good connection to the internet
+  <br>
+  <br>3. Sync up application data . Uinstall . Reinstall . Sync down and Refresh
+</p>",5
+2,tfm,Activate Trust Group Leader,Search for TG Leader,gif2.gif,Cant find IK number,"<p>1. Ik Number might not be assigned to you
+  <br>
+  <br>2. Check withyour supervisor
+</p>",3
+3,tfm,Activate Trust Group Leader,Verify TG Leader Facial Template,gif3.gif,"Why does it show me time out, No face?","<p>1. Scan facial template in bright area with good lightening. &nbsp; &nbsp; &nbsp; &nbsp;
+  <br>
+  <br>2.  hold camera close to members face.and ensure camera capture
+</p>",5
+4,tfm,Activate Trust Group Leader,Verify TG Leader Facial Template,,Why is it showing No match?,"<p>1. You may not be verifying the leader
+  <br>
+  <br>2. Please confirm he/she is the leader and try again
+  <br>
+  <br>3.  Ensure you have proper lightening
+</p>",5
+5,tfm,Activate Trust Group Leader,Verify TG Leader Details,gif1.gif,Why cant i proceed from verifying TGs leader face.,<p>1. Ensure you fill all details you are required to fill e.g age(age cannot be less than 18) and enter 11 Character phone number</p>,5
+6,tfm,Old member renewal,Review and update personal data,gif2.gif,How do i renew an old member for an old TG,"<p>1. You have to click on name to click RENEW and then update member phone number and crop type and location, note you can't update State and local government</p>",5
+7,tfm,Add Member,Enter personal data,gif1.gif,"Why is the App crashing, when i try to add a third member","<p>1. Ensure you have space on your phone
+  <br>
+  <br>2. Go to Phone settings &gt; Open adavnced setting &gt; Open Apps &gt; Open TFM and click clear cache
+</p>",1
+8,tfm,Add Member,Enter personal data,gif2.gif,Why can't i change a members local goverment,<p>1. Members of a Tg can not belong to a local goverment different from their TG Leader</p>,5
+9,tfm,Add Member,Capture Member Face,gif1.gif,Why didnt the capture button turn green,"<p>1. Click on capture button and try again
+  <br>
+  <br>2.  scan face in a bright area, hold phone close to members face
+</p>",5
+10,tfm,Edit Member,Switch Member Role,gif2.gif,Why cant i switch role,"<p>1. If its the leaders role, you are trying to switch, you cant change a leaders role</p>",5
+11,tfm,Delete Member,Delete a TG leader,gif1.gif,Why cant i delete the leader,<p>1. The leader of a TG cant be deleted</p>,5
+12,tfm,Delete Member,Delete a Member,gif2.gif,How do i delete a member?,"<p>1. Click on Members name
+  <br>
+  <br>2. 3 options come up
+  <br>
+  <br>3. Click delete and click yes
+  <br>
+  <br>4. Member names moves to deleted members
+</p>",5
+13,tfm,Renew Member,Renew a deleted member,gif1.gif,How can i add back a member deleted in error,"<p>1. Click on deleted members at the top right corner of your App
+  <br>
+  <br>2. Click on member name
+  <br>
+  <br>3. Click Add to Group.
+</p>",5
+14,tfm,Complete TFM for a trust group,Complete TFM for a TG,gif2.gif,why has the TG status not turned green,"<p>1. You have to have a minimum of 3 active persons and maximum of 5 whose status are green
+  <br>
+  <br>2.  Click done to finish TFM.
+</p>",2
+15,tfm,Sync,Sync up application data,gif1.gif,How do i know if my work has synced?,"<p>1. Go to statistics on App menu
+  <br>
+  <br>2.  check TFM synced and Last sync up time, it should be around the same time with the time you are syncing
+</p>",5
+16,tfm,App Crashing,How to stop App crashing,gif2.gif,How do i stop my App from crashing?,"<p>1. Create space on phone, delete unneccessary files
+  <br>
+  <br>2. Close all other applications not in use
+  <br>
+  <br>3. Restart phone
+</p>",5

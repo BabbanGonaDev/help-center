@@ -1,0 +1,101 @@
+package com.bgenterprise.helpcentermodule;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+
+import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
+import com.bgenterprise.helpcentermodule.Database.Tables.IssuesEnglish;
+import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityAdapter;
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class ViewActivities extends AppCompatActivity {
+
+    RecyclerView view_activities_rv;
+    public List<IssuesEnglish> questionsList;
+    ActivityAdapter adapter;
+    HelpCenterDatabase helpCenterDb;
+    ProgressDialog progressDialog;
+    HelpSessionManager sessionM;
+    HashMap<String, String> help_details;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_help_view_activities);
+        getSupportActionBar().setTitle("Help Center");
+        questionsList = new ArrayList<>();
+        sessionM = new HelpSessionManager(ViewActivities.this);
+        helpCenterDb = HelpCenterDatabase.getInstance(ViewActivities.this);
+        help_details = sessionM.getHelpDetails();
+
+        view_activities_rv = findViewById(R.id.view_activities_rv);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading....");
+        progressDialog.show();
+
+        getActivities get_activities = new getActivities(ViewActivities.this){
+            @Override
+            protected void onPostExecute(List<IssuesEnglish> issuesEnglishes) {
+                super.onPostExecute(issuesEnglishes);
+                questionsList = issuesEnglishes;
+                adapter = new ActivityAdapter(ViewActivities.this, questionsList, new ActivityAdapter.OnItemClickListener() {
+                    @Override
+                    public void onClick(IssuesEnglish issuesEnglish) {
+                        sessionM.SET_ACTIVITY_ID(issuesEnglish.getActivity_id());
+                        sessionM.SET_ACTIVITY_ISSUE(issuesEnglish.getIssue_question());
+                        sessionM.SET_KEY_APP_ID(issuesEnglish.getApp_id());
+                        sessionM.SET_USERNAME("USERNAME: "+"\n"+"IYASELE REHOBOTH");
+                        sessionM.SET_LAST_SYNC_DATE("LAST SYNC DATE: " +"\n" +"25TH SEPTEMBER, 2019");
+                        startActivity(new Intent(ViewActivities.this, ViewActivityIssues.class));
+                    }
+                });
+
+                RecyclerView.LayoutManager vLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
+                view_activities_rv.setLayoutManager(vLayoutManager);
+                view_activities_rv.setItemAnimator(new DefaultItemAnimator());
+                view_activities_rv.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+                view_activities_rv.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+            }
+        };get_activities.execute(help_details.get(HelpSessionManager.KEY_ACTIVITY_GROUP_ID));
+        progressDialog.dismiss();
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    public class getActivities extends AsyncTask<String, Void, List<IssuesEnglish>>{
+        Context mCtx;
+        List<IssuesEnglish> activity_issues = new ArrayList<>();
+
+        public getActivities(Context context) {
+            this.mCtx = context;
+        }
+
+        @Override
+        protected List<IssuesEnglish> doInBackground(String... strings) {
+            try{
+                activity_issues = helpCenterDb.getEnglishDao().getActivities(strings[0]);
+                return activity_issues;
+            }catch (Exception e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+    }
+
+
+}
