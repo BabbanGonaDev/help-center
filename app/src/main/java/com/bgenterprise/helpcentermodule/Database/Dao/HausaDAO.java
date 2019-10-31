@@ -28,16 +28,16 @@ public interface HausaDAO {
     @Query("SELECT * FROM issues_hausa WHERE app_id = :appID")
     List<IssuesHausa> getAllAppIssueH(String appID);
 
-    @Query("SELECT * FROM issues_hausa WHERE app_id = :appID and activity_group_id = :groupID")
-    List<IssuesHausa> getAllGroupIssuesH(String appID, String groupID);
+    @Query("SELECT * FROM issues_hausa WHERE activity_group_name = :groupName")
+    List<IssuesHausa> getAllGroupIssuesH(String groupName);
 
-    @Query("SELECT * FROM issues_hausa WHERE app_id = :appID and activity_group_id = :groupID and activity_id = :activityID")
-    List<IssuesHausa> getActivityIssuesH(String appID, String groupID, String activityID);
+    @Query("SELECT * FROM issues_hausa WHERE activity_id = :activityID")
+    List<IssuesHausa> getActivityIssuesH(String activityID);
 
-    @Query("SELECT * FROM issues_hausa WHERE app_id = :appID and activity_group_id = :groupID and issue_question = :questionID")
-    List<IssuesHausa> getQuestionSolutionH(String appID, String groupID, String questionID);
+    @Query("SELECT * FROM issues_hausa WHERE issue_question = :questionID")
+    List<IssuesHausa> getQuestionSolutionH(String questionID);
 
-    @Query("SELECT * FROM issues_hausa WHERE app_id = :appID and issue_question = :questionID")
-    List<IssuesHausa> getAllFAQIssuesH(String appID, String questionID);
+    @Query("SELECT * FROM issues_hausa WHERE app_id = :appID")
+    List<IssuesHausa> getAllFAQIssuesH(String appID);
 
 }

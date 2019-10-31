@@ -30,11 +30,11 @@ public interface EnglishDAO {
     @Delete
     void DeleteIssue(IssuesEnglish issuesEnglishT);
 
-    @Query("SELECT * FROM issues_english WHERE app_id = :appID GROUP BY activity_group_id")
+    @Query("SELECT * FROM issues_english WHERE app_id = :appID GROUP BY activity_group_name")
     List<IssuesEnglish> getActivityGroups(String appID);
 
-    @Query("SELECT * FROM issues_english WHERE activity_group_id = :groupID GROUP BY activity_id")
-    List<IssuesEnglish> getActivities(String groupID);
+    @Query("SELECT * FROM issues_english WHERE activity_group_name = :groupName GROUP BY activity_id")
+    List<IssuesEnglish> getActivities(String groupName);
 
     @Query("SELECT * FROM issues_english WHERE activity_id = :activityID")
     List<IssuesEnglish> getActivityIssues(String activityID);

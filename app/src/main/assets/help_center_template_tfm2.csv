@@ -1,4 +1,4 @@
-unique_question_id,app_id,activity_group_id,activity_id,resource_id,issue_question,issue_answer,faq_status
+unique_question_id,app_id,activity_group_name,activity_id,resource_id,issue_question,issue_answer,faq_status
 1,tfm,Sync,Download application data,gif1.gif,No Ik number coming up after syncing down,"<p>1. Ensure you have data and your data connection is on
   <br>
   <br>2. Try to browse on browser to ensure good connection to the internet

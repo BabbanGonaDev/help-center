@@ -60,7 +60,7 @@ public class ViewActivityGroups extends AppCompatActivity {
                 if(issuesList == null || issuesList.isEmpty()){
                     Log.d("CHECK:", "List is very empty");
                 }else if(issuesList != null && !issuesList.isEmpty()){
-                    Log.d("CHECK:", issuesEnglishes.get(0).getActivity_group_id());
+                    Log.d("CHECK:", issuesEnglishes.get(0).getActivity_group_name());
                 }
             }
         };
@@ -150,7 +150,7 @@ public class ViewActivityGroups extends AppCompatActivity {
             public void onClick(IssuesEnglish issuesList) {
                 //New Onclick into the next activity.
                 //Toast.makeText(ViewActivityGroups.this, "Selected this new guy", Toast.LENGTH_LONG).show();
-                sessionM.SET_ACTIVITY_GROUP_ID(issuesList.getActivity_group_id());
+                sessionM.SET_ACTIVITY_GROUP_ID(issuesList.getActivity_group_name());
                 startActivity(new Intent(ViewActivityGroups.this, ViewActivities.class));
             }
         });
