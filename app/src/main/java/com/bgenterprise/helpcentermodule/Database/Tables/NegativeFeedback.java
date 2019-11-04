@@ -5,20 +5,20 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "negative_feedback_log")
-public class Feedback {
+public class NegativeFeedback {
 
     @PrimaryKey(autoGenerate = true)
-    private int counter;
+    private int id;
 
     private String staff_id;
     private String app_id;
     private String question_id;
     private String comment;
     private String date;
-    private int sync_status;
+    private String sync_status;
 
-    public Feedback(int counter, String staff_id, String app_id, String question_id, String comment, String date, int sync_status){
-        this.counter = counter;
+    public NegativeFeedback(int id, String staff_id, String app_id, String question_id, String comment, String date, String sync_status){
+        this.id = id;
         this.staff_id = staff_id;
         this.app_id = app_id;
         this.question_id = question_id;
@@ -27,8 +27,8 @@ public class Feedback {
         this.sync_status = sync_status;
     }
 
-    public int getCounter() {
-        return counter;
+    public int getId() {
+        return id;
     }
 
     public String getStaff_id() {
@@ -51,7 +51,7 @@ public class Feedback {
         return date;
     }
 
-    public int getSync_status() {
+    public String getSync_status() {
         return sync_status;
     }
 }

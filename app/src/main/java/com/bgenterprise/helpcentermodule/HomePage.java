@@ -6,8 +6,8 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.bgenterprise.helpcentermodule.Api.ApiClientHelpCenter;
-import com.bgenterprise.helpcentermodule.Api.ApiHelpCenter;
+import com.bgenterprise.helpcentermodule.Network.ApiClientHelpCenter;
+import com.bgenterprise.helpcentermodule.Network.ApiCalls;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.IssuesEnglish;
 
@@ -36,7 +36,7 @@ public class HomePage extends AppCompatActivity {
     private static final int REQUEST_CALL = 1;
     HelpSessionManager sessionM;
     String app_id;
-    ApiHelpCenter apiInterface;
+    ApiCalls apiInterface;
     List<IssuesEnglish> newTable = new ArrayList<>();
 
     @Override
@@ -126,7 +126,7 @@ public class HomePage extends AppCompatActivity {
     }
 
     public void sync(){
-        apiInterface = ApiClientHelpCenter.getApiClient().create(ApiHelpCenter.class);
+        apiInterface = ApiClientHelpCenter.getApiClient().create(ApiCalls.class);
         Call<List<IssuesEnglish>> call = apiInterface.getString();
         Toast.makeText(HomePage.this, "Syncing data", Toast.LENGTH_SHORT).show();
         call.enqueue(new Callback<List<IssuesEnglish>>() {

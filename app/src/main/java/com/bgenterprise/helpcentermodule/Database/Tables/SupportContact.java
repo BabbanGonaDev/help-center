@@ -4,7 +4,7 @@ package com.bgenterprise.helpcentermodule.Database.Tables;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "SupportContact")
+@Entity(tableName = "contact_support")
 public class SupportContact {
 
     @PrimaryKey

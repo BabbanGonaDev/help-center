@@ -30,9 +30,9 @@ public interface ContactDAO {
     @Delete
     void DeleteContact(SupportContact supportContact);
 
-    @Query("SELECT * FROM SupportContact WHERE location = :location GROUP BY location")
-    List<SupportContact> getPhoneToCall(String location);
+    @Query("SELECT phone_number FROM contact_support WHERE location = :location")
+    String getPhoneNumber(String location);
 
-    @Query("SELECT * FROM SupportContact WHERE location = :location GROUP BY location")
-    List<SupportContact> getWhatsappNumber(String location);
+    @Query("SELECT whatsapp_number FROM contact_support WHERE location = :location")
+    String getWhatsappNumber(String location);
 }

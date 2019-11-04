@@ -1,4 +1,4 @@
-package com.bgenterprise.helpcentermodule.Api;
+package com.bgenterprise.helpcentermodule.Network;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,7 +14,6 @@ public class ApiClientHelpCenter {
 
     public static Retrofit getApiClient(){
         if (retrofit == null){
-
             Gson gson = new GsonBuilder().setLenient().create();
             retrofit = new Retrofit
                     .Builder()
