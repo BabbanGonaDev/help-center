@@ -165,7 +165,7 @@ public class ViewActivityIssues extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
             } else {
-                Intent intent = new Intent(Intent.ACTION_CALL);
+                Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(Uri.parse("tel:+2349095657536"));
                 startActivity(intent);
             }

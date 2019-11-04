@@ -13,9 +13,12 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -24,9 +27,12 @@ import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.google.android.material.button.MaterialButton;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class ViewIssueAndAnswer extends AppCompatActivity {
 
@@ -34,6 +40,10 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
     TextView qandaHeader;
     MaterialButton rating2;
     MaterialButton rating;
+    LinearLayout ratingsection;
+    TextView ratingheader;
+    EditText feedback;
+    MaterialButton submitfeedback;
     private static final int REQUEST_CALL = 1;
     HelpSessionManager sessionM;
     HelpCenterDatabase helpCenterDb;
@@ -41,6 +51,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
     HashMap<String, String> help_details;
     ProgressDialog progressDialog;
     String source2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +69,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
 
         qandaContent = findViewById(R.id.qandaContent);
         qandaHeader = findViewById(R.id.qandaHeader);
+        submitfeedback = findViewById(R.id.submitfeedback);
         rating2 = findViewById(R.id.rating2);
         rating = findViewById(R.id.rating);
 
@@ -76,7 +88,8 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
                 qandaContent.setText(Html.fromHtml(htmlText, new Html.ImageGetter() {
                     @Override
                     public Drawable getDrawable(String source) {
-                        String path = "/storage/emulated/0/helpcenter/" + source;
+                        String path = Environment.getExternalStoragePublicDirectory("")+"/helpcenter/";
+//
                         try {
                             Drawable bmp = Drawable.createFromPath(path);
                             bmp.setBounds(0, 0, bmp.getIntrinsicWidth(), bmp.getIntrinsicHeight());
@@ -93,7 +106,8 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
                 VideoView gif = findViewById(R.id.gif);
 
                 source2 = gifName;
-                String path = "/storage/emulated/0/helpcenter/" + source2;
+//                File path = new File(context.getFilesDir()+"/helpcenter/", source2);
+                String path = Environment.getExternalStoragePublicDirectory("")+"/helpcenter/" + source2;
 
                 File dir = new File(path);
                 if(dir.exists() && source2 != null && !source2.matches("")) {
@@ -123,20 +137,75 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
         };get_answers.execute(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID),help_details.get(HelpSessionManager.KEY_ACTIVITY_ISSUE));
         progressDialog.dismiss();
 
+        submitfeedback.setOnClickListener(view -> {
+            try {
+                negativeFeedback();
+                Toast.makeText(ViewIssueAndAnswer.this,"Thanks for your feedback", Toast.LENGTH_SHORT).show();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(ViewIssueAndAnswer.this,"Thanks for your feedback", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         rating.setOnClickListener(view -> {
-            rating();
+            try {
+                rating();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(ViewIssueAndAnswer.this,"Thanks for your feedback", Toast.LENGTH_SHORT).show();
+            }
         });
 
         rating2.setOnClickListener(view -> {
-            rating();
+            try {
+                rating2();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(ViewIssueAndAnswer.this,"Thanks for your feedback", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
     public void rating(){
         Log.d("CHECK", "We toasted");
         Toast.makeText(ViewIssueAndAnswer.this,"Thanks for your feedback", Toast.LENGTH_SHORT).show();
+        ratingsection = findViewById(R.id.ratingsection);
+        ratingheader = findViewById(R.id.ratingheader);
+        ratingsection.setVisibility(View.GONE);
+        ratingheader.setVisibility(View.GONE);
     }
 
+    public void rating2(){
+        Log.d("CHECK", "We toasted");
+        ratingsection = findViewById(R.id.ratingsection);
+        ratingheader = findViewById(R.id.ratingheader);
+        submitfeedback = findViewById(R.id.submitfeedback);
+        feedback = findViewById(R.id.feedback);
+        ratingsection.setVisibility(View.GONE);
+        ratingheader.setVisibility(View.GONE);
+        feedback.setVisibility(View.VISIBLE);
+        submitfeedback.setVisibility(View.VISIBLE);
+    }
+
+    public void negativeFeedback(){
+        //Insert into db, only display string in log to ensure right data
+        String feedbackdate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        Log.d("CHECK", "We toasted");
+        submitfeedback = findViewById(R.id.submitfeedback);
+        feedback = findViewById(R.id.feedback);
+        String result = feedback.getText().toString();
+        String feedbackresult = "APP_ID: "+"\n" + help_details.get(HelpSessionManager.KEY_APP_ID) + "\n" +
+                "QUESTION_ID: "+"\n" + help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID) + "\n" +
+                "FEEDBACK: "+"\n" + result + "\n" +
+                "DATE: "+"\n" + feedbackdate + "\n" +
+                "SYNC_STATUS: "+"\n" + " - ";
+        Log.d("CHECK", feedbackresult);
+        submitfeedback.setVisibility(View.GONE);
+        feedback.setVisibility(View.GONE);
+    }
 
     @SuppressLint("StaticFieldLeak")
     public class getAnswers extends AsyncTask <String, Void, List<QuestionsEnglish>>{
