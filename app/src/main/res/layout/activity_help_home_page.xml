@@ -8,13 +8,14 @@
 
 
     <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/local_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#050150"
         android:elevation="4dp"
         android:fitsSystemWindows="true"
         android:minHeight="?attr/actionBarSize"
-        app:title="@string/helpcenter_text"
+        app:title="@string/app_name"
         app:titleTextColor="@android:color/white" />
 
     <ScrollView
@@ -250,18 +251,7 @@
                 app:rowCount="1"
                 app:columnOrderPreserved="false">
 
-
-
-
-
             </androidx.gridlayout.widget.GridLayout>-->
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSync"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Sync to get up to date data" />
 
         </LinearLayout>
     </ScrollView>

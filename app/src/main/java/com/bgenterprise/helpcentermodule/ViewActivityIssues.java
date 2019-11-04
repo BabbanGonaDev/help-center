@@ -51,7 +51,6 @@ public class ViewActivityIssues extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_view_activity_issues);
-        getSupportActionBar().setTitle("Help Center");
         IssuesList = new ArrayList<>();
         sessionM = new HelpSessionManager(ViewActivityIssues.this);
         helpCenterDb = HelpCenterDatabase.getInstance(ViewActivityIssues.this);

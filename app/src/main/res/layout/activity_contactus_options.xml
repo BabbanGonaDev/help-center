@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="@string/choose" />
+            android:text="@string/helpcenter_choose" />
 
         <com.google.android.material.button.MaterialButton
             style="@style/Widget.MaterialComponents.Button"
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:id="@+id/phoneCall"
-            android:text="@string/free_phone_call" />
+            android:text="@string/helpcenter_phone_call" />
 
         <com.google.android.material.button.MaterialButton
             style="@style/Widget.MaterialComponents.Button"
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:id="@+id/whatsappcall"
-            android:text="@string/use_whatsapp" />
+            android:text="@string/helpcenter_whatsapp" />
 
     </LinearLayout>
 

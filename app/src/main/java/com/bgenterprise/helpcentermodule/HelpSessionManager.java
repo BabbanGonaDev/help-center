@@ -25,6 +25,8 @@ public class HelpSessionManager {
     public static final String KEY_ACTIVITY_ISSUE = "activity_issue";
     public static final String KEY_USERNAME = "username";
     public static final String KEY_LAST_SYNC_DATE = "last_sync_date";
+    public static final String KEY_LAST_SYNC_QUESTIONS_ENGLISH = "last_sync_questions_english";
+    public static final String KEY_LAST_SYNC_QUESTIONS_HAUSA = "last_sync_questions_hausa";
 
 
     public HelpSessionManager(Context context) {
@@ -73,6 +75,16 @@ public class HelpSessionManager {
         editor.commit();
     }
 
+    public void SET_LAST_SYNC_QUESTIONS_ENGLISH(String value){
+        editor.putString(KEY_LAST_SYNC_QUESTIONS_ENGLISH, value);
+        editor.commit();
+    }
+
+    public void SET_LAST_SYNC_QUESTIONS_HAUSA(String value){
+        editor.putString(KEY_LAST_SYNC_QUESTIONS_HAUSA, value);
+        editor.commit();
+    }
+
     public Boolean getImportStatus(){
         return prefs.getBoolean(KEY_IMPORT_CSV, false);
     }
@@ -87,6 +99,8 @@ public class HelpSessionManager {
         help.put(KEY_ACTIVITY_ISSUE, prefs.getString(KEY_ACTIVITY_ISSUE, ""));
         help.put(KEY_USERNAME, prefs.getString(KEY_USERNAME, ""));
         help.put(KEY_LAST_SYNC_DATE, prefs.getString(KEY_LAST_SYNC_DATE, ""));
+        help.put(KEY_LAST_SYNC_QUESTIONS_ENGLISH, prefs.getString(KEY_LAST_SYNC_QUESTIONS_ENGLISH, "2019-11-04 00:00:00"));
+        help.put(KEY_LAST_SYNC_QUESTIONS_HAUSA, prefs.getString(KEY_LAST_SYNC_QUESTIONS_HAUSA, "2019-11-04 00:00:00"));
 
         return help;
     }

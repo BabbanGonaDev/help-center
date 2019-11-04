@@ -40,7 +40,6 @@ public class ViewActivityGroups extends AppCompatActivity {
 
         //Initialization of all local variables.
         setContentView(R.layout.activity_help_view_activity_groups);
-        getSupportActionBar().setTitle("Help Center");
         issuesList = new ArrayList<>();
         faqList = new ArrayList<>();
         helpCenterDb = HelpCenterDatabase.getInstance(ViewActivityGroups.this);

@@ -3,7 +3,7 @@ package com.bgenterprise.helpcentermodule.Network.ModelClasses;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class QuestionsEnglishSyncDown {
+public class QuestionsHausaSyncDown {
 
     @SerializedName("unique_question_id")
     @Expose
@@ -45,10 +45,10 @@ public class QuestionsEnglishSyncDown {
     @Expose
     private String last_sync_time;
 
-    public QuestionsEnglishSyncDown() {
+    public QuestionsHausaSyncDown() {
     }
 
-    public QuestionsEnglishSyncDown(String unique_question_id, String app_id, String activity_group_id, String activity_group_name, String activity_id, String resource_id, String issue_question, String issue_answer, String faq_status, String last_sync_time) {
+    public QuestionsHausaSyncDown(String unique_question_id, String app_id, String activity_group_id, String activity_group_name, String activity_id, String resource_id, String issue_question, String issue_answer, String faq_status, String last_sync_time) {
         this.unique_question_id = unique_question_id;
         this.app_id = app_id;
         this.activity_group_id = activity_group_id;

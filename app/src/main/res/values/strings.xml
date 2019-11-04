@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Help Center Module</string>
+    <string name="app_name">Help Center App</string>
 
     <!--String values for Help Center-->
     <string name="helpcenter_test_card_text">TGL\nTest</string>
@@ -12,10 +12,10 @@
     <string name="helpcenter_answer_feedback_question">Did this answer help you ?</string>
     <string name="helpcenter_yes">Yes</string>
     <string name="helpcenter_no">No</string>
-    <string name="contact_us_for_free">CONTACT US FOR FREE</string>
-    <string name="free_phone_call">FREE PHONE CALL</string>
-    <string name="use_whatsapp">USE WHATSAPP</string>
-    <string name="choose">CHOOSE</string>
+    <string name="helpcenter_contact_us_text">CONTACT US FOR FREE</string>
+    <string name="helpcenter_phone_call">FREE PHONE CALL</string>
+    <string name="helpcenter_whatsapp">USE WHATSAPP</string>
+    <string name="helpcenter_choose">CHOOSE</string>
 
 
 </resources>

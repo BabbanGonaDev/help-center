@@ -22,7 +22,7 @@ public interface EnglishDAO {
     void InsertFromCSV(List<QuestionsEnglish> issuesList);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void InsertFromOnline(QuestionsEnglish issuesList);
+    void InsertFromOnline(List<QuestionsEnglish> issuesList);
 
     @Update
     void UpdateIssue(QuestionsEnglish... questionsEnglishT);

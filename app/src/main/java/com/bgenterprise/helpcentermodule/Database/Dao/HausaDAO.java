@@ -23,7 +23,7 @@ public interface HausaDAO {
     void InsertFromCSV(List<QuestionsHausa> issuesList);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void InsertFromOnline(QuestionsHausa issuesList);
+    void InsertFromOnline(List<QuestionsHausa> issuesList);
 
     @Update
     void UpdateIssue(QuestionsHausa... questionsHausaT);
