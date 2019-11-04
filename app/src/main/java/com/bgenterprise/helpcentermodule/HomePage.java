@@ -242,7 +242,7 @@ public class HomePage extends AppCompatActivity {
     }
 
     public void syncUpNegativeFeedback(){
-        //Get unsynced feedback then call function to sync up using retrofit
+        //Get unsynced etNegativeFeedback then call function to sync up using retrofit
         Gson json = new Gson();
         AppExecutors.getInstance().diskIO().execute(() -> {
             String unsyncedNegativeFeedback = json.toJson(helpcenterdb.getFeedbackDao().unsyncedNegativeFeedback());

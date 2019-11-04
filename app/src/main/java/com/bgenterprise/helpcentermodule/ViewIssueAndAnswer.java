@@ -24,6 +24,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
+import com.bgenterprise.helpcentermodule.Database.Tables.NegativeFeedback;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.google.android.material.button.MaterialButton;
 import java.io.File;
@@ -38,12 +39,12 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
 
     TextView qandaContent;
     TextView qandaHeader;
-    MaterialButton rating2;
-    MaterialButton rating;
-    LinearLayout ratingsection;
-    TextView ratingheader;
-    EditText feedback;
-    MaterialButton submitfeedback;
+    MaterialButton btnThumbsDown;
+    MaterialButton btnThumbsUp;
+    LinearLayout layoutRatingSection;
+    TextView tvRatingHeader;
+    EditText etNegativeFeedback;
+    MaterialButton btnSubmitNegativeFeedback;
     private static final int REQUEST_CALL = 1;
     HelpSessionManager sessionM;
     HelpCenterDatabase helpCenterDb;
@@ -69,9 +70,13 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
 
         qandaContent = findViewById(R.id.qandaContent);
         qandaHeader = findViewById(R.id.qandaHeader);
-        submitfeedback = findViewById(R.id.submitfeedback);
-        rating2 = findViewById(R.id.rating2);
-        rating = findViewById(R.id.rating);
+        btnSubmitNegativeFeedback = findViewById(R.id.submitfeedback);
+        layoutRatingSection = findViewById(R.id.ratingsection);
+        tvRatingHeader = findViewById(R.id.ratingheader);
+        etNegativeFeedback = findViewById(R.id.feedback);
+
+        btnThumbsDown = findViewById(R.id.rating2);
+        btnThumbsUp = findViewById(R.id.rating);
 
         @SuppressLint("StaticFieldLeak")
         getAnswers get_answers = new getAnswers(ViewIssueAndAnswer.this) {
@@ -137,74 +142,63 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
         };get_answers.execute(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID),help_details.get(HelpSessionManager.KEY_ACTIVITY_ISSUE));
         progressDialog.dismiss();
 
-        submitfeedback.setOnClickListener(view -> {
+        btnSubmitNegativeFeedback.setOnClickListener(view -> {
             try {
                 negativeFeedback();
-                Toast.makeText(ViewIssueAndAnswer.this,"Thanks for your feedback", Toast.LENGTH_SHORT).show();
             }
             catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(ViewIssueAndAnswer.this,"Thanks for your feedback", Toast.LENGTH_SHORT).show();
             }
         });
 
-        rating.setOnClickListener(view -> {
+        btnThumbsUp.setOnClickListener(view -> {
             try {
-                rating();
-            }
-            catch (Exception e) {
+                ratingUp();
+            } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(ViewIssueAndAnswer.this,"Thanks for your feedback", Toast.LENGTH_SHORT).show();
             }
         });
 
-        rating2.setOnClickListener(view -> {
+        btnThumbsDown.setOnClickListener(view -> {
             try {
-                rating2();
-            }
-            catch (Exception e) {
+                ratingDown();
+            } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(ViewIssueAndAnswer.this,"Thanks for your feedback", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public void rating(){
-        Log.d("CHECK", "We toasted");
-        Toast.makeText(ViewIssueAndAnswer.this,"Thanks for your feedback", Toast.LENGTH_SHORT).show();
-        ratingsection = findViewById(R.id.ratingsection);
-        ratingheader = findViewById(R.id.ratingheader);
-        ratingsection.setVisibility(View.GONE);
-        ratingheader.setVisibility(View.GONE);
+    public void ratingUp(){
+        //Thumbs Up
+        Toast.makeText(ViewIssueAndAnswer.this,"Thanks for your Feedback", Toast.LENGTH_SHORT).show();
+        layoutRatingSection.setVisibility(View.GONE);
+        tvRatingHeader.setVisibility(View.GONE);
     }
 
-    public void rating2(){
-        Log.d("CHECK", "We toasted");
-        ratingsection = findViewById(R.id.ratingsection);
-        ratingheader = findViewById(R.id.ratingheader);
-        submitfeedback = findViewById(R.id.submitfeedback);
-        feedback = findViewById(R.id.feedback);
-        ratingsection.setVisibility(View.GONE);
-        ratingheader.setVisibility(View.GONE);
-        feedback.setVisibility(View.VISIBLE);
-        submitfeedback.setVisibility(View.VISIBLE);
+    public void ratingDown(){
+        //Thumbs Down
+        layoutRatingSection.setVisibility(View.GONE);
+        tvRatingHeader.setVisibility(View.GONE);
+        etNegativeFeedback.setVisibility(View.VISIBLE);
+        btnSubmitNegativeFeedback.setVisibility(View.VISIBLE);
     }
 
     public void negativeFeedback(){
         //Insert into db, only display string in log to ensure right data
-        String feedbackdate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        Log.d("CHECK", "We toasted");
-        submitfeedback = findViewById(R.id.submitfeedback);
-        feedback = findViewById(R.id.feedback);
-        String result = feedback.getText().toString();
-        String feedbackresult = "APP_ID: "+"\n" + help_details.get(HelpSessionManager.KEY_APP_ID) + "\n" +
+        String feedback_date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String result = etNegativeFeedback.getText().toString();
+        String feedback_result = "APP_ID: " + "\n" + help_details.get(HelpSessionManager.KEY_APP_ID) + "\n" +
                 "QUESTION_ID: "+"\n" + help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID) + "\n" +
                 "FEEDBACK: "+"\n" + result + "\n" +
-                "DATE: "+"\n" + feedbackdate + "\n" +
-                "SYNC_STATUS: "+"\n" + " - ";
-        Log.d("CHECK", feedbackresult);
-        submitfeedback.setVisibility(View.GONE);
-        feedback.setVisibility(View.GONE);
+                "DATE: "+"\n" + feedback_date + "\n" +
+                "SYNC_STATUS: " + "\n" + " - ";
+        Log.d("CHECK", feedback_result);
+        btnSubmitNegativeFeedback.setVisibility(View.GONE);
+        etNegativeFeedback.setVisibility(View.GONE);
+
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            //Insert into negative feedback here.
+        });
     }
 
     @SuppressLint("StaticFieldLeak")

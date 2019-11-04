@@ -107,18 +107,8 @@ public class ViewActivityIssues extends AppCompatActivity {
         Button whatsappCall  = popupView.findViewById(R.id.whatsappcall);
         Button phoneCall = popupView.findViewById(R.id.phoneCall);
 
-        whatsappCall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendWhatsappMessage();
-            }
-        });
-        phoneCall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                makeCall();
-            }
-        });
+        whatsappCall.setOnClickListener(view1 -> sendWhatsappMessage());
+        phoneCall.setOnClickListener(view12 -> makeCall());
 
     }
 
