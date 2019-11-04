@@ -14,7 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
-import com.bgenterprise.helpcentermodule.Database.Tables.IssuesEnglish;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityAdapter;
 
 
@@ -25,7 +25,7 @@ import java.util.List;
 public class ViewActivities extends AppCompatActivity {
 
     RecyclerView view_activities_rv;
-    public List<IssuesEnglish> questionsList;
+    public List<QuestionsEnglish> questionsList;
     ActivityAdapter adapter;
     HelpCenterDatabase helpCenterDb;
     ProgressDialog progressDialog;
@@ -50,12 +50,12 @@ public class ViewActivities extends AppCompatActivity {
 
         getActivities get_activities = new getActivities(ViewActivities.this){
             @Override
-            protected void onPostExecute(List<IssuesEnglish> issuesEnglishes) {
+            protected void onPostExecute(List<QuestionsEnglish> issuesEnglishes) {
                 super.onPostExecute(issuesEnglishes);
                 questionsList = issuesEnglishes;
                 adapter = new ActivityAdapter(ViewActivities.this, questionsList, new ActivityAdapter.OnItemClickListener() {
                     @Override
-                    public void onClick(IssuesEnglish issuesEnglish) {
+                    public void onClick(QuestionsEnglish issuesEnglish) {
                         sessionM.SET_ACTIVITY_ID(issuesEnglish.getActivity_id());
                         sessionM.SET_ACTIVITY_ISSUE(issuesEnglish.getIssue_question());
                         sessionM.SET_KEY_APP_ID(issuesEnglish.getApp_id());
@@ -77,16 +77,16 @@ public class ViewActivities extends AppCompatActivity {
     }
 
     @SuppressLint("StaticFieldLeak")
-    public class getActivities extends AsyncTask<String, Void, List<IssuesEnglish>>{
+    public class getActivities extends AsyncTask<String, Void, List<QuestionsEnglish>>{
         Context mCtx;
-        List<IssuesEnglish> activity_issues = new ArrayList<>();
+        List<QuestionsEnglish> activity_issues = new ArrayList<>();
 
         public getActivities(Context context) {
             this.mCtx = context;
         }
 
         @Override
-        protected List<IssuesEnglish> doInBackground(String... strings) {
+        protected List<QuestionsEnglish> doInBackground(String... strings) {
             try{
                 activity_issues = helpCenterDb.getEnglishDao().getActivities(strings[0]);
                 return activity_issues;

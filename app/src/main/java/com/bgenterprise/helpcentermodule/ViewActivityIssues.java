@@ -1,6 +1,5 @@
 package com.bgenterprise.helpcentermodule;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -26,7 +25,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
-import com.bgenterprise.helpcentermodule.Database.Tables.IssuesEnglish;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityIssuesAdapter;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -39,7 +38,7 @@ public class ViewActivityIssues extends AppCompatActivity {
     private static final int REQUEST_CALL = 1;
     RecyclerView recyclerView2;
     Button contactUs;
-    public List<IssuesEnglish> IssuesList;
+    public List<QuestionsEnglish> IssuesList;
     ActivityIssuesAdapter adapter;
     HelpCenterDatabase helpCenterDb;
     ProgressDialog progressDialog;
@@ -69,12 +68,12 @@ public class ViewActivityIssues extends AppCompatActivity {
 
         @SuppressLint("StaticFieldLeak") getIssues get_issues = new getIssues(ViewActivityIssues.this) {
             @Override
-            protected void onPostExecute(List<IssuesEnglish> issuesEnglishes) {
+            protected void onPostExecute(List<QuestionsEnglish> issuesEnglishes) {
                 super.onPostExecute(issuesEnglishes);
                 IssuesList = issuesEnglishes;
                 adapter = new ActivityIssuesAdapter(ViewActivityIssues.this, IssuesList, new ActivityIssuesAdapter.OnItemClickListener() {
                     @Override
-                    public void onClick(IssuesEnglish issuesEnglish) {
+                    public void onClick(QuestionsEnglish issuesEnglish) {
                         sessionM.SET_UNIQUE_QUESTION_ID(issuesEnglish.getUnique_question_id());
                         sessionM.SET_ACTIVITY_ISSUE(issuesEnglish.getIssue_question());
                         startActivity(new Intent(ViewActivityIssues.this, ViewIssueAndAnswer.class));
@@ -173,18 +172,18 @@ public class ViewActivityIssues extends AppCompatActivity {
     }
 
     @SuppressLint("StaticFieldLeak")
-    public class getIssues extends AsyncTask<String, Void, List<IssuesEnglish>> {
+    public class getIssues extends AsyncTask<String, Void, List<QuestionsEnglish>> {
         Context myContext;
-        List<IssuesEnglish> issues = new ArrayList<>();
+        List<QuestionsEnglish> issues = new ArrayList<>();
 
         public getIssues(Context context) {
             this.myContext = context;
         }
 
         @Override
-        protected List<IssuesEnglish> doInBackground(String... strings) {
+        protected List<QuestionsEnglish> doInBackground(String... strings) {
             try {
-                issues = helpCenterDb.getEnglishDao().getActivityIssues(strings[0]);
+                issues = helpCenterDb.getEnglishDao().getActivityQuestions(strings[0]);
                 return issues;
             } catch (Exception e){
                 e.printStackTrace();

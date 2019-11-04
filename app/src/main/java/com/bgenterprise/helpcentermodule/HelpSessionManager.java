@@ -53,7 +53,7 @@ public class HelpSessionManager {
         editor.commit();
     }
 
-    public void SET_UNIQUE_QUESTION_ID(int value){
+    public void SET_UNIQUE_QUESTION_ID(String value){
         editor.putString(KEY_UNIQUE_QUESTION_ID, String.valueOf(value));
         editor.commit();
     }

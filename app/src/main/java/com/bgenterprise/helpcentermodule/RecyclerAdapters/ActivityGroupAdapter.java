@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bgenterprise.helpcentermodule.Database.Tables.IssuesEnglish;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 
 import com.bgenterprise.helpcentermodule.R;
 import com.google.android.material.textview.MaterialTextView;
@@ -20,9 +20,9 @@ public class ActivityGroupAdapter extends RecyclerView.Adapter<ActivityGroupAdap
 
     private Context mCtx;
     private final OnItemClickListener listener;
-    private List<IssuesEnglish> issuesList;
+    private List<QuestionsEnglish> issuesList;
 
-    public ActivityGroupAdapter(Context context, List<IssuesEnglish> issuesList, OnItemClickListener listener) {
+    public ActivityGroupAdapter(Context context, List<QuestionsEnglish> issuesList, OnItemClickListener listener) {
         this.mCtx = context;
         this.issuesList = issuesList;
         this.listener = listener;
@@ -37,7 +37,7 @@ public class ActivityGroupAdapter extends RecyclerView.Adapter<ActivityGroupAdap
 
     @Override
     public void onBindViewHolder(@NonNull ActivityGroupViewHolder holder, int position) {
-        IssuesEnglish issues = issuesList.get(position);
+        QuestionsEnglish issues = issuesList.get(position);
         holder.mcv_ActivityGroup_category.setText(issues.getActivity_group_name());
     }
 
@@ -47,7 +47,7 @@ public class ActivityGroupAdapter extends RecyclerView.Adapter<ActivityGroupAdap
     }
 
     public interface OnItemClickListener{
-        void onClick(IssuesEnglish issuesList);
+        void onClick(QuestionsEnglish issuesList);
     }
 
     public class ActivityGroupViewHolder extends RecyclerView.ViewHolder{

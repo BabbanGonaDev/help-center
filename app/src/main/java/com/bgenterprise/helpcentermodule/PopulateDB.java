@@ -4,11 +4,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.bgenterprise.helpcentermodule.Database.Dao.EnglishDAO;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
-import com.bgenterprise.helpcentermodule.Database.Tables.IssuesEnglish;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.opencsv.CSVReader;
-import com.opencsv.bean.CsvToBeanBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,8 +31,8 @@ public class PopulateDB extends AsyncTask<Void,Void,Void> {
         return null;
     }
 
-    private List<IssuesEnglish> readFromCSV(){
-        List<IssuesEnglish> issuesEng = new ArrayList<>();
+    private List<QuestionsEnglish> readFromCSV(){
+        List<QuestionsEnglish> issuesEng = new ArrayList<>();
         String[] content = null;
         try{
             InputStream inputStream = mCtx.getAssets().open("help_center_template_tfm2.csv");
@@ -48,7 +46,7 @@ public class PopulateDB extends AsyncTask<Void,Void,Void> {
                     iteration++;
                     continue;
                 }else{
-                    issuesEng.add(new IssuesEnglish(Integer.parseInt(content[0]),
+                    issuesEng.add(new QuestionsEnglish((content[0]),
                             content[1],
                             content[2],
                             content[3],
@@ -56,9 +54,9 @@ public class PopulateDB extends AsyncTask<Void,Void,Void> {
                             content[5],
                             content[6],
                             content[7],
-                            Integer.parseInt(content[8]),
-                            Integer.parseInt(content[9]),
-                            Integer.parseInt(content[10])));
+                            '0',
+                            '0',
+                            Integer.parseInt(content[8])));
                     Log.d("CHECK", "One Iteration");
                 }
 
@@ -70,8 +68,8 @@ public class PopulateDB extends AsyncTask<Void,Void,Void> {
         return issuesEng;
     }
 
-    private List<IssuesEnglish> readFromCSVAgain(){
-        List<IssuesEnglish> issuesEng = new ArrayList<>();
+    private List<QuestionsEnglish> readFromCSVAgain(){
+        List<QuestionsEnglish> issuesEng = new ArrayList<>();
         String[] content = null;
         try{
             InputStream inputStream = mCtx.getAssets().open("help_center_template_tfm2.csv");
@@ -81,7 +79,7 @@ public class PopulateDB extends AsyncTask<Void,Void,Void> {
                 if(iteration == 0){
                     iteration++;
                 }else {
-                    issuesEng.add(new IssuesEnglish(Integer.parseInt(content[0]),
+                    issuesEng.add(new QuestionsEnglish((content[0]),
                             content[1],
                             content[2],
                             content[3],
@@ -89,9 +87,9 @@ public class PopulateDB extends AsyncTask<Void,Void,Void> {
                             content[5],
                             content[6],
                             content[7],
-                            Integer.parseInt(content[8]),
-                            Integer.parseInt(content[9]),
-                            Integer.parseInt(content[10])));
+                            '0',
+                            '0',
+                            Integer.parseInt(content[8])));
                     Log.d("CHECK", "One Iteration");
                 }
             }

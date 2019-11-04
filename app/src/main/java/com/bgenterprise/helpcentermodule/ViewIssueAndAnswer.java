@@ -21,7 +21,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
-import com.bgenterprise.helpcentermodule.Database.Tables.IssuesEnglish;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.google.android.material.button.MaterialButton;
 import java.io.File;
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
     private static final int REQUEST_CALL = 1;
     HelpSessionManager sessionM;
     HelpCenterDatabase helpCenterDb;
-    public List<IssuesEnglish> IssuesList;
+    public List<QuestionsEnglish> IssuesList;
     HashMap<String, String> help_details;
     ProgressDialog progressDialog;
     String source2;
@@ -64,7 +64,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
         @SuppressLint("StaticFieldLeak")
         getAnswers get_answers = new getAnswers(ViewIssueAndAnswer.this) {
             @Override
-            protected void onPostExecute(List<IssuesEnglish> issuesEnglishes) {
+            protected void onPostExecute(List<QuestionsEnglish> issuesEnglishes) {
                 super.onPostExecute(issuesEnglishes);
                 IssuesList = issuesEnglishes;
                 qandaHeader = findViewById(R.id.qandaHeader);
@@ -99,27 +99,25 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
                 if(dir.exists() && source2 != null && !source2.matches("")) {
                     Log.d("Dami","Getting1");
                     try {
-                        /*Uri uri = Uri.fromFile(new File(path));*/
-                        gif.setVideoPath(path);
-                        gif.invalidate();
-//                    gif.getHolder().setFixedSize(200,200);
-                        gif.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                            @Override
-                            public void onPrepared(MediaPlayer mp) {
-                                mp.setLooping(true);
-                                gif.start();
-                            }
-                        });
-                    } catch (Exception e) {
-                        Log.d("Dami","Getting3");
-                        e.printStackTrace();
-                        gif.setVisibility(View.GONE);
+                            /*Uri uri = Uri.fromFile(new File(path));*/
+                            gif.setVideoPath(path);
+                            gif.invalidate();
+                            //gif.getHolder().setFixedSize(200,200);
+                            gif.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
+                                    mp.setLooping(true);
+                                    gif.start();
+                                }
+                            });
+                        } catch (Exception e) {
+                            Log.d("Dami","Getting3");
+                            e.printStackTrace();
+                            gif.setVisibility(View.GONE);
                     }
-                }
-                else{
+                }else{
                     Log.d("Dami","Getting2");
                     gif.setVisibility(View.GONE);
-
                 }
             }
         };get_answers.execute(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID),help_details.get(HelpSessionManager.KEY_ACTIVITY_ISSUE));
@@ -141,19 +139,19 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
 
 
     @SuppressLint("StaticFieldLeak")
-    public class getAnswers extends AsyncTask <String, Void, List<IssuesEnglish>>{
+    public class getAnswers extends AsyncTask <String, Void, List<QuestionsEnglish>>{
         Context context;
-        List<IssuesEnglish> answers = new ArrayList<>();
+        List<QuestionsEnglish> answers = new ArrayList<>();
         public getAnswers(Context context) {
             this.context = context;
         }
 
         @Override
-        protected List<IssuesEnglish> doInBackground(String... strings) {
+        protected List<QuestionsEnglish> doInBackground(String... strings) {
             try{
                 Log.d("CHECK", "Loading Answers");
                 Log.d("CHECK", help_details.get(HelpSessionManager.KEY_APP_ID)+ " " +help_details.get(HelpSessionManager.KEY_ACTIVITY_GROUP_ID) + " " + help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
-                answers = helpCenterDb.getEnglishDao().getAllQuestionSolution(Integer.valueOf(strings[0]));
+                answers = helpCenterDb.getEnglishDao().getAllQuestionSolution(strings[0]);
                 Log.d("CHECK", answers.get(0).getIssue_answer());
                 return answers;
             }catch (Exception e){

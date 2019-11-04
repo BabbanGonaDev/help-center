@@ -6,10 +6,10 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.Network.ApiClientHelpCenter;
 import com.bgenterprise.helpcentermodule.Network.ApiCalls;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
-import com.bgenterprise.helpcentermodule.Database.Tables.IssuesEnglish;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -37,7 +37,7 @@ public class HomePage extends AppCompatActivity {
     HelpSessionManager sessionM;
     String app_id;
     ApiCalls apiInterface;
-    List<IssuesEnglish> newTable = new ArrayList<>();
+    List<QuestionsEnglish> newTable = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +115,8 @@ public class HomePage extends AppCompatActivity {
         }
     }
 
+    //TODO ---> Combine all permissions.
+
     @Override
     public void onBackPressed() {
         finish();
@@ -127,23 +129,23 @@ public class HomePage extends AppCompatActivity {
 
     public void sync(){
         apiInterface = ApiClientHelpCenter.getApiClient().create(ApiCalls.class);
-        Call<List<IssuesEnglish>> call = apiInterface.getString();
+        Call<List<QuestionsEnglish>> call = apiInterface.getString();
         Toast.makeText(HomePage.this, "Syncing data", Toast.LENGTH_SHORT).show();
-        call.enqueue(new Callback<List<IssuesEnglish>>() {
+        call.enqueue(new Callback<List<QuestionsEnglish>>() {
             @Override
-            public void onResponse(@NonNull Call<List<IssuesEnglish>> call, @NonNull Response<List<IssuesEnglish>> response) {
+            public void onResponse(@NonNull Call<List<QuestionsEnglish>> call, @NonNull Response<List<QuestionsEnglish>> response) {
 
                 Context mCtx = null;
                 HelpCenterDatabase helpCenterDb;
 
                 if (response.isSuccessful()) {
-                    List<IssuesEnglish> responseList = response.body();
+                    List<QuestionsEnglish> responseList = response.body();
 
                     if (responseList != null) {
                         for (int i = 0; i < responseList.size(); i++) {
-                            IssuesEnglish issuesEnglish = responseList.get(i);
+                            QuestionsEnglish questionsEnglish = responseList.get(i);
                             DownloadData downloadData = new DownloadData();
-                            downloadData.execute(issuesEnglish);
+                            downloadData.execute(questionsEnglish);
                         }
                     }
 
@@ -172,7 +174,7 @@ public class HomePage extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<IssuesEnglish>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<QuestionsEnglish>> call, @NonNull Throwable t) {
                 Log.d("tobi", t.toString());
                 Toast.makeText(HomePage.this, "Error "  + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -180,7 +182,7 @@ public class HomePage extends AppCompatActivity {
     }
 
     @SuppressLint("StaticFieldLeak")
-    public class DownloadData extends AsyncTask<IssuesEnglish, Void, Void>{
+    public class DownloadData extends AsyncTask<QuestionsEnglish, Void, Void>{
 
         HelpCenterDatabase helpCenterDatabase;
 
@@ -189,12 +191,12 @@ public class HomePage extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(IssuesEnglish... issuesEnglishes) {
-            IssuesEnglish issuesEnglish = issuesEnglishes[0];
+        protected Void doInBackground(QuestionsEnglish... questionsEnglishes) {
+            QuestionsEnglish questionsEnglish = questionsEnglishes[0];
 
             try {
                 helpCenterDatabase = HelpCenterDatabase.getInstance(HomePage.this);
-                helpCenterDatabase.getEnglishDao().InsertFromOnline(issuesEnglish);
+                helpCenterDatabase.getEnglishDao().InsertFromOnline(questionsEnglish);
 
             } catch (Exception e) {
                 e.printStackTrace();

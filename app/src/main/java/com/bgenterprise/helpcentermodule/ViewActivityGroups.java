@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
-import com.bgenterprise.helpcentermodule.Database.Tables.IssuesEnglish;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityGroupAdapter;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.FAQAdapter;
 
@@ -27,7 +27,7 @@ public class ViewActivityGroups extends AppCompatActivity {
     RecyclerView faq_recyclerView;
     RecyclerView group_recyclerView;
     String app_id;
-    public List<IssuesEnglish> issuesList, faqList;
+    public List<QuestionsEnglish> issuesList, faqList;
     FAQAdapter faqAdapter;
     ActivityGroupAdapter activityGroupAdapter;
     HelpCenterDatabase helpCenterDb;
@@ -53,7 +53,7 @@ public class ViewActivityGroups extends AppCompatActivity {
         //Get Recycler Lists.
         getActivityGroups getActivityGroupIssues = new getActivityGroups(ViewActivityGroups.this){
             @Override
-            protected void onPostExecute(List<IssuesEnglish> issuesEnglishes) {
+            protected void onPostExecute(List<QuestionsEnglish> issuesEnglishes) {
                 super.onPostExecute(issuesEnglishes);
                 issuesList = issuesEnglishes;
                 initGroupAdapter();
@@ -68,7 +68,7 @@ public class ViewActivityGroups extends AppCompatActivity {
 
         getFAQuestions getFaq = new getFAQuestions(ViewActivityGroups.this){
             @Override
-            protected void onPostExecute(List<IssuesEnglish> FAQIssues) {
+            protected void onPostExecute(List<QuestionsEnglish> FAQIssues) {
                 super.onPostExecute(FAQIssues);
                 faqList = FAQIssues;
                 initFAQRecycler();
@@ -78,16 +78,16 @@ public class ViewActivityGroups extends AppCompatActivity {
     }
 
     @SuppressLint("StaticFieldLeak")
-    public class getActivityGroups extends AsyncTask<String, Void, List<IssuesEnglish>>{
+    public class getActivityGroups extends AsyncTask<String, Void, List<QuestionsEnglish>>{
         Context context;
-        List<IssuesEnglish> englishIssues = new ArrayList<>();
+        List<QuestionsEnglish> englishIssues = new ArrayList<>();
 
         public getActivityGroups(Context context) {
             this.context = context;
         }
 
         @Override
-        protected List<IssuesEnglish> doInBackground(String... AppID) {
+        protected List<QuestionsEnglish> doInBackground(String... AppID) {
             try{
                 Log.d("CHECK", "App id: " + AppID[0]);
                 englishIssues = helpCenterDb.getEnglishDao().getActivityGroups(AppID[0]);
@@ -100,19 +100,19 @@ public class ViewActivityGroups extends AppCompatActivity {
     }
 
     @SuppressLint("StaticFieldLeak")
-    public class getFAQuestions extends AsyncTask<String, Void, List<IssuesEnglish>>{
+    public class getFAQuestions extends AsyncTask<String, Void, List<QuestionsEnglish>>{
         Context context;
-        List<IssuesEnglish> faqIssues = new ArrayList<>();
+        List<QuestionsEnglish> faqIssues = new ArrayList<>();
 
         public getFAQuestions(Context context) {
             this.context = context;
         }
 
         @Override
-        protected List<IssuesEnglish> doInBackground(String... strings) {
+        protected List<QuestionsEnglish> doInBackground(String... strings) {
             try{
                 Log.d("CHECK", "Loading FAQ");
-                faqIssues = helpCenterDb.getEnglishDao().getAllFAQIssues(strings[0]);
+                faqIssues = helpCenterDb.getEnglishDao().getAllFAQQuestions(strings[0]);
 
                 return faqIssues;
             }catch (Exception e){
@@ -127,7 +127,7 @@ public class ViewActivityGroups extends AppCompatActivity {
         //Initialize and populate the FAQ recycler view.
         faqAdapter = new FAQAdapter(ViewActivityGroups.this, faqList, new FAQAdapter.OnItemClickListener() {
             @Override
-            public void onClick(IssuesEnglish issuesList) {
+            public void onClick(QuestionsEnglish issuesList) {
                 //Onclick listener for clicking the recyclerview.
                 //Toast.makeText(ViewActivityGroups.this, app_id, Toast.LENGTH_LONG).show();
                 sessionM.SET_UNIQUE_QUESTION_ID(issuesList.getUnique_question_id());
@@ -147,7 +147,7 @@ public class ViewActivityGroups extends AppCompatActivity {
         //Initialize and populate the Group activities recycler view.
         activityGroupAdapter = new ActivityGroupAdapter(ViewActivityGroups.this, issuesList, new ActivityGroupAdapter.OnItemClickListener() {
             @Override
-            public void onClick(IssuesEnglish issuesList) {
+            public void onClick(QuestionsEnglish issuesList) {
                 //New Onclick into the next activity.
                 //Toast.makeText(ViewActivityGroups.this, "Selected this new guy", Toast.LENGTH_LONG).show();
                 sessionM.SET_ACTIVITY_GROUP_ID(issuesList.getActivity_group_name());

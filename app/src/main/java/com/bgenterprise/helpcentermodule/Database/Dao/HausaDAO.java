@@ -8,8 +8,8 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.bgenterprise.helpcentermodule.Database.Tables.IssuesEnglish;
-import com.bgenterprise.helpcentermodule.Database.Tables.IssuesHausa;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
 
 import java.util.List;
 
@@ -17,27 +17,33 @@ import java.util.List;
 public interface HausaDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void InsertIssues(IssuesHausa... issuesHausaT);
+    void InsertIssues(QuestionsHausa... questionsHausaT);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void InsertFromCSV(List<QuestionsHausa> issuesList);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void InsertFromOnline(QuestionsHausa issuesList);
 
     @Update
-    void UpdateIssue(IssuesHausa... issuesHausaT);
+    void UpdateIssue(QuestionsHausa... questionsHausaT);
 
     @Delete
-    void DeleteIssue(IssuesHausa issuesHausaT);
+    void DeleteIssue(QuestionsHausa questionsHausaT);
 
-    @Query("SELECT * FROM issues_hausa WHERE app_id = :appID")
-    List<IssuesHausa> getAllAppIssueH(String appID);
+    @Query("SELECT * FROM questions_hausa WHERE app_id = :appID GROUP BY activity_group_name")
+    List<QuestionsHausa> getActivityGroups(String appID);
 
-    @Query("SELECT * FROM issues_hausa WHERE activity_group_name = :groupName")
-    List<IssuesHausa> getAllGroupIssuesH(String groupName);
+    @Query("SELECT * FROM questions_hausa WHERE activity_group_name = :groupName GROUP BY activity_id")
+    List<QuestionsHausa> getActivities(String groupName);
 
-    @Query("SELECT * FROM issues_hausa WHERE activity_id = :activityID")
-    List<IssuesHausa> getActivityIssuesH(String activityID);
+    @Query("SELECT * FROM questions_hausa WHERE activity_id = :activityID")
+    List<QuestionsHausa> getActivityQuestions(String activityID);
 
-    @Query("SELECT * FROM issues_hausa WHERE issue_question = :questionID")
-    List<IssuesHausa> getQuestionSolutionH(String questionID);
+    @Query("SELECT * FROM questions_hausa WHERE unique_question_id = :questionID")
+    List<QuestionsHausa> getAllQuestionSolution (String questionID);
 
-    @Query("SELECT * FROM issues_hausa WHERE app_id = :appID")
-    List<IssuesHausa> getAllFAQIssuesH(String appID);
+    @Query("SELECT * FROM questions_hausa WHERE app_id = :appID ORDER BY faq_status DESC LIMIT 3")
+    List<QuestionsHausa> getAllFAQQuestions(String appID);
 
 }

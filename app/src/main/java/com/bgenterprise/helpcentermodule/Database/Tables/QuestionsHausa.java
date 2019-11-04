@@ -1,13 +1,15 @@
 package com.bgenterprise.helpcentermodule.Database.Tables;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "issues_english")
-public class IssuesEnglish {
+@Entity(tableName = "questions_hausa")
+public class QuestionsHausa {
 
     @PrimaryKey
-    private int unique_question_id;
+    @NonNull
+    private String unique_question_id;
 
     private String app_id;
     private String activity_group_id;
@@ -20,9 +22,9 @@ public class IssuesEnglish {
     private int negative_feedback_count;
     private int faq_status;
 
-    public IssuesEnglish(int unique_question_id, String app_id, String activity_group_id, String activity_group_name,
-                         String activity_id, String resource_id, String issue_question,
-                         String issue_answer, int positive_feedback_count, int negative_feedback_count,int faq_status) {
+    public QuestionsHausa(@NonNull String unique_question_id, String app_id, String activity_group_id, String activity_group_name,
+                          String activity_id, String resource_id, String issue_question,
+                          String issue_answer, int positive_feedback_count, int negative_feedback_count, int faq_status) {
         this.unique_question_id = unique_question_id;
         this.app_id = app_id;
         this.activity_group_id = activity_group_id;
@@ -36,7 +38,8 @@ public class IssuesEnglish {
         this.faq_status = faq_status;
     }
 
-    public int getUnique_question_id() {
+    @NonNull
+    public String getUnique_question_id() {
         return unique_question_id;
     }
 
@@ -79,6 +82,5 @@ public class IssuesEnglish {
     public int getFaq_status() {
         return faq_status;
     }
-
 
 }
