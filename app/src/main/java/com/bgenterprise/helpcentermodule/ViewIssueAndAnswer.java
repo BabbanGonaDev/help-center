@@ -84,12 +84,11 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
             protected void onPostExecute(List<QuestionsEnglish> issuesEnglishes) {
                 super.onPostExecute(issuesEnglishes);
                 IssuesList = issuesEnglishes;
-                qandaHeader = findViewById(R.id.qandaHeader);
-                qandaHeader.setText(help_details.get(HelpSessionManager.KEY_ACTIVITY_ISSUE));
                 String htmlText = IssuesList.get(0).getIssue_answer();
+                String issue_header = IssuesList.get(0).getIssue_question();
                 String gifName = IssuesList.get(0).getResource_id();
                 makeCall();
-                qandaContent = findViewById(R.id.qandaContent);
+                qandaHeader.setText(issue_header);
                 qandaContent.setText(Html.fromHtml(htmlText, source -> {
                     String path = Environment.getExternalStoragePublicDirectory("")+"/helpcenter/";
 

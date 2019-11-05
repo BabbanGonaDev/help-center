@@ -30,7 +30,7 @@ public interface EnglishDAO {
     @Delete
     void DeleteIssue(QuestionsEnglish questionsEnglishT);
 
-    @Query("SELECT * FROM questions_english WHERE app_id = :appID GROUP BY activity_group_name")
+    @Query("SELECT * FROM questions_english WHERE app_id = :appID GROUP BY activity_group_id")
     List<QuestionsEnglish> getActivityGroups(String appID);
 
     @Query("SELECT * FROM questions_english WHERE activity_group_id = :groupId GROUP BY activity_id")

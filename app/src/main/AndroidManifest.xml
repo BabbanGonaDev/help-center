@@ -14,11 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".QuestionNotFound"></activity>
-        <activity android:name=".ViewActivityIssues" />
-        <activity android:name=".ViewIssueAndAnswer" />
         <activity
-            android:name=".ViewActivities"
+            android:name=".ViewActivityIssues"
             android:exported="true" />
+        <activity android:name=".ViewIssueAndAnswer" />
+        <activity android:name=".ViewActivities" />
         <activity
             android:name=".HomePage"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />

@@ -37,7 +37,7 @@ public class ActivityAdapter extends RecyclerView.Adapter <ActivityAdapter.ViewH
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         QuestionsEnglish issues = questionList.get(position);
-        holder.questionView.setText(issues.getActivity_id());
+        holder.questionView.setText(issues.getActivity_name());
     }
 
     public interface OnItemClickListener{

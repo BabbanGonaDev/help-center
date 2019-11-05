@@ -61,7 +61,7 @@ public class ViewActivityGroups extends AppCompatActivity {
                     Log.d("CHECK:", "List is very empty");
                     startActivity(new Intent(ViewActivityGroups.this, QuestionNotFound.class));
                 }else if(issuesList != null && !issuesList.isEmpty()){
-                    Log.d("CHECK:", issuesEnglishes.get(0).getActivity_group_name());
+                    Log.d("CHECK:", issuesEnglishes.get(0).getActivity_group_id());
                 }
             }
         };

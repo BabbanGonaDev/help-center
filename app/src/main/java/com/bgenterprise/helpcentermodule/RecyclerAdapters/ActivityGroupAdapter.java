@@ -38,7 +38,7 @@ public class ActivityGroupAdapter extends RecyclerView.Adapter<ActivityGroupAdap
     @Override
     public void onBindViewHolder(@NonNull ActivityGroupViewHolder holder, int position) {
         QuestionsEnglish issues = issuesList.get(position);
-        holder.mcv_ActivityGroup_category.setText(issues.getActivity_group_name());
+        holder.mcv_ActivityGroup_category.setText(issues.getActivity_group_id());
     }
 
     @Override

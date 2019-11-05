@@ -46,6 +46,7 @@ public class ViewActivityIssues extends AppCompatActivity {
     HashMap<String, String> help_details;
     Dialog myDialog;
     public String WhatsappMessage;
+    String passed_activity_id, passed_app_id, passed_staff_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,22 @@ public class ViewActivityIssues extends AppCompatActivity {
         setContentView(R.layout.activity_help_view_activity_issues);
         IssuesList = new ArrayList<>();
         sessionM = new HelpSessionManager(ViewActivityIssues.this);
+
+        try{
+            Intent intent = getIntent();
+            Bundle bundle = intent.getExtras();
+
+            passed_activity_id = bundle.getString("activity_id");
+            passed_app_id = bundle.getString("app_id");
+            passed_staff_id = bundle.getString("staff_id");
+
+            sessionM.SET_ACTIVITY_ID(passed_activity_id);
+            sessionM.SET_KEY_APP_ID(passed_app_id);
+            sessionM.SET_STAFF_ID(passed_staff_id);
+        }catch(NullPointerException e){
+
+        }
+
         helpCenterDb = HelpCenterDatabase.getInstance(ViewActivityIssues.this);
         help_details = sessionM.getHelpDetails();
 
