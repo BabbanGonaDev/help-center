@@ -1,6 +1,7 @@
 package com.bgenterprise.helpcentermodule.Network;
 
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
+import com.bgenterprise.helpcentermodule.Network.ModelClasses.ContactSupportSyncDown;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.NegativeFeedbackResponse;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsEnglishSyncDown;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsHausaSyncDown;
@@ -26,4 +27,6 @@ public interface RetrofitApiCalls {
     @POST("sync_up_negative_feedback.php")
     Call<List<NegativeFeedbackResponse>> syncUpNegativeFeedback(@Field("negative_feedback_list") String negative_feedback_list);
 
+    @GET("sync_down_contact_support.php")
+    Call<List<ContactSupportSyncDown>> syncDownContactSupport();
 }

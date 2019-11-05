@@ -6,8 +6,10 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.bgenterprise.helpcentermodule.Database.Tables.ContactSupport;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
+import com.bgenterprise.helpcentermodule.Network.ModelClasses.ContactSupportSyncDown;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.NegativeFeedbackResponse;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsEnglishSyncDown;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsHausaSyncDown;
@@ -153,6 +155,7 @@ public class HomePage extends AppCompatActivity {
         syncDownQuestionsEnglish();
         syncDownQuestionsHausa();
         syncUpNegativeFeedback();
+        syncDownContactSupport();
     }
 
     public void syncDownQuestionsEnglish(){
@@ -274,6 +277,39 @@ public class HomePage extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<NegativeFeedbackResponse>> call, Throwable t) {
 
+            }
+        });
+    }
+
+    public void syncDownContactSupport(){
+        RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
+        Call<List<ContactSupportSyncDown>> call = service.syncDownContactSupport();
+        call.enqueue(new Callback<List<ContactSupportSyncDown>>() {
+            @Override
+            public void onResponse(Call<List<ContactSupportSyncDown>> call, Response<List<ContactSupportSyncDown>> response) {
+                if(response.isSuccessful()){
+                    List<ContactSupportSyncDown> syncData = response.body();
+                    List<ContactSupport> contact_support = new ArrayList<>();
+
+                    try{
+                        for(ContactSupportSyncDown j: syncData){
+                            contact_support.add(new ContactSupport(j.getLocation(),
+                                    j.getWhatsapp_number(),
+                                    j.getPhone_number()));
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                    AppExecutors.getInstance().diskIO().execute(() -> {
+                        helpcenterdb.getContactDao().InsertFromOnline(contact_support);
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ContactSupportSyncDown>> call, Throwable t) {
+                Toast.makeText(HomePage.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

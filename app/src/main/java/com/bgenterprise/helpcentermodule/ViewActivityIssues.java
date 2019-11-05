@@ -70,13 +70,10 @@ public class ViewActivityIssues extends AppCompatActivity {
             protected void onPostExecute(List<QuestionsEnglish> issuesEnglishes) {
                 super.onPostExecute(issuesEnglishes);
                 IssuesList = issuesEnglishes;
-                adapter = new ActivityIssuesAdapter(ViewActivityIssues.this, IssuesList, new ActivityIssuesAdapter.OnItemClickListener() {
-                    @Override
-                    public void onClick(QuestionsEnglish issuesEnglish) {
-                        sessionM.SET_UNIQUE_QUESTION_ID(issuesEnglish.getUnique_question_id());
-                        sessionM.SET_ACTIVITY_ISSUE(issuesEnglish.getIssue_question());
-                        startActivity(new Intent(ViewActivityIssues.this, ViewIssueAndAnswer.class));
-                    }
+                adapter = new ActivityIssuesAdapter(ViewActivityIssues.this, IssuesList, issuesEnglish -> {
+                    sessionM.SET_UNIQUE_QUESTION_ID(issuesEnglish.getUnique_question_id());
+                    sessionM.SET_ACTIVITY_ISSUE(issuesEnglish.getIssue_question());
+                    startActivity(new Intent(ViewActivityIssues.this, ViewIssueAndAnswer.class));
                 });
 
                 RecyclerView.LayoutManager vLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);

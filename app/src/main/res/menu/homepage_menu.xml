@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/sync_app"
-        android:icon="@drawable/ic_cloud_sync"
+        android:icon="@drawable/ic_helpcenter_cloud_sync"
         android:title="Sync App"
         app:showAsAction="always" />
 </menu>

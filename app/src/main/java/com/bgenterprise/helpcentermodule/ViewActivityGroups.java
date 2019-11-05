@@ -50,6 +50,7 @@ public class ViewActivityGroups extends AppCompatActivity {
         group_recyclerView = findViewById(R.id.group_recycler);
 
         //Get Recycler Lists.
+        @SuppressLint("StaticFieldLeak")
         getActivityGroups getActivityGroupIssues = new getActivityGroups(ViewActivityGroups.this){
             @Override
             protected void onPostExecute(List<QuestionsEnglish> issuesEnglishes) {
@@ -58,6 +59,7 @@ public class ViewActivityGroups extends AppCompatActivity {
                 initGroupAdapter();
                 if(issuesList == null || issuesList.isEmpty()){
                     Log.d("CHECK:", "List is very empty");
+                    startActivity(new Intent(ViewActivityGroups.this, QuestionNotFound.class));
                 }else if(issuesList != null && !issuesList.isEmpty()){
                     Log.d("CHECK:", issuesEnglishes.get(0).getActivity_group_name());
                 }
@@ -65,6 +67,7 @@ public class ViewActivityGroups extends AppCompatActivity {
         };
         getActivityGroupIssues.execute(help_details.get(HelpSessionManager.KEY_APP_ID));
 
+        @SuppressLint("StaticFieldLeak")
         getFAQuestions getFaq = new getFAQuestions(ViewActivityGroups.this){
             @Override
             protected void onPostExecute(List<QuestionsEnglish> FAQIssues) {
@@ -124,15 +127,12 @@ public class ViewActivityGroups extends AppCompatActivity {
 
     public void initFAQRecycler(){
         //Initialize and populate the FAQ recycler view.
-        faqAdapter = new FAQAdapter(ViewActivityGroups.this, faqList, new FAQAdapter.OnItemClickListener() {
-            @Override
-            public void onClick(QuestionsEnglish issuesList) {
-                //Onclick listener for clicking the recyclerview.
-                //Toast.makeText(ViewActivityGroups.this, app_id, Toast.LENGTH_LONG).show();
-                sessionM.SET_UNIQUE_QUESTION_ID(issuesList.getUnique_question_id());
-                sessionM.SET_ACTIVITY_ISSUE(issuesList.getIssue_question());
-                startActivity(new Intent(ViewActivityGroups.this, ViewIssueAndAnswer.class));
-            }
+        faqAdapter = new FAQAdapter(ViewActivityGroups.this, faqList, issuesList -> {
+            //Onclick listener for clicking the recyclerview.
+            //Toast.makeText(ViewActivityGroups.this, app_id, Toast.LENGTH_LONG).show();
+            sessionM.SET_UNIQUE_QUESTION_ID(issuesList.getUnique_question_id());
+            sessionM.SET_ACTIVITY_ISSUE(issuesList.getIssue_question());
+            startActivity(new Intent(ViewActivityGroups.this, ViewIssueAndAnswer.class));
         });
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
@@ -144,14 +144,11 @@ public class ViewActivityGroups extends AppCompatActivity {
 
     public void initGroupAdapter(){
         //Initialize and populate the Group activities recycler view.
-        activityGroupAdapter = new ActivityGroupAdapter(ViewActivityGroups.this, issuesList, new ActivityGroupAdapter.OnItemClickListener() {
-            @Override
-            public void onClick(QuestionsEnglish issuesList) {
-                //New Onclick into the next activity.
-                //Toast.makeText(ViewActivityGroups.this, "Selected this new guy", Toast.LENGTH_LONG).show();
-                sessionM.SET_ACTIVITY_GROUP_ID(issuesList.getActivity_group_name());
-                startActivity(new Intent(ViewActivityGroups.this, ViewActivities.class));
-            }
+        activityGroupAdapter = new ActivityGroupAdapter(ViewActivityGroups.this, issuesList, issuesList -> {
+            //New Onclick into the next activity.
+            //Toast.makeText(ViewActivityGroups.this, "Selected this new guy", Toast.LENGTH_LONG).show();
+            sessionM.SET_ACTIVITY_GROUP_ID(issuesList.getActivity_group_name());
+            startActivity(new Intent(ViewActivityGroups.this, ViewActivities.class));
         });
 
         RecyclerView.LayoutManager nLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);

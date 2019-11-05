@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
@@ -31,13 +32,26 @@ public class ViewActivities extends AppCompatActivity {
     ProgressDialog progressDialog;
     HelpSessionManager sessionM;
     HashMap<String, String> help_details;
+    String passed_activity_group_id, passed_app_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_view_activities);
-        questionsList = new ArrayList<>();
         sessionM = new HelpSessionManager(ViewActivities.this);
+
+        try{
+            Intent intent = getIntent();
+            Bundle bundle = intent.getExtras();
+            passed_activity_group_id = bundle.getString("activity_group");
+            passed_app_id = bundle.getString("app_id");
+            sessionM.SET_ACTIVITY_GROUP_ID(passed_activity_group_id);
+            sessionM.SET_KEY_APP_ID(passed_app_id);
+        }catch(NullPointerException e){
+            Toast.makeText(getApplicationContext(), "API requirements failure", Toast.LENGTH_LONG).show();
+        }
+
+        questionsList = new ArrayList<>();
         helpCenterDb = HelpCenterDatabase.getInstance(ViewActivities.this);
         help_details = sessionM.getHelpDetails();
 

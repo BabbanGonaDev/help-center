@@ -8,7 +8,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.bgenterprise.helpcentermodule.Database.Tables.SupportContact;
+import com.bgenterprise.helpcentermodule.Database.Tables.ContactSupport;
 
 import java.util.List;
 
@@ -16,19 +16,16 @@ import java.util.List;
 public interface ContactDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void InsertContact(SupportContact... supportContacts);
+    void InsertContact(ContactSupport... contactSupports);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void InsertFromCSV(List<SupportContact> supportContactList);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void InsertFromOnline(SupportContact supportContact);
+    void InsertFromOnline(List<ContactSupport> contactSupport);
 
     @Update
-    void UpdateContact(SupportContact supportContact);
+    void UpdateContact(ContactSupport contactSupport);
 
     @Delete
-    void DeleteContact(SupportContact supportContact);
+    void DeleteContact(ContactSupport contactSupport);
 
     @Query("SELECT phone_number FROM contact_support WHERE location = :location")
     String getPhoneNumber(String location);

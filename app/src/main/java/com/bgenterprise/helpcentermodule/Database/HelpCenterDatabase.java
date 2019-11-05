@@ -10,12 +10,12 @@ import com.bgenterprise.helpcentermodule.Database.Dao.ContactDAO;
 import com.bgenterprise.helpcentermodule.Database.Dao.EnglishDAO;
 import com.bgenterprise.helpcentermodule.Database.Dao.NegativeFeedbackDAO;
 import com.bgenterprise.helpcentermodule.Database.Dao.HausaDAO;
+import com.bgenterprise.helpcentermodule.Database.Tables.ContactSupport;
 import com.bgenterprise.helpcentermodule.Database.Tables.NegativeFeedback;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
-import com.bgenterprise.helpcentermodule.Database.Tables.SupportContact;
 
-@Database(entities = {QuestionsEnglish.class, QuestionsHausa.class, SupportContact.class, NegativeFeedback.class}, version = 1, exportSchema = false)
+@Database(entities = {QuestionsEnglish.class, QuestionsHausa.class, ContactSupport.class, NegativeFeedback.class}, version = 1, exportSchema = false)
 public abstract class HelpCenterDatabase extends RoomDatabase {
     private static HelpCenterDatabase INSTANCE;
 

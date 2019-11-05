@@ -17,6 +17,8 @@
     <string name="helpcenter_whatsapp">USE WHATSAPP</string>
     <string name="helpcenter_choose">CHOOSE</string>
     <string name="helpcenter_feedback_appreciate">Thanks for your feedback</string>
+    <string name="helpcenter_not_found_headline">Not Found</string>
+    <string name="helpcenter_not_found_suggestion_text">Have you tried syncing your app ?</string>
 
 
 </resources>

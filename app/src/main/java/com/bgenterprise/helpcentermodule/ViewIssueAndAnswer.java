@@ -101,7 +101,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
                             return bmp;
                         }
                         catch (Exception e){
-                           Drawable bmp =  getResources().getDrawable(R.drawable.no_image);
+                           Drawable bmp =  getResources().getDrawable(R.drawable.helpcenter_no_image);
                            bmp.setBounds(0, 0, 100, 100);
                             return bmp;
                         }
