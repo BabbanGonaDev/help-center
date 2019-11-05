@@ -7,25 +7,27 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bgenterprise.helpcentermodule.Database.FileDownloadClient;
+import com.bgenterprise.helpcentermodule.Database.Tables.ContactSupport;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
-import com.bgenterprise.helpcentermodule.Network.ApiClientHelpCenter;
-import com.bgenterprise.helpcentermodule.Network.ApiCalls;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
+import com.bgenterprise.helpcentermodule.Network.ModelClasses.ContactSupportSyncDown;
+import com.bgenterprise.helpcentermodule.Network.ModelClasses.NegativeFeedbackResponse;
+import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsEnglishSyncDown;
+import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsHausaSyncDown;
+import com.bgenterprise.helpcentermodule.Network.RetrofitApiCalls;
+import com.bgenterprise.helpcentermodule.Network.RetrofitClient;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.gson.Gson;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.io.File;
@@ -34,8 +36,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -49,46 +51,45 @@ public class HomePage extends AppCompatActivity {
     private static final int REQUEST_CALL = 1;
     private static final int MY_PERMISSIONS_REQUEST = 1;
     HelpSessionManager sessionM;
-    String app_id;
-    ApiCalls apiInterface;
-    List<QuestionsEnglish> newTable = new ArrayList<>();
+    HashMap<String, String> help_details;
+    HelpCenterDatabase helpcenterdb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_home_page);
-
+        MaterialToolbar custom_toolbar = findViewById(R.id.local_toolbar);
         CardView tgl_test_card = findViewById(R.id.tgl_test_card);
         CardView tgl_interview_card = findViewById(R.id.tgl_interview_card);
         CardView field_mapping_card = findViewById(R.id.field_mapping_card);
         CardView tfm_card = findViewById(R.id.tfm_card);
-        Button btnSync = findViewById(R.id.btnSync);
 
+        setSupportActionBar(custom_toolbar);
+        helpcenterdb = HelpCenterDatabase.getInstance(HomePage.this);
         sessionM = new HelpSessionManager(HomePage.this);
+        help_details = sessionM.getHelpDetails();
         checkMemory();
         makeCall();
 
         tgl_test_card.setOnClickListener(view -> {
             sessionM.SET_KEY_APP_ID("tgl_test");
-            beginNewActivity(app_id);
+            startActivity(new Intent(HomePage.this, ViewActivityGroups.class));
         });
 
         tgl_interview_card.setOnClickListener(view -> {
             sessionM.SET_KEY_APP_ID("tgl_interview");
-            beginNewActivity(app_id);
+            startActivity(new Intent(HomePage.this, ViewActivityGroups.class));
         });
 
         field_mapping_card.setOnClickListener(view -> {
             sessionM.SET_KEY_APP_ID("field_mapping");
-            beginNewActivity(app_id);
+            startActivity(new Intent(HomePage.this, ViewActivityGroups.class));
         });
 
         tfm_card.setOnClickListener(view -> {
             sessionM.SET_KEY_APP_ID("tfm");
-            beginNewActivity(app_id);
+            startActivity(new Intent(HomePage.this, ViewActivityGroups.class));
         });
-
-        btnSync.setOnClickListener(view -> sync());
 
         createFolder("TestOnlineFile");
 
@@ -115,6 +116,23 @@ public class HomePage extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.homepage_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.sync_app:
+                sync();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -152,88 +170,12 @@ public class HomePage extends AppCompatActivity {
         finish();
     }
 
-    public void beginNewActivity(String app_id){
-        //This is an Intent function moves into the Activity group activity.
-        startActivity(new Intent(HomePage.this, ViewActivityGroups.class));
-    }
-
     public void sync(){
-        apiInterface = ApiClientHelpCenter.getApiClient().create(ApiCalls.class);
-        Call<List<QuestionsEnglish>> call = apiInterface.getString();
-        Toast.makeText(HomePage.this, "Syncing data", Toast.LENGTH_SHORT).show();
-        call.enqueue(new Callback<List<QuestionsEnglish>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<QuestionsEnglish>> call, @NonNull Response<List<QuestionsEnglish>> response) {
-
-                Context mCtx = null;
-                HelpCenterDatabase helpCenterDb;
-
-                if (response.isSuccessful()) {
-                    List<QuestionsEnglish> responseList = response.body();
-
-                    if (responseList != null) {
-                        for (int i = 0; i < responseList.size(); i++) {
-                            QuestionsEnglish questionsEnglish = responseList.get(i);
-                            DownloadData downloadData = new DownloadData();
-                            downloadData.execute(questionsEnglish);
-                        }
-                    }
-
-                    Log.d("Retrofit_response", Objects.requireNonNull(responseList).get(0).getIssue_answer());
-                    Toast.makeText(HomePage.this, "Syncing Successful", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    int sc = response.code();
-                    switch (sc) {
-                        case 400:
-                            Log.e("Error 400", "Bad Request");
-                            Toast.makeText(getApplicationContext(), "Error 400: Network Error Please Reconnect",
-                                    Toast.LENGTH_LONG).show();
-                            break;
-                        case 404:
-                            Log.e("Error 404", "Not Found");
-                            Toast.makeText(getApplicationContext(), "Error 404: Page not found",
-                                    Toast.LENGTH_LONG).show();
-                            break;
-                        default:
-                            Log.e("Error", "Generic Error");
-                            Toast.makeText(getApplicationContext(), "Error: Network Error Please Reconnect",
-                                    Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<List<QuestionsEnglish>> call, @NonNull Throwable t) {
-                Log.d("tobi", t.toString());
-                Toast.makeText(HomePage.this, "Error "  + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    public class DownloadData extends AsyncTask<QuestionsEnglish, Void, Void>{
-
-        HelpCenterDatabase helpCenterDatabase;
-
-        protected void onPreExecute(){
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(QuestionsEnglish... questionsEnglishes) {
-            QuestionsEnglish questionsEnglish = questionsEnglishes[0];
-
-            try {
-                helpCenterDatabase = HelpCenterDatabase.getInstance(HomePage.this);
-                helpCenterDatabase.getEnglishDao().InsertFromOnline(questionsEnglish);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
+        Toast.makeText(HomePage.this, "Beginning syncing process", Toast.LENGTH_LONG).show();
+        syncDownQuestionsEnglish();
+        syncDownQuestionsHausa();
+        syncUpNegativeFeedback();
+        syncDownContactSupport();
     }
 
     public void createFolder(String fname){
@@ -321,5 +263,161 @@ public class HomePage extends AppCompatActivity {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public void syncDownQuestionsEnglish(){
+        RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
+        Call<List<QuestionsEnglishSyncDown>> call = service.syncDownQuestionsEnglish(help_details.get(HelpSessionManager.KEY_LAST_SYNC_QUESTIONS_ENGLISH));
+        call.enqueue(new Callback<List<QuestionsEnglishSyncDown>>() {
+            @Override
+            public void onResponse(Call<List<QuestionsEnglishSyncDown>> call, Response<List<QuestionsEnglishSyncDown>> response) {
+                if(response.isSuccessful()){
+                    List<QuestionsEnglishSyncDown> syncData = response.body();
+                    List<QuestionsEnglish> question_eng = new ArrayList<>();
+
+                    try {
+                        for (QuestionsEnglishSyncDown x : syncData) {
+                            question_eng.add(new QuestionsEnglish(x.getUnique_question_id(),
+                                    x.getApp_id(),
+                                    x.getActivity_group_id(),
+                                    x.getActivity_id(),
+                                    x.getActivity_name(),
+                                    x.getResource_id(),
+                                    x.getIssue_question(),
+                                    x.getIssue_answer(),
+                                    0,
+                                    0,
+                                    Integer.parseInt(x.getFaq_status())));
+                            sessionM.SET_LAST_SYNC_QUESTIONS_ENGLISH(x.getLast_sync_time());
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                    AppExecutors.getInstance().diskIO().execute(() -> {
+                        helpcenterdb.getEnglishDao().InsertFromOnline(question_eng);
+                        runOnUiThread(() -> Toast.makeText(HomePage.this, "Sync down completed",Toast.LENGTH_LONG).show());
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<QuestionsEnglishSyncDown>> call, Throwable t) {
+                Toast.makeText(HomePage.this, t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void syncDownQuestionsHausa(){
+        RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
+        Call<List<QuestionsHausaSyncDown>> call = service.syncDownQuestionsHausa(help_details.get(HelpSessionManager.KEY_LAST_SYNC_QUESTIONS_HAUSA));
+        call.enqueue(new Callback<List<QuestionsHausaSyncDown>>() {
+            @Override
+            public void onResponse(Call<List<QuestionsHausaSyncDown>> call, Response<List<QuestionsHausaSyncDown>> response) {
+                if(response.isSuccessful()){
+                    List<QuestionsHausaSyncDown> syncData = response.body();
+                    List<QuestionsHausa> question_hausa = new ArrayList<>();
+
+                    try{
+                        for(QuestionsHausaSyncDown y: syncData){
+                            question_hausa.add(new QuestionsHausa(y.getUnique_question_id(),
+                                    y.getApp_id(),
+                                    y.getActivity_group_id(),
+                                    y.getActivity_id(),
+                                    y.getActivity_name(),
+                                    y.getResource_id(),
+                                    y.getIssue_question(),
+                                    y.getIssue_answer(),
+                                    0,
+                                    0,
+                                    Integer.parseInt(y.getFaq_status())));
+                            sessionM.SET_LAST_SYNC_QUESTIONS_HAUSA(y.getLast_sync_time());
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                    AppExecutors.getInstance().diskIO().execute(() -> {
+                        helpcenterdb.getHausaDao().InsertFromOnline(question_hausa);
+                        runOnUiThread(() -> Toast.makeText(HomePage.this, "Sync Completed", Toast.LENGTH_LONG).show());
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<QuestionsHausaSyncDown>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void syncUpNegativeFeedback(){
+        //Get unsynced etNegativeFeedback then call function to sync up using retrofit
+        Gson json = new Gson();
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            String unsyncedNegativeFeedback = json.toJson(helpcenterdb.getFeedbackDao().unsyncedNegativeFeedback());
+            runOnUiThread(() -> initNegativeFeedbackSync(unsyncedNegativeFeedback));
+        });
+    }
+
+    public void initNegativeFeedbackSync(String unsynced){
+        RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
+        Call<List<NegativeFeedbackResponse>> call = service.syncUpNegativeFeedback(unsynced);
+        call.enqueue(new Callback<List<NegativeFeedbackResponse>>() {
+            @Override
+            public void onResponse(Call<List<NegativeFeedbackResponse>> call, Response<List<NegativeFeedbackResponse>> response) {
+                if(response.isSuccessful()){
+                    List<NegativeFeedbackResponse> responseData = response.body();
+                    try{
+                        for(NegativeFeedbackResponse z: responseData){
+                            AppExecutors.getInstance().diskIO().execute(() -> {
+                                helpcenterdb.getFeedbackDao().updateSyncStatus(z.getStaff_id(), z.getApp_id(), z.getSync_status());
+                            });
+                            Toast.makeText(HomePage.this, "Sync Up Completed",Toast.LENGTH_LONG).show();
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<NegativeFeedbackResponse>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void syncDownContactSupport(){
+        RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
+        Call<List<ContactSupportSyncDown>> call = service.syncDownContactSupport();
+        call.enqueue(new Callback<List<ContactSupportSyncDown>>() {
+            @Override
+            public void onResponse(Call<List<ContactSupportSyncDown>> call, Response<List<ContactSupportSyncDown>> response) {
+                if(response.isSuccessful()){
+                    List<ContactSupportSyncDown> syncData = response.body();
+                    List<ContactSupport> contact_support = new ArrayList<>();
+
+                    try{
+                        for(ContactSupportSyncDown j: syncData){
+                            contact_support.add(new ContactSupport(j.getLocation(),
+                                    j.getWhatsapp_number(),
+                                    j.getPhone_number()));
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                    AppExecutors.getInstance().diskIO().execute(() -> {
+                        helpcenterdb.getContactDao().InsertFromOnline(contact_support);
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ContactSupportSyncDown>> call, Throwable t) {
+                Toast.makeText(HomePage.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
