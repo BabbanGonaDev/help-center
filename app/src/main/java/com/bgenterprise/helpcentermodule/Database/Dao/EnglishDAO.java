@@ -45,5 +45,9 @@ public interface EnglishDAO {
     @Query("SELECT * FROM questions_english WHERE app_id = :appID ORDER BY faq_status DESC LIMIT 3")
     List<QuestionsEnglish> getAllFAQQuestions(String appID);
 
+    @Query("UPDATE questions_english SET positive_feedback_count = positive_feedback_count + 1 WHERE unique_question_id = :questionID")
+    void updateThumbsUp(String questionID);
 
+    @Query("UPDATE questions_english SET negative_feedback_count = negative_feedback_count + 1 WHERE unique_question_id = :questionID")
+    void updateThumbsDown(String questionID);
 }

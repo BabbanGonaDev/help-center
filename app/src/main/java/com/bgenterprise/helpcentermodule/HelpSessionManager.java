@@ -23,7 +23,7 @@ public class HelpSessionManager {
     public static final String KEY_ACTIVITY_GROUP_ID = "activity_group_id";
     public static final String KEY_UNIQUE_QUESTION_ID = "unique_question_id";
     public static final String KEY_ACTIVITY_ISSUE = "activity_issue";
-    public static final String KEY_USERNAME = "username";
+    public static final String KEY_STAFF_ID = "staff_id";
     public static final String KEY_LAST_SYNC_DATE = "last_sync_date";
     public static final String KEY_LAST_SYNC_QUESTIONS_ENGLISH = "last_sync_questions_english";
     public static final String KEY_LAST_SYNC_QUESTIONS_HAUSA = "last_sync_questions_hausa";
@@ -65,8 +65,8 @@ public class HelpSessionManager {
         editor.commit();
     }
 
-    public void SET_USERNAME(String value){
-        editor.putString(KEY_USERNAME, value);
+    public void SET_STAFF_ID(String value){
+        editor.putString(KEY_STAFF_ID, value);
         editor.commit();
     }
 
@@ -97,7 +97,7 @@ public class HelpSessionManager {
         help.put(KEY_ACTIVITY_ID, prefs.getString(KEY_ACTIVITY_ID, ""));
         help.put(KEY_UNIQUE_QUESTION_ID, prefs.getString(KEY_UNIQUE_QUESTION_ID, ""));
         help.put(KEY_ACTIVITY_ISSUE, prefs.getString(KEY_ACTIVITY_ISSUE, ""));
-        help.put(KEY_USERNAME, prefs.getString(KEY_USERNAME, ""));
+        help.put(KEY_STAFF_ID, prefs.getString(KEY_STAFF_ID, ""));
         help.put(KEY_LAST_SYNC_DATE, prefs.getString(KEY_LAST_SYNC_DATE, ""));
         help.put(KEY_LAST_SYNC_QUESTIONS_ENGLISH, prefs.getString(KEY_LAST_SYNC_QUESTIONS_ENGLISH, "2019-11-04 00:00:00"));
         help.put(KEY_LAST_SYNC_QUESTIONS_HAUSA, prefs.getString(KEY_LAST_SYNC_QUESTIONS_HAUSA, "2019-11-04 00:00:00"));

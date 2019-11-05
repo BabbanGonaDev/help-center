@@ -2,6 +2,7 @@ package com.bgenterprise.helpcentermodule.Database.Tables;
 
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "negative_feedback_log")
@@ -19,6 +20,16 @@ public class NegativeFeedback {
 
     public NegativeFeedback(int id, String staff_id, String app_id, String question_id, String comment, String date, String sync_status){
         this.id = id;
+        this.staff_id = staff_id;
+        this.app_id = app_id;
+        this.question_id = question_id;
+        this.comment = comment;
+        this.date = date;
+        this.sync_status = sync_status;
+    }
+
+    @Ignore
+    public NegativeFeedback(String staff_id, String app_id, String question_id, String comment, String date, String sync_status) {
         this.staff_id = staff_id;
         this.app_id = app_id;
         this.question_id = question_id;

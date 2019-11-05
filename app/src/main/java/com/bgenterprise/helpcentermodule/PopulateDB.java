@@ -87,8 +87,8 @@ public class PopulateDB extends AsyncTask<Void,Void,Void> {
                             content[5],
                             content[6],
                             content[7],
-                            '0',
-                            '0',
+                            0,
+                            0,
                             Integer.parseInt(content[8])));
                     Log.d("CHECK", "One Iteration");
                 }

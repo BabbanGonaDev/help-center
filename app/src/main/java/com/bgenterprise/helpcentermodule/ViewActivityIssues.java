@@ -116,7 +116,7 @@ public class ViewActivityIssues extends AppCompatActivity {
         String versionName = BuildConfig.VERSION_NAME;
         WhatsappMessage = "APP ID: "+"\n" + help_details.get(HelpSessionManager.KEY_APP_ID) + "\n" +
                 "ACTIVITY ISSUE: "+"\n" + help_details.get(HelpSessionManager.KEY_ACTIVITY_ISSUE) + "\n" +
-                help_details.get(HelpSessionManager.KEY_USERNAME)+ "\n" +
+                help_details.get(HelpSessionManager.KEY_STAFF_ID)+ "\n" +
                 help_details.get(HelpSessionManager.KEY_LAST_SYNC_DATE)+ "\n" +
                 "APP VERSION: " + versionName;
         if(!appInstalledOrNot("com.whatsapp")){

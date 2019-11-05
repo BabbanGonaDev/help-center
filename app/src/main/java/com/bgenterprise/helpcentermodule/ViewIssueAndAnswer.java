@@ -170,17 +170,29 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
 
     public void ratingUp(){
         //Thumbs Up
-        Toast.makeText(ViewIssueAndAnswer.this,"Thanks for your Feedback", Toast.LENGTH_SHORT).show();
-        layoutRatingSection.setVisibility(View.GONE);
-        tvRatingHeader.setVisibility(View.GONE);
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            helpCenterDb.getEnglishDao().updateThumbsUp(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
+
+            runOnUiThread(() -> {
+                Toast.makeText(ViewIssueAndAnswer.this,R.string.helpcenter_feedback_appreciate, Toast.LENGTH_SHORT).show();
+                layoutRatingSection.setVisibility(View.GONE);
+                tvRatingHeader.setVisibility(View.GONE);
+            });
+        });
     }
 
     public void ratingDown(){
         //Thumbs Down
-        layoutRatingSection.setVisibility(View.GONE);
-        tvRatingHeader.setVisibility(View.GONE);
-        etNegativeFeedback.setVisibility(View.VISIBLE);
-        btnSubmitNegativeFeedback.setVisibility(View.VISIBLE);
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            helpCenterDb.getEnglishDao().updateThumbsDown(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
+
+            runOnUiThread(() -> {
+                layoutRatingSection.setVisibility(View.GONE);
+                tvRatingHeader.setVisibility(View.GONE);
+                etNegativeFeedback.setVisibility(View.VISIBLE);
+                btnSubmitNegativeFeedback.setVisibility(View.VISIBLE);
+            });
+        });
     }
 
     public void negativeFeedback(){
@@ -198,6 +210,14 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
 
         AppExecutors.getInstance().diskIO().execute(() -> {
             //Insert into negative feedback here.
+            helpCenterDb.getFeedbackDao().InsertFeedback(new NegativeFeedback(help_details.get(HelpSessionManager.KEY_STAFF_ID),
+                    help_details.get(HelpSessionManager.KEY_APP_ID),
+                    help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID),
+                    result,
+                    feedback_date,
+                    "no"));
+
+            runOnUiThread(() -> Toast.makeText(ViewIssueAndAnswer.this, R.string.helpcenter_feedback_appreciate, Toast.LENGTH_LONG).show());
         });
     }
 
@@ -212,10 +232,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
         @Override
         protected List<QuestionsEnglish> doInBackground(String... strings) {
             try{
-                Log.d("CHECK", "Loading Answers");
-                Log.d("CHECK", help_details.get(HelpSessionManager.KEY_APP_ID)+ " " +help_details.get(HelpSessionManager.KEY_ACTIVITY_GROUP_ID) + " " + help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
                 answers = helpCenterDb.getEnglishDao().getAllQuestionSolution(strings[0]);
-                Log.d("CHECK", answers.get(0).getIssue_answer());
                 return answers;
             }catch (Exception e){
                 e.printStackTrace();

@@ -47,21 +47,17 @@ public class ViewActivities extends AppCompatActivity {
         progressDialog.setMessage("Loading....");
         progressDialog.show();
 
+        @SuppressLint("StaticFieldLeak")
         getActivities get_activities = new getActivities(ViewActivities.this){
             @Override
             protected void onPostExecute(List<QuestionsEnglish> issuesEnglishes) {
                 super.onPostExecute(issuesEnglishes);
                 questionsList = issuesEnglishes;
-                adapter = new ActivityAdapter(ViewActivities.this, questionsList, new ActivityAdapter.OnItemClickListener() {
-                    @Override
-                    public void onClick(QuestionsEnglish issuesEnglish) {
-                        sessionM.SET_ACTIVITY_ID(issuesEnglish.getActivity_id());
-                        sessionM.SET_ACTIVITY_ISSUE(issuesEnglish.getIssue_question());
-                        sessionM.SET_KEY_APP_ID(issuesEnglish.getApp_id());
-                        sessionM.SET_USERNAME("USERNAME: "+"\n"+"IYASELE REHOBOTH");
-                        sessionM.SET_LAST_SYNC_DATE("LAST SYNC DATE: " +"\n" +"25TH SEPTEMBER, 2019");
-                        startActivity(new Intent(ViewActivities.this, ViewActivityIssues.class));
-                    }
+                adapter = new ActivityAdapter(ViewActivities.this, questionsList, issuesEnglish -> {
+                    sessionM.SET_ACTIVITY_ID(issuesEnglish.getActivity_id());
+                    sessionM.SET_ACTIVITY_ISSUE(issuesEnglish.getIssue_question());
+                    sessionM.SET_KEY_APP_ID(issuesEnglish.getApp_id());
+                    startActivity(new Intent(ViewActivities.this, ViewActivityIssues.class));
                 });
 
                 RecyclerView.LayoutManager vLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
