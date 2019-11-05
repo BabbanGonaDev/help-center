@@ -48,7 +48,7 @@ public class ViewActivities extends AppCompatActivity {
             sessionM.SET_ACTIVITY_GROUP_ID(passed_activity_group_id);
             sessionM.SET_KEY_APP_ID(passed_app_id);
         }catch(NullPointerException e){
-            Toast.makeText(getApplicationContext(), "API requirements failure", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "API requirements failure", Toast.LENGTH_LONG).show();
         }
 
         questionsList = new ArrayList<>();
@@ -68,9 +68,8 @@ public class ViewActivities extends AppCompatActivity {
                 super.onPostExecute(issuesEnglishes);
                 questionsList = issuesEnglishes;
                 adapter = new ActivityAdapter(ViewActivities.this, questionsList, issuesEnglish -> {
+                    //TODO save only activity_id.
                     sessionM.SET_ACTIVITY_ID(issuesEnglish.getActivity_id());
-                    sessionM.SET_ACTIVITY_ISSUE(issuesEnglish.getIssue_question());
-                    sessionM.SET_KEY_APP_ID(issuesEnglish.getApp_id());
                     startActivity(new Intent(ViewActivities.this, ViewActivityIssues.class));
                 });
 

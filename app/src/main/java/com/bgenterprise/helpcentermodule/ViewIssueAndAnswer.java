@@ -90,21 +90,17 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
                 String gifName = IssuesList.get(0).getResource_id();
                 makeCall();
                 qandaContent = findViewById(R.id.qandaContent);
-                qandaContent.setText(Html.fromHtml(htmlText, new Html.ImageGetter() {
-                    @Override
-                    public Drawable getDrawable(String source) {
-                        String path = Environment.getExternalStoragePublicDirectory("")+"/helpcenter/";
-//
-                        try {
-                            Drawable bmp = Drawable.createFromPath(path);
-                            bmp.setBounds(0, 0, bmp.getIntrinsicWidth(), bmp.getIntrinsicHeight());
-                            return bmp;
-                        }
-                        catch (Exception e){
-                           Drawable bmp =  getResources().getDrawable(R.drawable.helpcenter_no_image);
-                           bmp.setBounds(0, 0, 100, 100);
-                            return bmp;
-                        }
+                qandaContent.setText(Html.fromHtml(htmlText, source -> {
+                    String path = Environment.getExternalStoragePublicDirectory("")+"/helpcenter/";
+
+                    try {
+                        Drawable bmp = Drawable.createFromPath(path);
+                        bmp.setBounds(0, 0, bmp.getIntrinsicWidth(), bmp.getIntrinsicHeight());
+                        return bmp;
+                    } catch (Exception e){
+                       Drawable bmp =  getResources().getDrawable(R.drawable.helpcenter_no_image);
+                       bmp.setBounds(0, 0, 100, 100);
+                       return bmp;
                     }
                 }, null));
 
@@ -139,7 +135,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
                     gif.setVisibility(View.GONE);
                 }
             }
-        };get_answers.execute(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID),help_details.get(HelpSessionManager.KEY_ACTIVITY_ISSUE));
+        };get_answers.execute(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
         progressDialog.dismiss();
 
         btnSubmitNegativeFeedback.setOnClickListener(view -> {

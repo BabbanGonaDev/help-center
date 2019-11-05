@@ -33,8 +33,8 @@ public interface EnglishDAO {
     @Query("SELECT * FROM questions_english WHERE app_id = :appID GROUP BY activity_group_name")
     List<QuestionsEnglish> getActivityGroups(String appID);
 
-    @Query("SELECT * FROM questions_english WHERE activity_group_name = :groupName GROUP BY activity_id")
-    List<QuestionsEnglish> getActivities(String groupName);
+    @Query("SELECT * FROM questions_english WHERE activity_group_id = :groupId GROUP BY activity_id")
+    List<QuestionsEnglish> getActivities(String groupId);
 
     @Query("SELECT * FROM questions_english WHERE activity_id = :activityID")
     List<QuestionsEnglish> getActivityQuestions(String activityID);

@@ -110,22 +110,33 @@ public class HelpSessionManager {
         editor.remove(KEY_ACTIVITY_ID);
         editor.remove(KEY_ACTIVITY_GROUP_ID);
         editor.remove(KEY_APP_ID);
+        editor.remove(KEY_ACTIVITY_ISSUE);
+        editor.commit();
     }
 
     public void CLEAR_UNIQUE_QUESTION(){
         editor.remove(KEY_UNIQUE_QUESTION_ID);
+        editor.commit();
     }
 
     public void CLEAR_ACTIVITY_ID(){
         editor.remove(KEY_ACTIVITY_ID);
+        editor.commit();
     }
 
     public void CLEAR_ACTIVITY_GROUP_ID(){
         editor.remove(KEY_ACTIVITY_GROUP_ID);
+        editor.commit();
     }
 
     public void CLEAR_APP_ID(){
         editor.remove(KEY_APP_ID);
+        editor.commit();
+    }
+
+    public void CLEAR_ACTIVITY_ISSUES(){
+        editor.remove(KEY_ACTIVITY_ISSUE);
+        editor.commit();
     }
 
 

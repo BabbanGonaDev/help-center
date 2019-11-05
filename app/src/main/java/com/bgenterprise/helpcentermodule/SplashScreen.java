@@ -1,6 +1,8 @@
 package com.bgenterprise.helpcentermodule;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +26,7 @@ public class SplashScreen extends AppCompatActivity {
             public void run() {
                 //Re-direct to the Home page activity after 1sec.
                 if(!helpSession.getImportStatus()){
+                    @SuppressLint("StaticFieldLeak")
                     PopulateDB insertDB = new PopulateDB(SplashScreen.this){
                         @Override
                         protected void onPostExecute(Void aVoid) {

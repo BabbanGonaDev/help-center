@@ -70,9 +70,9 @@ public class ViewActivityIssues extends AppCompatActivity {
             protected void onPostExecute(List<QuestionsEnglish> issuesEnglishes) {
                 super.onPostExecute(issuesEnglishes);
                 IssuesList = issuesEnglishes;
+                //TODO save unique_question_id.
                 adapter = new ActivityIssuesAdapter(ViewActivityIssues.this, IssuesList, issuesEnglish -> {
                     sessionM.SET_UNIQUE_QUESTION_ID(issuesEnglish.getUnique_question_id());
-                    sessionM.SET_ACTIVITY_ISSUE(issuesEnglish.getIssue_question());
                     startActivity(new Intent(ViewActivityIssues.this, ViewIssueAndAnswer.class));
                 });
 
