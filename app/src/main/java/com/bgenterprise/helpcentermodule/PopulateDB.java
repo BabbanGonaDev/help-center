@@ -31,43 +31,6 @@ public class PopulateDB extends AsyncTask<Void,Void,Void> {
         return null;
     }
 
-    private List<QuestionsEnglish> readFromCSV(){
-        List<QuestionsEnglish> issuesEng = new ArrayList<>();
-        String[] content = null;
-        try{
-            InputStream inputStream = mCtx.getAssets().open("help_center_template_tfm2.csv");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            String line = "";
-            int iteration = 0;
-            while((line = reader.readLine()) != null){
-                content = line.split(",");
-
-                if(iteration == 0){
-                    iteration++;
-                    continue;
-                }else{
-                    issuesEng.add(new QuestionsEnglish((content[0]),
-                            content[1],
-                            content[2],
-                            content[3],
-                            content[4],
-                            content[5],
-                            content[6],
-                            content[7],
-                            '0',
-                            '0',
-                            Integer.parseInt(content[8])));
-                    Log.d("CHECK", "One Iteration");
-                }
-
-            }
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-
-        return issuesEng;
-    }
-
     private List<QuestionsEnglish> readFromCSVAgain(){
         List<QuestionsEnglish> issuesEng = new ArrayList<>();
         String[] content = null;
@@ -87,9 +50,10 @@ public class PopulateDB extends AsyncTask<Void,Void,Void> {
                             content[5],
                             content[6],
                             content[7],
+                            content[8],
                             0,
                             0,
-                            Integer.parseInt(content[8])));
+                            Integer.parseInt(content[9])));
                     Log.d("CHECK", "One Iteration");
                 }
             }

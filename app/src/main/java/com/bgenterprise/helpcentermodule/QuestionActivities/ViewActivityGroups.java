@@ -1,4 +1,4 @@
-package com.bgenterprise.helpcentermodule;
+package com.bgenterprise.helpcentermodule.QuestionActivities;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
+import com.bgenterprise.helpcentermodule.HelpSessionManager;
+import com.bgenterprise.helpcentermodule.R;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityGroupAdapter;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.FAQAdapter;
 

@@ -16,22 +16,21 @@ public class QuestionsEnglish {
     private String activity_id;
     private String activity_name;
     private String resource_id;
+    private String resource_url;
     private String issue_question;
     private String issue_answer;
     private int positive_feedback_count;
     private int negative_feedback_count;
     private int faq_status;
 
-    public QuestionsEnglish(@NonNull String unique_question_id, String app_id, String activity_group_id,
-                            String activity_id, String activity_name, String resource_id, String issue_question,
-                            String issue_answer, int positive_feedback_count, int negative_feedback_count, int faq_status) {
-
+    public QuestionsEnglish(@NonNull String unique_question_id, String app_id, String activity_group_id, String activity_id, String activity_name, String resource_id, String resource_url, String issue_question, String issue_answer, int positive_feedback_count, int negative_feedback_count, int faq_status) {
         this.unique_question_id = unique_question_id;
         this.app_id = app_id;
         this.activity_group_id = activity_group_id;
         this.activity_id = activity_id;
         this.activity_name = activity_name;
         this.resource_id = resource_id;
+        this.resource_url = resource_url;
         this.issue_question = issue_question;
         this.issue_answer = issue_answer;
         this.positive_feedback_count = positive_feedback_count;
@@ -62,6 +61,10 @@ public class QuestionsEnglish {
 
     public String getResource_id() {
         return resource_id;
+    }
+
+    public String getResource_url() {
+        return resource_url;
     }
 
     public String getIssue_question() {

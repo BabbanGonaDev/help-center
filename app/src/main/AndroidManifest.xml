@@ -15,16 +15,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".QuestionNotFound"></activity>
+        <activity android:name=".QuestionActivities.QuestionNotFound"></activity>
         <activity
-            android:name=".ViewActivityIssues"
+            android:name=".QuestionActivities.ViewActivityIssues"
             android:exported="true" />
-        <activity android:name=".ViewIssueAndAnswer" />
-        <activity android:name=".ViewActivities" />
+        <activity android:name=".QuestionActivities.ViewIssueAndAnswer" />
+        <activity android:name=".QuestionActivities.ViewActivities" />
         <activity
             android:name=".HomePage"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
-        <activity android:name=".ViewActivityGroups" />
+        <activity android:name=".QuestionActivities.ViewActivityGroups" />
         <activity
             android:name=".SplashScreen"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />

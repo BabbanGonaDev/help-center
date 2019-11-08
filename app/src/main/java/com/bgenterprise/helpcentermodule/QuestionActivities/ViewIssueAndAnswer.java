@@ -1,4 +1,4 @@
-package com.bgenterprise.helpcentermodule;
+package com.bgenterprise.helpcentermodule.QuestionActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -23,9 +23,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.bgenterprise.helpcentermodule.AppExecutors;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.NegativeFeedback;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
+import com.bgenterprise.helpcentermodule.HelpSessionManager;
+import com.bgenterprise.helpcentermodule.R;
 import com.google.android.material.button.MaterialButton;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -107,7 +110,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
 
                 source2 = gifName;
 //                File path = new File(context.getFilesDir()+"/helpcenter/", source2);
-                String path = Environment.getExternalStoragePublicDirectory("")+"/helpcenter/" + source2;
+                String path = Environment.getExternalStoragePublicDirectory("") + "/helpcenter/" + source2;
 
                 File dir = new File(path);
                 if(dir.exists() && source2 != null && !source2.matches("")) {

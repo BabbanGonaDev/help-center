@@ -1,4 +1,4 @@
-package com.bgenterprise.helpcentermodule;
+package com.bgenterprise.helpcentermodule.QuestionActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -12,10 +12,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
+import com.bgenterprise.helpcentermodule.HelpSessionManager;
+import com.bgenterprise.helpcentermodule.R;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityAdapter;
 
 

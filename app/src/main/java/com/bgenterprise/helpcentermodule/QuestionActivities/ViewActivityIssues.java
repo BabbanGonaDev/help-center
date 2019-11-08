@@ -1,4 +1,4 @@
-package com.bgenterprise.helpcentermodule;
+package com.bgenterprise.helpcentermodule.QuestionActivities;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,8 +24,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.bgenterprise.helpcentermodule.BuildConfig;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
+import com.bgenterprise.helpcentermodule.HelpSessionManager;
+import com.bgenterprise.helpcentermodule.R;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityIssuesAdapter;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;

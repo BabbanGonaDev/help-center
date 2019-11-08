@@ -1,6 +1,5 @@
 package com.bgenterprise.helpcentermodule.Network;
 
-import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.ContactSupportSyncDown;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.NegativeFeedbackResponse;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsEnglishSyncDown;
@@ -8,12 +7,15 @@ import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsHausaSync
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
+import retrofit2.http.Streaming;
+import retrofit2.http.Url;
 
 public interface RetrofitApiCalls {
 
@@ -29,4 +31,8 @@ public interface RetrofitApiCalls {
 
     @GET("sync_down_contact_support.php")
     Call<List<ContactSupportSyncDown>> syncDownContactSupport();
+
+    //Removed the @Streaming, so that resources don't get "half" downloaded and un-use-able due to bad network.
+    @GET
+    Call<ResponseBody> downloadFileWithDynamicUrl(@Url String fileUrl);
 }

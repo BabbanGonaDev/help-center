@@ -1,10 +1,12 @@
-package com.bgenterprise.helpcentermodule;
+package com.bgenterprise.helpcentermodule.QuestionActivities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+
+import com.bgenterprise.helpcentermodule.R;
 
 public class QuestionNotFound extends AppCompatActivity {
 

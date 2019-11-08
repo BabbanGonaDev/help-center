@@ -8,7 +8,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
 
 import java.util.List;
@@ -26,16 +26,16 @@ public interface HausaDAO {
     void InsertFromOnline(List<QuestionsHausa> issuesList);
 
     @Update
-    void UpdateIssue(QuestionsHausa... questionsHausaT);
+    void UpdateIssue(QuestionsHausa... questionsHausas);
 
     @Delete
-    void DeleteIssue(QuestionsHausa questionsHausaT);
+    void DeleteIssue(QuestionsHausa questionsHausa);
 
-    @Query("SELECT * FROM questions_hausa WHERE app_id = :appID GROUP BY activity_group_name")
+    @Query("SELECT * FROM questions_hausa WHERE app_id = :appID GROUP BY activity_group_id")
     List<QuestionsHausa> getActivityGroups(String appID);
 
-    @Query("SELECT * FROM questions_hausa WHERE activity_group_name = :groupName GROUP BY activity_id")
-    List<QuestionsHausa> getActivities(String groupName);
+    @Query("SELECT * FROM questions_hausa WHERE activity_group_id = :groupId GROUP BY activity_id")
+    List<QuestionsHausa> getActivities(String groupId);
 
     @Query("SELECT * FROM questions_hausa WHERE activity_id = :activityID")
     List<QuestionsHausa> getActivityQuestions(String activityID);
@@ -51,4 +51,7 @@ public interface HausaDAO {
 
     @Query("UPDATE questions_hausa SET negative_feedback_count = negative_feedback_count + 1 WHERE unique_question_id = :questionID")
     void updateThumbsDown(String questionID);
+
+    @Query("SELECT * FROM questions_hausa")
+    List<QuestionsHausa> getAllQuestions();
 }

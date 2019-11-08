@@ -50,4 +50,7 @@ public interface EnglishDAO {
 
     @Query("UPDATE questions_english SET negative_feedback_count = negative_feedback_count + 1 WHERE unique_question_id = :questionID")
     void updateThumbsDown(String questionID);
+
+    @Query("SELECT * FROM questions_english")
+    List<QuestionsEnglish> getAllQuestions();
 }

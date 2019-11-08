@@ -19,6 +19,9 @@
     <string name="helpcenter_feedback_appreciate">Thanks for your feedback</string>
     <string name="helpcenter_not_found_headline">Not Found</string>
     <string name="helpcenter_not_found_suggestion_text">Have you tried syncing your app ?</string>
+    <string name="helpcenter_check_network">Kindly Check Network Connection</string>
+    <string name="helpcenter_cancel_operation">Cancel Operation</string>
+    <string name="helpcenter_close">Close</string>
 
 
 </resources>
