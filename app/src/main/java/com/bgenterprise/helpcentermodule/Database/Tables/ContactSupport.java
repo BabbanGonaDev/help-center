@@ -3,9 +3,10 @@ package com.bgenterprise.helpcentermodule.Database.Tables;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "contact_support")
+@Entity(tableName = "contact_support", indices = {@Index(value = "location", unique = true)})
 public class ContactSupport {
 
     @PrimaryKey(autoGenerate = true)
