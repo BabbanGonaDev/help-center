@@ -109,6 +109,7 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/local_toolbar"
+            style="@style/MyToolbarTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#050150"

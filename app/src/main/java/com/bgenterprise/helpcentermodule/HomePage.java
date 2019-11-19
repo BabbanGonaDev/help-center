@@ -20,17 +20,22 @@ import com.bgenterprise.helpcentermodule.Network.RetrofitClient;
 import com.bgenterprise.helpcentermodule.QuestionActivities.ViewActivityGroups;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.gson.Gson;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +51,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -171,6 +177,9 @@ public class HomePage extends AppCompatActivity {
             case R.id.sync_resources:
                 syncDownResources();
                 return true;
+            case R.id.change_language:
+                changeAppLanguage();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -181,6 +190,37 @@ public class HomePage extends AppCompatActivity {
         finish();
     }
 
+    public void changeAppLanguage(){
+        new MaterialAlertDialogBuilder(HomePage.this)
+                .setTitle("Choose App Language")
+                .setSingleChoiceItems(Utility.app_language, -1, (dialogInterface, i) -> {
+                    Toast.makeText(HomePage.this, "Language selected: " + Utility.app_language[i], Toast.LENGTH_LONG).show();
+
+                    //Based on language, set the appropriate application language.
+                    String selected_lang = Utility.app_language[i];
+                    switch (selected_lang){
+                        case "English":
+                            sessionM.SET_LANGUAGE("en", "English");
+                            break;
+                        case "Hausa":
+                            sessionM.SET_LANGUAGE("ha", "Hausa");
+                            break;
+                        default:
+                            break;
+                    }
+                    dialogInterface.dismiss();
+                    setAppLanguage();
+                }).show();
+    }
+
+    public void setAppLanguage(){
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = new Locale(help_details.get(HelpSessionManager.KEY_APP_LANG));
+        res.updateConfiguration(conf, dm);
+        recreate();
+    }
 
     /**
      *
@@ -560,6 +600,5 @@ public class HomePage extends AppCompatActivity {
         ++fail_count;
         mtv_fail_text.setText("Failed: " + fail_count);
     }
-
 
 }

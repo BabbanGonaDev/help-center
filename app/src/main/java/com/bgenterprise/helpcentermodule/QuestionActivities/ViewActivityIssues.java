@@ -48,7 +48,7 @@ public class ViewActivityIssues extends AppCompatActivity {
     HelpSessionManager sessionM;
     HashMap<String, String> help_details;
     Dialog myDialog;
-    public String WhatsappMessage;
+    public String whatsapp_message;
     String passed_activity_id, passed_app_id, passed_staff_id;
 
     @Override
@@ -57,7 +57,14 @@ public class ViewActivityIssues extends AppCompatActivity {
         setContentView(R.layout.activity_help_view_activity_issues);
         IssuesList = new ArrayList<>();
         sessionM = new HelpSessionManager(ViewActivityIssues.this);
+        helpCenterDb = HelpCenterDatabase.getInstance(ViewActivityIssues.this);
+        help_details = sessionM.getHelpDetails();
 
+        recyclerView2 = findViewById(R.id.recyclerView2);
+        contactUs = findViewById(R.id.contactUs);
+        myDialog = new Dialog(this);
+
+        //Receive intent call from external apps.
         try{
             Intent intent = getIntent();
             Bundle bundle = intent.getExtras();
@@ -73,17 +80,9 @@ public class ViewActivityIssues extends AppCompatActivity {
 
         }
 
-        helpCenterDb = HelpCenterDatabase.getInstance(ViewActivityIssues.this);
-        help_details = sessionM.getHelpDetails();
-
-        myDialog = new Dialog(this);
-
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading....");
         progressDialog.show();
-
-        recyclerView2 = findViewById(R.id.recyclerView2);
-        contactUs = findViewById(R.id.contactUs);
 
         @SuppressLint("StaticFieldLeak") getIssues get_issues = new getIssues(ViewActivityIssues.this) {
             @Override
@@ -107,7 +106,6 @@ public class ViewActivityIssues extends AppCompatActivity {
         get_issues.execute(help_details.get(HelpSessionManager.KEY_ACTIVITY_ID));
         progressDialog.dismiss();
 
-        contactUs = findViewById(R.id.contactUs);
         contactUs.setOnClickListener(view -> {
             onButtonShowPopupWindowClick(view);
         });
@@ -130,47 +128,48 @@ public class ViewActivityIssues extends AppCompatActivity {
     }
 
     public void sendWhatsappMessage() {
-        String versionName = BuildConfig.VERSION_NAME;
-        WhatsappMessage = "APP ID: "+"\n" + help_details.get(HelpSessionManager.KEY_APP_ID) + "\n" +
-                "ACTIVITY ISSUE: "+"\n" + help_details.get(HelpSessionManager.KEY_ACTIVITY_ISSUE) + "\n" +
-                help_details.get(HelpSessionManager.KEY_STAFF_ID)+ "\n" +
-                help_details.get(HelpSessionManager.KEY_LAST_SYNC_DATE)+ "\n" +
-                "APP VERSION: " + versionName;
-        if(!appInstalledOrNot("com.whatsapp")){
-            Toast.makeText(this, "Install whatsapp", Toast.LENGTH_SHORT).show();
+        whatsapp_message = "Application ID: " + help_details.get(HelpSessionManager.KEY_APP_ID) + "\n" +
+                "Activity Issue: " + help_details.get(HelpSessionManager.KEY_ACTIVITY_ISSUE) + "\n" +
+                "Staff ID: " + help_details.get(HelpSessionManager.KEY_STAFF_ID)+ "\n" +
+                "Version: " + BuildConfig.VERSION_NAME;
+
+        if(!isAppInstalled("com.whatsapp")){
+            Toast.makeText(this, "Kindly install WhatsApp", Toast.LENGTH_SHORT).show();
         }else {
+
+            //TODO ----> Add the part to pick phone number from DB.
             String toNumber = "+2349095657536"; // contains spaces.
             toNumber = toNumber.replace("+", "").replace(" ", "");
+
             Intent sendIntent = new Intent("android.intent.action.MAIN");
-            // sendIntent.setComponent(new ComponentName(“com.whatsapp”, “com.whatsapp.Conversation”));
             sendIntent.putExtra("jid", toNumber + "@s.whatsapp.net");
-            sendIntent.putExtra(Intent.EXTRA_TEXT, WhatsappMessage);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, whatsapp_message);
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.setPackage("com.whatsapp");
             sendIntent.setType("text/plain");
             startActivity(sendIntent);
+
         }
     }
 
-    private boolean appInstalledOrNot(String uri) {
+    private boolean isAppInstalled(String uri) {
         PackageManager pm = getPackageManager();
-        boolean app_installed;
         try {
             pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
-            app_installed = true;
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
         }
-        catch (PackageManager.NameNotFoundException e) {
-            app_installed = false;
-        }
-        return app_installed;
     }
 
     public void makeCall() {
+
             if (ContextCompat.checkSelfPermission((this),
                     Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
             } else {
+                //TODO---> Add phone number function here.
                 Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(Uri.parse("tel:+2349095657536"));
                 startActivity(intent);

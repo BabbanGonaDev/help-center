@@ -7,4 +7,9 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="MyToolbarTheme" parent="Widget.MaterialComponents.Toolbar">
+        <item name="android:textColorSecondary">#FFFFFF</item>
+    </style>
+
 </resources>
