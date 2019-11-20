@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.bgenterprise.helpcentermodule.QuestionActivities.ViewActivityIssues;
 import com.google.android.material.button.MaterialButton;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
         MaterialButton materialButton = findViewById(R.id.btn_helpCenter);
         materialButton.setOnClickListener(view -> {
-            startActivity(new Intent(MainActivity.this, SplashScreen.class));
+            startActivity(new Intent(MainActivity.this, ViewActivityIssues.class));
         });
     }
 }

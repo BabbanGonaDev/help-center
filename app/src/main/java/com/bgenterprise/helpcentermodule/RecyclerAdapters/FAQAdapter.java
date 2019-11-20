@@ -22,10 +22,6 @@ public class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.FAQViewHolder> {
     private final OnItemClickListener listener;
     private List<QuestionsEnglish> faqList;
 
-    /**
-     * TODO: Use the Recyclers from LMTC app as a guide
-     */
-
     public FAQAdapter(Context context, List<QuestionsEnglish> faqList, OnItemClickListener listener) {
         this.context = context;
         this.faqList = faqList;

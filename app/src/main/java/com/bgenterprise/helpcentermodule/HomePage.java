@@ -67,6 +67,7 @@ public class HomePage extends AppCompatActivity {
     LinearLayoutCompat loading_layout;
     HelpSessionManager sessionM;
     HashMap<String, String> help_details;
+    String session_app_lang, session_dao_lang;
     HelpCenterDatabase helpcenterdb;
     Boolean writtenToDisk;
     List<QuestionsEnglish> resourceList, downloadList;
@@ -78,6 +79,7 @@ public class HomePage extends AppCompatActivity {
             Manifest.permission.CALL_PHONE
     };
     private static final int PERMISSIONS_REQUEST_CODE = 4045;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,19 +172,19 @@ public class HomePage extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.sync_app:
-                sync();
-                return true;
-            case R.id.sync_resources:
-                syncDownResources();
-                return true;
-            case R.id.change_language:
-                changeAppLanguage();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.sync_app){
+            sync();
+            return true;
+        }else if (item.getItemId() == R.id.sync_resources){
+            syncDownResources();
+            return true;
+        }else if (item.getItemId() == R.id.change_language){
+            changeAppLanguage();
+            return true;
+        }else {
+            return super.onOptionsItemSelected(item);
         }
+
     }
 
     @Override
@@ -214,10 +216,11 @@ public class HomePage extends AppCompatActivity {
     }
 
     public void setAppLanguage(){
+        session_app_lang = sessionM.getAppLanguage();
         Resources res = getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
         Configuration conf = res.getConfiguration();
-        conf.locale = new Locale(help_details.get(HelpSessionManager.KEY_APP_LANG));
+        conf.locale = new Locale(session_app_lang);
         res.updateConfiguration(conf, dm);
         recreate();
     }

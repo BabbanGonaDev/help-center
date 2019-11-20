@@ -28,9 +28,11 @@ import com.bgenterprise.helpcentermodule.BuildConfig;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.HelpSessionManager;
+import com.bgenterprise.helpcentermodule.PopulateDB;
 import com.bgenterprise.helpcentermodule.R;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityIssuesAdapter;
 
+import com.bgenterprise.helpcentermodule.SplashScreen;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
@@ -66,18 +68,15 @@ public class ViewActivityIssues extends AppCompatActivity {
 
         //Receive intent call from external apps.
         try{
-            Intent intent = getIntent();
-            Bundle bundle = intent.getExtras();
-
-            passed_activity_id = bundle.getString("activity_id");
-            passed_app_id = bundle.getString("app_id");
-            passed_staff_id = bundle.getString("staff_id");
+            passed_activity_id = getIntent().getStringExtra("activity_id");
+            passed_app_id = getIntent().getStringExtra("app_id");
+            passed_staff_id = getIntent().getStringExtra("staff_id");
 
             sessionM.SET_ACTIVITY_ID(passed_activity_id);
             sessionM.SET_KEY_APP_ID(passed_app_id);
             sessionM.SET_STAFF_ID(passed_staff_id);
-        }catch(NullPointerException e){
-
+        }catch(Exception e){
+            e.printStackTrace();
         }
 
         progressDialog = new ProgressDialog(this);
