@@ -96,7 +96,7 @@ public class HomePage extends AppCompatActivity {
         mtv_fail_text = findViewById(R.id.mtv_fail_text);
         loading_layout = findViewById(R.id.loading_layout);
         progressBar = findViewById(R.id.progressBar);
-        //TODO ----> Adjust all php scripts.
+        //TODO---> Use a switch case function to change the Dao being used based on the language stored in shared preferences.
 
         setSupportActionBar(custom_toolbar);
         helpcenterdb = HelpCenterDatabase.getInstance(HomePage.this);
@@ -232,6 +232,7 @@ public class HomePage extends AppCompatActivity {
      */
 
     public void sync(){
+        //For the syncing function, we download all languages to the phone, then switch the tables based on shared pref language.
         if(isConnected()) {
             Toast.makeText(HomePage.this, "Beginning syncing process", Toast.LENGTH_LONG).show();
             syncDownQuestionsEnglish();

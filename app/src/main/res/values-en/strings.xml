@@ -22,4 +22,6 @@
     <string name="helpcenter_cancel_operation">Cancel Operation</string>
     <string name="helpcenter_close">Close</string>
     <string name="kk">llk</string>
+    <string name="dao_name">getEnglishDao</string>
+
 </resources>
