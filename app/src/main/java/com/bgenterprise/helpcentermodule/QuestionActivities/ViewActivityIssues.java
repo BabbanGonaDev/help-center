@@ -9,16 +9,13 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -28,13 +25,12 @@ import com.bgenterprise.helpcentermodule.AppExecutors;
 import com.bgenterprise.helpcentermodule.BuildConfig;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
 import com.bgenterprise.helpcentermodule.HelpSessionManager;
-import com.bgenterprise.helpcentermodule.HomePage;
-import com.bgenterprise.helpcentermodule.PopulateDB;
+import com.bgenterprise.helpcentermodule.QuestionsAll;
 import com.bgenterprise.helpcentermodule.R;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityIssuesAdapter;
 
-import com.bgenterprise.helpcentermodule.SplashScreen;
 import com.bgenterprise.helpcentermodule.Utility;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -43,10 +39,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ViewActivityIssues extends AppCompatActivity {
-    private static final int REQUEST_CALL = 1;
     RecyclerView recyclerView2;
     Button contactUs;
-    public List<QuestionsEnglish> IssuesList;
+    public List<QuestionsEnglish> questionsList_en;
+    public List<QuestionsHausa> questionsList_ha;
+    public List<QuestionsAll> questionsList_all;
     ActivityIssuesAdapter adapter;
     HelpCenterDatabase helpCenterDb;
     ProgressDialog progressDialog;
@@ -61,7 +58,9 @@ public class ViewActivityIssues extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_view_activity_issues);
-        IssuesList = new ArrayList<>();
+        questionsList_en = new ArrayList<>();
+        questionsList_ha = new ArrayList<>();
+        questionsList_all = new ArrayList<>();
         sessionM = new HelpSessionManager(ViewActivityIssues.this);
         helpCenterDb = HelpCenterDatabase.getInstance(ViewActivityIssues.this);
         help_details = sessionM.getHelpDetails();
@@ -80,6 +79,8 @@ public class ViewActivityIssues extends AppCompatActivity {
             sessionM.SET_ACTIVITY_ID(passed_activity_id);
             sessionM.SET_KEY_APP_ID(passed_app_id);
             sessionM.SET_STAFF_ID(passed_staff_id);
+
+            checkAndRequestPermissions();
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -88,19 +89,68 @@ public class ViewActivityIssues extends AppCompatActivity {
         progressDialog.setMessage("Loading....");
         progressDialog.show();
 
+        switch (sessionM.getAppLanguage()){
+            case "en":
+                displayActivityIssuesEnglish();
+                break;
+            case "ha":
+                displayActivityIssuesHausa();
+                break;
+        }
+
         contactUs.setOnClickListener(view -> {
             onButtonShowPopupWindowClick(view);
         });
 
+    }
+
+    public void displayActivityIssuesEnglish(){
         //Get the Activity Issues using AppExecutors.
         AppExecutors.getInstance().diskIO().execute(() -> {
-            IssuesList = helpCenterDb.getEnglishDao().getActivityQuestions(help_details.get(HelpSessionManager.KEY_ACTIVITY_ID));
+            questionsList_en = helpCenterDb.getEnglishDao().getActivityQuestions(help_details.get(HelpSessionManager.KEY_ACTIVITY_ID));
+
+            if(questionsList_en == null || questionsList_en.isEmpty()){
+                Log.d("CHECK:", "List is very empty");
+                finish();
+                startActivity(new Intent(ViewActivityIssues.this, QuestionNotFound.class));
+            }
 
             runOnUiThread(() -> {
-                //TODO save unique_question_id.
-                adapter = new ActivityIssuesAdapter(ViewActivityIssues.this, IssuesList, issuesEnglish -> {
-                    sessionM.SET_UNIQUE_QUESTION_ID(issuesEnglish.getUnique_question_id());
-                    startActivity(new Intent(ViewActivityIssues.this, ViewIssueAndAnswer.class));
+                questionsList_all = convertEnglishToAll(questionsList_en);
+                adapter = new ActivityIssuesAdapter(ViewActivityIssues.this, questionsList_all, questionsAll -> {
+                    //Save only unique_question_id.
+                    sessionM.SET_UNIQUE_QUESTION_ID(questionsAll.getUnique_question_id());
+                    ViewActivityIssues.this.startActivity(new Intent(ViewActivityIssues.this, ViewIssueAndAnswer.class));
+                });
+
+                RecyclerView.LayoutManager vLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
+                recyclerView2.setLayoutManager(vLayoutManager);
+                recyclerView2.setItemAnimator(new DefaultItemAnimator());
+                recyclerView2.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+                recyclerView2.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+                progressDialog.dismiss();
+            });
+        });
+    }
+
+    public void displayActivityIssuesHausa(){
+        //Get the Activity Issues using AppExecutors.
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            questionsList_ha = helpCenterDb.getHausaDao().getActivityQuestions(help_details.get(HelpSessionManager.KEY_ACTIVITY_ID));
+
+            if(questionsList_ha == null || questionsList_ha.isEmpty()){
+                Log.d("CHECK:", "List is very empty");
+                finish();
+                startActivity(new Intent(ViewActivityIssues.this, QuestionNotFound.class));
+            }
+
+            runOnUiThread(() -> {
+                questionsList_all = convertHausaToAll(questionsList_ha);
+                adapter = new ActivityIssuesAdapter(ViewActivityIssues.this, questionsList_all, questionsAll -> {
+                    //Save only unique_question_id.
+                    sessionM.SET_UNIQUE_QUESTION_ID(questionsAll.getUnique_question_id());
+                    ViewActivityIssues.this.startActivity(new Intent(ViewActivityIssues.this, ViewIssueAndAnswer.class));
                 });
 
                 RecyclerView.LayoutManager vLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
@@ -193,5 +243,45 @@ public class ViewActivityIssues extends AppCompatActivity {
 
         //All permissions granted.
         return true;
+    }
+
+    public List<QuestionsAll> convertHausaToAll(List<QuestionsHausa> qHausa){
+        List<QuestionsAll> y = new ArrayList<>();
+        for(QuestionsHausa x: qHausa){
+            y.add(new QuestionsAll(x.getUnique_question_id(),
+                    x.getApp_id(),
+                    x.getActivity_group_id(),
+                    x.getActivity_id(),
+                    x.getActivity_name(),
+                    x.getResource_id(),
+                    x.getResource_url(),
+                    x.getIssue_question(),
+                    x.getIssue_answer(),
+                    x.getPositive_feedback_count(),
+                    x.getNegative_feedback_count(),
+                    x.getFaq_status()));
+        }
+
+        return y;
+    }
+
+    public List<QuestionsAll> convertEnglishToAll(List<QuestionsEnglish> qEnglish){
+        List<QuestionsAll> y = new ArrayList<>();
+        for(QuestionsEnglish x: qEnglish){
+            y.add(new QuestionsAll(x.getUnique_question_id(),
+                    x.getApp_id(),
+                    x.getActivity_group_id(),
+                    x.getActivity_id(),
+                    x.getActivity_name(),
+                    x.getResource_id(),
+                    x.getResource_url(),
+                    x.getIssue_question(),
+                    x.getIssue_answer(),
+                    x.getPositive_feedback_count(),
+                    x.getNegative_feedback_count(),
+                    x.getFaq_status()));
+        }
+
+        return y;
     }
 }

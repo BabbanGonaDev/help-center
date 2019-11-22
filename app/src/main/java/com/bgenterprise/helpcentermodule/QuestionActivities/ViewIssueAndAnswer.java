@@ -1,17 +1,9 @@
 package com.bgenterprise.helpcentermodule.QuestionActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Html;
@@ -27,7 +19,9 @@ import com.bgenterprise.helpcentermodule.AppExecutors;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.NegativeFeedback;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
 import com.bgenterprise.helpcentermodule.HelpSessionManager;
+import com.bgenterprise.helpcentermodule.QuestionsAll;
 import com.bgenterprise.helpcentermodule.R;
 import com.google.android.material.button.MaterialButton;
 import java.io.File;
@@ -52,7 +46,9 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
     VideoView gifView;
     HelpSessionManager sessionM;
     HelpCenterDatabase helpCenterDb;
-    public List<QuestionsEnglish> IssuesList;
+    public List<QuestionsEnglish> questionsList_en;
+    public List<QuestionsHausa> questionsList_ha;
+    public List<QuestionsAll> questionsList_all;
     HashMap<String, String> help_details;
     String htmlText, issue_header, gif_name;
 
@@ -60,8 +56,10 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_view_issue_and_answer);
-        getSupportActionBar().setTitle("Help Center");
-        IssuesList = new ArrayList<>();
+        getSupportActionBar().setTitle("View Answer");
+        questionsList_en = new ArrayList<>();
+        questionsList_ha = new ArrayList<>();
+        questionsList_all = new ArrayList<>();
         sessionM = new HelpSessionManager(ViewIssueAndAnswer.this);
         helpCenterDb = HelpCenterDatabase.getInstance(ViewIssueAndAnswer.this);
         help_details = sessionM.getHelpDetails();
@@ -80,15 +78,23 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
         btnThumbsUp = findViewById(R.id.rating);
         gifView = findViewById(R.id.gif);
 
-
         //Get and display questions using AppExecutor.
         AppExecutors.getInstance().diskIO().execute(() -> {
-            IssuesList = helpCenterDb.getEnglishDao().getAllQuestionSolution(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
+            switch (sessionM.getAppLanguage()){
+                case "en":
+                    questionsList_en = helpCenterDb.getEnglishDao().getAllQuestionSolution(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
+                    questionsList_all = convertEnglishToAll(questionsList_en);
+                    break;
+                case "ha":
+                    questionsList_ha = helpCenterDb.getHausaDao().getAllQuestionSolution(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
+                    questionsList_all = convertHausaToAll(questionsList_ha);
+                    break;
+            }
 
             runOnUiThread(() -> {
-                htmlText = IssuesList.get(0).getIssue_answer();
-                issue_header = IssuesList.get(0).getIssue_question();
-                gif_name = IssuesList.get(0).getResource_id();
+                htmlText = questionsList_all.get(0).getIssue_answer();
+                issue_header = questionsList_all.get(0).getIssue_question();
+                gif_name = questionsList_all.get(0).getResource_id();
                 qandaHeader.setText(issue_header);
                 qandaContent.setText(Html.fromHtml(htmlText, source -> {
                     String path = Environment.getExternalStoragePublicDirectory("")+"/helpcenter/";
@@ -144,7 +150,14 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
     public void ratingUp(){
         //Thumbs Up
         AppExecutors.getInstance().diskIO().execute(() -> {
-            helpCenterDb.getEnglishDao().updateThumbsUp(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
+            switch (sessionM.getAppLanguage()){
+                case "en":
+                    helpCenterDb.getEnglishDao().updateThumbsUp(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
+                    break;
+                case "ha":
+                    helpCenterDb.getHausaDao().updateThumbsUp(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
+                    break;
+            }
 
             runOnUiThread(() -> {
                 Toast.makeText(ViewIssueAndAnswer.this,R.string.helpcenter_feedback_appreciate, Toast.LENGTH_SHORT).show();
@@ -157,7 +170,14 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
     public void ratingDown(){
         //Thumbs Down
         AppExecutors.getInstance().diskIO().execute(() -> {
-            helpCenterDb.getEnglishDao().updateThumbsDown(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
+            switch (sessionM.getAppLanguage()){
+                case "en":
+                    helpCenterDb.getEnglishDao().updateThumbsDown(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
+                    break;
+                case "ha":
+                    helpCenterDb.getHausaDao().updateThumbsDown(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
+                    break;
+            }
 
             runOnUiThread(() -> {
                 layoutRatingSection.setVisibility(View.GONE);
@@ -192,6 +212,46 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
 
             runOnUiThread(() -> Toast.makeText(ViewIssueAndAnswer.this, R.string.helpcenter_feedback_appreciate, Toast.LENGTH_LONG).show());
         });
+    }
+
+    public List<QuestionsAll> convertHausaToAll(List<QuestionsHausa> qHausa){
+        List<QuestionsAll> y = new ArrayList<>();
+        for(QuestionsHausa x: qHausa){
+            y.add(new QuestionsAll(x.getUnique_question_id(),
+                    x.getApp_id(),
+                    x.getActivity_group_id(),
+                    x.getActivity_id(),
+                    x.getActivity_name(),
+                    x.getResource_id(),
+                    x.getResource_url(),
+                    x.getIssue_question(),
+                    x.getIssue_answer(),
+                    x.getPositive_feedback_count(),
+                    x.getNegative_feedback_count(),
+                    x.getFaq_status()));
+        }
+
+        return y;
+    }
+
+    public List<QuestionsAll> convertEnglishToAll(List<QuestionsEnglish> qEnglish){
+        List<QuestionsAll> y = new ArrayList<>();
+        for(QuestionsEnglish x: qEnglish){
+            y.add(new QuestionsAll(x.getUnique_question_id(),
+                    x.getApp_id(),
+                    x.getActivity_group_id(),
+                    x.getActivity_id(),
+                    x.getActivity_name(),
+                    x.getResource_id(),
+                    x.getResource_url(),
+                    x.getIssue_question(),
+                    x.getIssue_answer(),
+                    x.getPositive_feedback_count(),
+                    x.getNegative_feedback_count(),
+                    x.getFaq_status()));
+        }
+
+        return y;
     }
 
 }

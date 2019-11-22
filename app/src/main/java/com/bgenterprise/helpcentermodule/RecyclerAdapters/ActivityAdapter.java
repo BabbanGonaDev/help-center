@@ -11,17 +11,18 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
+import com.bgenterprise.helpcentermodule.QuestionsAll;
 import com.bgenterprise.helpcentermodule.R;
 
 
 import java.util.List;
 
 public class ActivityAdapter extends RecyclerView.Adapter <ActivityAdapter.ViewHolder>{
-    private List<QuestionsEnglish> questionList;
+    private List<QuestionsAll> questionList;
     private final OnItemClickListener listener;
     private Context context;
 
-    public ActivityAdapter(Context context, List<QuestionsEnglish> questionList, OnItemClickListener listener) {
+    public ActivityAdapter(Context context, List<QuestionsAll> questionList, OnItemClickListener listener) {
         this.questionList = questionList;
         this.listener = listener;
         this.context = context;
@@ -36,12 +37,12 @@ public class ActivityAdapter extends RecyclerView.Adapter <ActivityAdapter.ViewH
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        QuestionsEnglish issues = questionList.get(position);
+        QuestionsAll issues = questionList.get(position);
         holder.questionView.setText(issues.getActivity_name());
     }
 
     public interface OnItemClickListener{
-        void onClick(QuestionsEnglish questionsEnglish);
+        void onClick(QuestionsAll questionsAll);
     }
 
     @Override

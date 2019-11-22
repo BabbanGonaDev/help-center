@@ -10,16 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
+import com.bgenterprise.helpcentermodule.QuestionsAll;
 import com.bgenterprise.helpcentermodule.R;
 
 import java.util.List;
 
 public class ActivityIssuesAdapter extends RecyclerView.Adapter<ActivityIssuesAdapter.ViewHolder> {
-    List<QuestionsEnglish> IssuesList;
+    List<QuestionsAll> IssuesList;
     private final OnItemClickListener listener;
     private Context context;
 
-    public ActivityIssuesAdapter(Context context, List<QuestionsEnglish> issuesList, OnItemClickListener listener) {
+    public ActivityIssuesAdapter(Context context, List<QuestionsAll> issuesList, OnItemClickListener listener) {
         IssuesList = issuesList;
         this.listener = listener;
         this.context = context;
@@ -35,13 +36,13 @@ public class ActivityIssuesAdapter extends RecyclerView.Adapter<ActivityIssuesAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        QuestionsEnglish issues = IssuesList.get(position);
+        QuestionsAll issues = IssuesList.get(position);
         holder.activityIssues.setText(issues.getIssue_question());
     }
 
 
     public interface OnItemClickListener{
-        void onClick(QuestionsEnglish questionsEnglish);
+        void onClick(QuestionsAll questionsEnglish);
     }
 
 
