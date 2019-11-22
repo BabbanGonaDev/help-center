@@ -42,20 +42,19 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
 
     TextView qandaContent;
     TextView qandaHeader;
-    MaterialButton btnThumbsDown;
-    MaterialButton btnThumbsUp;
-    LinearLayout layoutRatingSection;
     TextView tvRatingHeader;
     EditText etNegativeFeedback;
+    MaterialButton btnThumbsDown;
+    MaterialButton btnThumbsUp;
     MaterialButton btnSubmitNegativeFeedback;
-    private static final int REQUEST_CALL = 1;
+    LinearLayout layoutRatingSection;
+    ProgressDialog progressDialog;
+    VideoView gifView;
     HelpSessionManager sessionM;
     HelpCenterDatabase helpCenterDb;
     public List<QuestionsEnglish> IssuesList;
     HashMap<String, String> help_details;
-    ProgressDialog progressDialog;
-    String source2;
-
+    String htmlText, issue_header, gif_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,92 +76,68 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
         layoutRatingSection = findViewById(R.id.ratingsection);
         tvRatingHeader = findViewById(R.id.ratingheader);
         etNegativeFeedback = findViewById(R.id.feedback);
-
         btnThumbsDown = findViewById(R.id.rating2);
         btnThumbsUp = findViewById(R.id.rating);
+        gifView = findViewById(R.id.gif);
 
-        @SuppressLint("StaticFieldLeak")
-        getAnswers get_answers = new getAnswers(ViewIssueAndAnswer.this) {
-            @Override
-            protected void onPostExecute(List<QuestionsEnglish> issuesEnglishes) {
-                super.onPostExecute(issuesEnglishes);
-                IssuesList = issuesEnglishes;
-                String htmlText = IssuesList.get(0).getIssue_answer();
-                String issue_header = IssuesList.get(0).getIssue_question();
-                String gifName = IssuesList.get(0).getResource_id();
-                makeCall();
+
+        //Get and display questions using AppExecutor.
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            IssuesList = helpCenterDb.getEnglishDao().getAllQuestionSolution(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
+
+            runOnUiThread(() -> {
+                htmlText = IssuesList.get(0).getIssue_answer();
+                issue_header = IssuesList.get(0).getIssue_question();
+                gif_name = IssuesList.get(0).getResource_id();
                 qandaHeader.setText(issue_header);
                 qandaContent.setText(Html.fromHtml(htmlText, source -> {
                     String path = Environment.getExternalStoragePublicDirectory("")+"/helpcenter/";
-
                     try {
                         Drawable bmp = Drawable.createFromPath(path);
                         bmp.setBounds(0, 0, bmp.getIntrinsicWidth(), bmp.getIntrinsicHeight());
                         return bmp;
                     } catch (Exception e){
-                       Drawable bmp =  getResources().getDrawable(R.drawable.helpcenter_no_image);
-                       bmp.setBounds(0, 0, 100, 100);
-                       return bmp;
+                        Drawable bmp =  getResources().getDrawable(R.drawable.helpcenter_no_image);
+                        bmp.setBounds(0, 0, 100, 100);
+                        return bmp;
                     }
                 }, null));
 
-                VideoView gif = findViewById(R.id.gif);
-
-                source2 = gifName;
-//                File path = new File(context.getFilesDir()+"/helpcenter/", source2);
-                String path = Environment.getExternalStoragePublicDirectory("") + "/helpcenter/" + source2;
-
+                String path = Environment.getExternalStoragePublicDirectory("") + "/helpcenter/" + gif_name;
                 File dir = new File(path);
-                if(dir.exists() && source2 != null && !source2.matches("")) {
+                if(dir.exists() && gif_name != null && !gif_name.matches("")) {
                     Log.d("Dami","Getting1");
                     try {
-                            /*Uri uri = Uri.fromFile(new File(path));*/
-                            gif.setVideoPath(path);
-                            gif.invalidate();
-                            //gif.getHolder().setFixedSize(200,200);
-                            gif.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                @Override
-                                public void onPrepared(MediaPlayer mp) {
-                                    mp.setLooping(true);
-                                    gif.start();
-                                }
-                            });
-                        } catch (Exception e) {
-                            Log.d("Dami","Getting3");
-                            e.printStackTrace();
-                            gif.setVisibility(View.GONE);
+                        gifView.setVideoPath(path);
+                        gifView.invalidate();
+                        //gifView.getHolder().setFixedSize(200,200);
+                        gifView.setOnPreparedListener(mp -> {
+                            mp.setLooping(true);
+                            gifView.start();
+                        });
+                    } catch (Exception e) {
+                        Log.d("Dami","Getting3");
+                        e.printStackTrace();
+                        gifView.setVisibility(View.GONE);
                     }
                 }else{
                     Log.d("Dami","Getting2");
-                    gif.setVisibility(View.GONE);
+                    gifView.setVisibility(View.GONE);
                 }
-            }
-        };get_answers.execute(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
-        progressDialog.dismiss();
+                progressDialog.dismiss();
+            });
+        });
 
         btnSubmitNegativeFeedback.setOnClickListener(view -> {
-            try {
-                negativeFeedback();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
+            negativeFeedback();
         });
 
         btnThumbsUp.setOnClickListener(view -> {
-            try {
-                ratingUp();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            ratingUp();
         });
 
         btnThumbsDown.setOnClickListener(view -> {
-            try {
-                ratingDown();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            ratingDown();
         });
     }
 
@@ -219,34 +194,4 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
         });
     }
 
-    @SuppressLint("StaticFieldLeak")
-    public class getAnswers extends AsyncTask <String, Void, List<QuestionsEnglish>>{
-        Context context;
-        List<QuestionsEnglish> answers = new ArrayList<>();
-        public getAnswers(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected List<QuestionsEnglish> doInBackground(String... strings) {
-            try{
-                answers = helpCenterDb.getEnglishDao().getAllQuestionSolution(strings[0]);
-                return answers;
-            }catch (Exception e){
-                e.printStackTrace();
-                return null;
-            }
-
-        }
-    }
-
-    public void makeCall() {
-        if (ContextCompat.checkSelfPermission((ViewIssueAndAnswer.this),
-                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(ViewIssueAndAnswer.this,
-                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CALL);
-        } else {
-
-        }
-    }
 }

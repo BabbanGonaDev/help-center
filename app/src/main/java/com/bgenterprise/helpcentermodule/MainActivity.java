@@ -4,9 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
-import com.bgenterprise.helpcentermodule.QuestionActivities.ViewActivityIssues;
-import com.google.android.material.button.MaterialButton;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,9 +14,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MaterialButton materialButton = findViewById(R.id.btn_helpCenter);
-        materialButton.setOnClickListener(view -> {
-            startActivity(new Intent(MainActivity.this, ViewActivityIssues.class));
-        });
+    }
+
+    public void moveToNextPage(View v){
+        startActivity(new Intent(MainActivity.this, SplashScreen.class));
     }
 }

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bgenterprise.helpcentermodule.AppExecutors;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.HelpSessionManager;
@@ -52,79 +53,37 @@ public class ViewActivityGroups extends AppCompatActivity {
         group_recyclerView = findViewById(R.id.group_recycler);
 
         //Get Recycler Lists.
-        @SuppressLint("StaticFieldLeak")
-        getActivityGroups getActivityGroupIssues = new getActivityGroups(ViewActivityGroups.this){
-            @Override
-            protected void onPostExecute(List<QuestionsEnglish> issuesEnglishes) {
-                super.onPostExecute(issuesEnglishes);
-                issuesList = issuesEnglishes;
+        //Get Activity groups using App Executor.
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            try {
+                issuesList = helpCenterDb.getEnglishDao().getActivityGroups(help_details.get(HelpSessionManager.KEY_APP_ID));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            runOnUiThread(() -> {
                 initGroupAdapter();
                 if(issuesList == null || issuesList.isEmpty()){
                     Log.d("CHECK:", "List is very empty");
+                    finish();
                     startActivity(new Intent(ViewActivityGroups.this, QuestionNotFound.class));
                 }else if(issuesList != null && !issuesList.isEmpty()){
-                    Log.d("CHECK:", issuesEnglishes.get(0).getActivity_group_id());
+                    Log.d("CHECK:", issuesList.get(0).getActivity_group_id());
                 }
-            }
-        };
-        getActivityGroupIssues.execute(help_details.get(HelpSessionManager.KEY_APP_ID));
+            });
+        });
 
-        @SuppressLint("StaticFieldLeak")
-        getFAQuestions getFaq = new getFAQuestions(ViewActivityGroups.this){
-            @Override
-            protected void onPostExecute(List<QuestionsEnglish> FAQIssues) {
-                super.onPostExecute(FAQIssues);
-                faqList = FAQIssues;
-                initFAQRecycler();
-            }
-        };
-        getFaq.execute(help_details.get(HelpSessionManager.KEY_APP_ID));
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    public class getActivityGroups extends AsyncTask<String, Void, List<QuestionsEnglish>>{
-        Context context;
-        List<QuestionsEnglish> englishIssues = new ArrayList<>();
-
-        public getActivityGroups(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected List<QuestionsEnglish> doInBackground(String... AppID) {
-            try{
-                Log.d("CHECK", "App id: " + AppID[0]);
-                englishIssues = helpCenterDb.getEnglishDao().getActivityGroups(AppID[0]);
-                return englishIssues;
-            }catch(Exception e){
-                e.printStackTrace();
-                return null;
-            }
-        }
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    public class getFAQuestions extends AsyncTask<String, Void, List<QuestionsEnglish>>{
-        Context context;
-        List<QuestionsEnglish> faqIssues = new ArrayList<>();
-
-        public getFAQuestions(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected List<QuestionsEnglish> doInBackground(String... strings) {
-            try{
-                Log.d("CHECK", "Loading FAQ");
-                faqIssues = helpCenterDb.getEnglishDao().getAllFAQQuestions(strings[0]);
-
-                return faqIssues;
+        //Get FAQs using App Executor.
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            try {
+                faqList = helpCenterDb.getEnglishDao().getAllFAQQuestions(help_details.get(HelpSessionManager.KEY_APP_ID));
             }catch (Exception e){
                 e.printStackTrace();
-                return null;
-
             }
-        }
+
+            runOnUiThread(() -> initFAQRecycler());
+        });
+
     }
 
     public void initFAQRecycler(){

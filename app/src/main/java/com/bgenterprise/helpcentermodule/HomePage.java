@@ -72,12 +72,6 @@ public class HomePage extends AppCompatActivity {
     Boolean writtenToDisk;
     List<QuestionsEnglish> resourceList, downloadList;
     int currentNo, success_count, fail_count;
-
-    String[] appPermissions = {
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.INTERNET,
-            Manifest.permission.CALL_PHONE
-    };
     private static final int PERMISSIONS_REQUEST_CODE = 4045;
 
 
@@ -146,7 +140,7 @@ public class HomePage extends AppCompatActivity {
     public boolean checkAndRequestPermissions(){
         //Check which permissions are granted
         List<String> listPermissionsNeeded = new ArrayList<>();
-        for(String perm : appPermissions){
+        for(String perm : Utility.appPermissions){
             if(ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED){
                 listPermissionsNeeded.add(perm);
             }

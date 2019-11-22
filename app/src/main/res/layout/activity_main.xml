@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
+            android:onClick="moveToNextPage"
             android:text="Help Center" />
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

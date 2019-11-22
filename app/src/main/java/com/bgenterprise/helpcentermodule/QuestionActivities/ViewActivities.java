@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import com.bgenterprise.helpcentermodule.AppExecutors;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.HelpSessionManager;
@@ -50,12 +51,15 @@ public class ViewActivities extends AppCompatActivity {
         progressDialog.setMessage("Loading....");
         progressDialog.show();
 
-        @SuppressLint("StaticFieldLeak")
-        getActivities get_activities = new getActivities(ViewActivities.this){
-            @Override
-            protected void onPostExecute(List<QuestionsEnglish> issuesEnglishes) {
-                super.onPostExecute(issuesEnglishes);
-                questionsList = issuesEnglishes;
+        //Get Activities using App Executor
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            try {
+                questionsList = helpCenterDb.getEnglishDao().getActivities(help_details.get(HelpSessionManager.KEY_ACTIVITY_GROUP_ID));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            runOnUiThread(() -> {
                 adapter = new ActivityAdapter(ViewActivities.this, questionsList, issuesEnglish -> {
                     //TODO save only activity_id.
                     sessionM.SET_ACTIVITY_ID(issuesEnglish.getActivity_id());
@@ -68,31 +72,9 @@ public class ViewActivities extends AppCompatActivity {
                 view_activities_rv.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
                 view_activities_rv.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
-            }
-        };get_activities.execute(help_details.get(HelpSessionManager.KEY_ACTIVITY_GROUP_ID));
-        progressDialog.dismiss();
+                progressDialog.dismiss();
+            });
+        });
     }
-
-    @SuppressLint("StaticFieldLeak")
-    public class getActivities extends AsyncTask<String, Void, List<QuestionsEnglish>>{
-        Context mCtx;
-        List<QuestionsEnglish> activity_issues = new ArrayList<>();
-
-        public getActivities(Context context) {
-            this.mCtx = context;
-        }
-
-        @Override
-        protected List<QuestionsEnglish> doInBackground(String... strings) {
-            try{
-                activity_issues = helpCenterDb.getEnglishDao().getActivities(strings[0]);
-                return activity_issues;
-            }catch (Exception e){
-                e.printStackTrace();
-                return null;
-            }
-        }
-    }
-
 
 }
