@@ -50,8 +50,7 @@ public class ViewActivityIssues extends AppCompatActivity {
     HelpSessionManager sessionM;
     HashMap<String, String> help_details;
     Dialog myDialog;
-    public String whatsapp_message;
-    String passed_activity_id, passed_app_id, passed_staff_id;
+    String passed_activity_id, passed_app_id, passed_staff_id, passed_user_location, whatsapp_message, contact_no, whatsapp_no;
     private static final int PERMISSIONS_REQUEST_CODE = 2048;
 
     @Override
@@ -63,27 +62,30 @@ public class ViewActivityIssues extends AppCompatActivity {
         questionsList_all = new ArrayList<>();
         sessionM = new HelpSessionManager(ViewActivityIssues.this);
         helpCenterDb = HelpCenterDatabase.getInstance(ViewActivityIssues.this);
-        help_details = sessionM.getHelpDetails();
 
         recyclerView2 = findViewById(R.id.recyclerView2);
         contactUs = findViewById(R.id.contactUs);
         myDialog = new Dialog(this);
 
-        //TODO--- Also request all app permissions here including phone call.
         //Receive intent call from external apps.
         try{
             passed_activity_id = getIntent().getStringExtra("activity_id");
             passed_app_id = getIntent().getStringExtra("app_id");
             passed_staff_id = getIntent().getStringExtra("staff_id");
+            passed_user_location = getIntent().getStringExtra("user_location"); //Get this from Access Control.
 
             sessionM.SET_ACTIVITY_ID(passed_activity_id);
             sessionM.SET_KEY_APP_ID(passed_app_id);
             sessionM.SET_STAFF_ID(passed_staff_id);
+            sessionM.SET_USER_LOCATION(passed_user_location);
 
             checkAndRequestPermissions();
         }catch(Exception e){
             e.printStackTrace();
         }
+
+        //Set the details before getting them all from shared pref.
+        help_details = sessionM.getHelpDetails();
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading....");
@@ -176,13 +178,13 @@ public class ViewActivityIssues extends AppCompatActivity {
         Button phoneCall = popupView.findViewById(R.id.phoneCall);
 
         whatsappCall.setOnClickListener(view1 -> sendWhatsappMessage());
-        phoneCall.setOnClickListener(view12 -> makeCall());
+        phoneCall.setOnClickListener(view12 -> makePhoneCall());
 
     }
 
     public void sendWhatsappMessage() {
         whatsapp_message = "Application ID: " + help_details.get(HelpSessionManager.KEY_APP_ID) + "\n" +
-                "Activity Issue: " + help_details.get(HelpSessionManager.KEY_ACTIVITY_ISSUE) + "\n" +
+                "Activity ID: " + help_details.get(HelpSessionManager.KEY_ACTIVITY_ID) + "\n" +
                 "Staff ID: " + help_details.get(HelpSessionManager.KEY_STAFF_ID)+ "\n" +
                 "Version: " + BuildConfig.VERSION_NAME;
 
@@ -190,18 +192,35 @@ public class ViewActivityIssues extends AppCompatActivity {
             Toast.makeText(this, "Kindly install WhatsApp", Toast.LENGTH_SHORT).show();
         }else {
 
-            //TODO ----> Add the part to pick phone number from DB.
-            String toNumber = "+2349095657536"; // contains spaces.
-            toNumber = toNumber.replace("+", "").replace(" ", "");
+            AppExecutors.getInstance().diskIO().execute(() -> {
+                whatsapp_no = helpCenterDb.getContactDao().getWhatsappNumber(help_details.get(HelpSessionManager.KEY_USER_LOCATION));
+                runOnUiThread(() -> {
+                    if(whatsapp_no.isEmpty()){
+                        Toast.makeText(this, "Whatsapp Contact not found", Toast.LENGTH_LONG).show();
+                    }
 
-            Intent sendIntent = new Intent("android.intent.action.MAIN");
-            sendIntent.putExtra("jid", toNumber + "@s.whatsapp.net");
-            sendIntent.putExtra(Intent.EXTRA_TEXT, whatsapp_message);
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.setPackage("com.whatsapp");
-            sendIntent.setType("text/plain");
-            startActivity(sendIntent);
+                    whatsapp_no = whatsapp_no.replace("+", "").replace(" ", "");
+                    Intent sendIntent = new Intent("android.intent.action.MAIN");
+                    sendIntent.putExtra("jid", whatsapp_no + "@s.whatsapp.net");
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, whatsapp_message);
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.setPackage("com.whatsapp");
+                    sendIntent.setType("text/plain");
+                    startActivity(sendIntent);
+                });
+            });
+        }
+    }
 
+    public void makePhoneCall() {
+        if (checkAndRequestPermissions()){
+            AppExecutors.getInstance().diskIO().execute(() -> {
+                contact_no = helpCenterDb.getContactDao().getPhoneNumber(help_details.get(HelpSessionManager.KEY_USER_LOCATION));
+                runOnUiThread(() -> {
+                    contact_no = contact_no.replace(" ", "");
+                    startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + contact_no)));
+                });
+            });
         }
     }
 
@@ -212,15 +231,6 @@ public class ViewActivityIssues extends AppCompatActivity {
             return true;
         } catch (PackageManager.NameNotFoundException e) {
             return false;
-        }
-    }
-
-    public void makeCall() {
-        if (checkAndRequestPermissions()){
-            //TODO---> Add phone number function here.
-            Intent intent = new Intent(Intent.ACTION_DIAL);
-            intent.setData(Uri.parse("tel:+2349095657536"));
-            startActivity(intent);
         }
     }
 
