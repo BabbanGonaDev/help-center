@@ -49,7 +49,7 @@ public class SplashScreen extends AppCompatActivity {
     }
 
     public void RedirectToHomepage(View v){
-        this.startActivity(new Intent(SplashScreen.this, HomePage.class));
+        startActivity(new Intent(SplashScreen.this, HomePage.class));
     }
 
     public void setAppLanguage(){

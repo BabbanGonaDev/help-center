@@ -90,7 +90,6 @@ public class HomePage extends AppCompatActivity {
         mtv_fail_text = findViewById(R.id.mtv_fail_text);
         loading_layout = findViewById(R.id.loading_layout);
         progressBar = findViewById(R.id.progressBar);
-        //TODO---> Use a switch case function to change the Dao being used based on the language stored in shared preferences.
 
         setSupportActionBar(custom_toolbar);
         helpcenterdb = HelpCenterDatabase.getInstance(HomePage.this);
@@ -422,7 +421,8 @@ public class HomePage extends AppCompatActivity {
         if(checkAndRequestPermissions()) {
             //Count the amount to be downloaded, for display to user.
             for (QuestionsEnglish x : list) {
-                if (!resourceExists(x.getResource_id())) {
+                if (!resourceExists(x.getResource_id()) && !x.getResource_url().isEmpty()) {
+                    //If the resource exists or the link isn't empty, add to the download list.
                     downloadList.add(x);
                 }
             }
@@ -502,7 +502,7 @@ public class HomePage extends AppCompatActivity {
         String storage_state = Environment.getExternalStorageState();
         if(storage_state.equals(Environment.MEDIA_MOUNTED)){
             try{
-                File file = new File(Environment.getExternalStorageDirectory().getPath(), "helpcenter");
+                File file = new File(Environment.getExternalStorageDirectory().getPath(), Utility.resource_location);
                 if(!file.exists() && !file.mkdirs()){
                     Log.d("CHECK", "file creation issue");
                 }else{
@@ -556,7 +556,7 @@ public class HomePage extends AppCompatActivity {
 
     public boolean resourceExists(String passedFileName){
         //Check if the picture exists in the assign_assets directory
-        File dir = new File(Environment.getExternalStorageDirectory().getPath(), "helpcenter");
+        File dir = new File(Environment.getExternalStorageDirectory().getPath(), Utility.resource_location);
         try{
             dir.mkdirs();
         }catch (Exception e){
@@ -597,6 +597,46 @@ public class HomePage extends AppCompatActivity {
     public void updateFailCount(){
         ++fail_count;
         mtv_fail_text.setText("Failed: " + fail_count);
+    }
+
+    public List<QuestionsAll> convertHausaToAll(List<QuestionsHausa> qHausa){
+        List<QuestionsAll> y = new ArrayList<>();
+        for(QuestionsHausa x: qHausa){
+            y.add(new QuestionsAll(x.getUnique_question_id(),
+                    x.getApp_id(),
+                    x.getActivity_group_id(),
+                    x.getActivity_id(),
+                    x.getActivity_name(),
+                    x.getResource_id(),
+                    x.getResource_url(),
+                    x.getIssue_question(),
+                    x.getIssue_answer(),
+                    x.getPositive_feedback_count(),
+                    x.getNegative_feedback_count(),
+                    x.getFaq_status()));
+        }
+
+        return y;
+    }
+
+    public List<QuestionsAll> convertEnglishToAll(List<QuestionsEnglish> qEnglish){
+        List<QuestionsAll> y = new ArrayList<>();
+        for(QuestionsEnglish x: qEnglish){
+            y.add(new QuestionsAll(x.getUnique_question_id(),
+                    x.getApp_id(),
+                    x.getActivity_group_id(),
+                    x.getActivity_id(),
+                    x.getActivity_name(),
+                    x.getResource_id(),
+                    x.getResource_url(),
+                    x.getIssue_question(),
+                    x.getIssue_answer(),
+                    x.getPositive_feedback_count(),
+                    x.getNegative_feedback_count(),
+                    x.getFaq_status()));
+        }
+
+        return y;
     }
 
 }

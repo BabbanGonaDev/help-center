@@ -11,4 +11,6 @@ public class Utility {
             Manifest.permission.INTERNET,
             Manifest.permission.CALL_PHONE
     };
+
+    public static final String resource_location = "/Helpcenter/resources/";
 }

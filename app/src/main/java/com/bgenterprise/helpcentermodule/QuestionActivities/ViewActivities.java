@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.bgenterprise.helpcentermodule.AppExecutors;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
@@ -41,7 +42,7 @@ public class ViewActivities extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_view_activities);
         sessionM = new HelpSessionManager(ViewActivities.this);
-        getSupportActionBar().setTitle("Activities");
+        getSupportActionBar().setTitle("View Activities");
         questionsList_en = new ArrayList<>();
         questionsList_ha = new ArrayList<>();
         questionsList_all = new ArrayList<>();

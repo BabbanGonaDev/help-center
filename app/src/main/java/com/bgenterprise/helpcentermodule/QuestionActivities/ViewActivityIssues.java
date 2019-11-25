@@ -57,11 +57,12 @@ public class ViewActivityIssues extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_view_activity_issues);
+        getSupportActionBar().setTitle("View Activity Issues");
         questionsList_en = new ArrayList<>();
         questionsList_ha = new ArrayList<>();
         questionsList_all = new ArrayList<>();
-        sessionM = new HelpSessionManager(ViewActivityIssues.this);
         helpCenterDb = HelpCenterDatabase.getInstance(ViewActivityIssues.this);
+        sessionM = new HelpSessionManager(ViewActivityIssues.this);
 
         recyclerView2 = findViewById(R.id.recyclerView2);
         contactUs = findViewById(R.id.contactUs);
@@ -74,17 +75,19 @@ public class ViewActivityIssues extends AppCompatActivity {
             passed_staff_id = getIntent().getStringExtra("staff_id");
             passed_user_location = getIntent().getStringExtra("user_location"); //Get this from Access Control.
 
-            sessionM.SET_ACTIVITY_ID(passed_activity_id);
-            sessionM.SET_KEY_APP_ID(passed_app_id);
-            sessionM.SET_STAFF_ID(passed_staff_id);
-            sessionM.SET_USER_LOCATION(passed_user_location);
+            if(!passed_activity_id.isEmpty() && !passed_app_id.isEmpty() && !passed_staff_id.isEmpty()){
+                sessionM.SET_ACTIVITY_ID(passed_activity_id);
+                sessionM.SET_KEY_APP_ID(passed_app_id);
+                sessionM.SET_STAFF_ID(passed_staff_id);
+                sessionM.SET_USER_LOCATION(passed_user_location);
+            }
 
             checkAndRequestPermissions();
         }catch(Exception e){
             e.printStackTrace();
         }
 
-        //Set the details before getting them all from shared pref.
+        //Get the values from the shared prefs now.
         help_details = sessionM.getHelpDetails();
 
         progressDialog = new ProgressDialog(this);
@@ -122,7 +125,7 @@ public class ViewActivityIssues extends AppCompatActivity {
                 adapter = new ActivityIssuesAdapter(ViewActivityIssues.this, questionsList_all, questionsAll -> {
                     //Save only unique_question_id.
                     sessionM.SET_UNIQUE_QUESTION_ID(questionsAll.getUnique_question_id());
-                    ViewActivityIssues.this.startActivity(new Intent(ViewActivityIssues.this, ViewIssueAndAnswer.class));
+                    startActivity(new Intent(ViewActivityIssues.this, ViewIssueAndAnswer.class));
                 });
 
                 RecyclerView.LayoutManager vLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
@@ -152,7 +155,7 @@ public class ViewActivityIssues extends AppCompatActivity {
                 adapter = new ActivityIssuesAdapter(ViewActivityIssues.this, questionsList_all, questionsAll -> {
                     //Save only unique_question_id.
                     sessionM.SET_UNIQUE_QUESTION_ID(questionsAll.getUnique_question_id());
-                    ViewActivityIssues.this.startActivity(new Intent(ViewActivityIssues.this, ViewIssueAndAnswer.class));
+                    startActivity(new Intent(ViewActivityIssues.this, ViewIssueAndAnswer.class));
                 });
 
                 RecyclerView.LayoutManager vLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
@@ -207,6 +210,13 @@ public class ViewActivityIssues extends AppCompatActivity {
                     sendIntent.setPackage("com.whatsapp");
                     sendIntent.setType("text/plain");
                     startActivity(sendIntent);
+
+                    /*Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                    sendIntent.setType("text/plain");
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, whatsapp_message);
+                    sendIntent.putExtra("jid", whatsapp_no + "@s.whatsapp.net");
+                    sendIntent.setPackage("com.whatsapp");
+                    startActivity(sendIntent);*/
                 });
             });
         }

@@ -1,9 +1,9 @@
-apply plugin: 'com.android.library'
+apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
     defaultConfig {
-        //applicationId "com.bgenterprise.helpcentermodule"
+        applicationId "com.bgenterprise.helpcentermodule"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1

@@ -1,9 +1,11 @@
 package com.bgenterprise.helpcentermodule.QuestionActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 
 import android.app.ProgressDialog;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Html;
@@ -23,7 +25,10 @@ import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
 import com.bgenterprise.helpcentermodule.HelpSessionManager;
 import com.bgenterprise.helpcentermodule.QuestionsAll;
 import com.bgenterprise.helpcentermodule.R;
+import com.bgenterprise.helpcentermodule.Utility;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textview.MaterialTextView;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,8 +39,8 @@ import java.util.Locale;
 
 public class ViewIssueAndAnswer extends AppCompatActivity {
 
-    TextView qandaContent;
-    TextView qandaHeader;
+    MaterialTextView qandaContent;
+    MaterialTextView qandaHeader;
     TextView tvRatingHeader;
     EditText etNegativeFeedback;
     MaterialButton btnThumbsDown;
@@ -43,14 +48,15 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
     MaterialButton btnSubmitNegativeFeedback;
     LinearLayout layoutRatingSection;
     ProgressDialog progressDialog;
-    VideoView gifView;
+    VideoView resource_video_view;
+    AppCompatImageView resource_image_view;
     HelpSessionManager sessionM;
     HelpCenterDatabase helpCenterDb;
     public List<QuestionsEnglish> questionsList_en;
     public List<QuestionsHausa> questionsList_ha;
     public List<QuestionsAll> questionsList_all;
     HashMap<String, String> help_details;
-    String htmlText, issue_header, gif_name;
+    String issue_content, issue_header, issue_resource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +82,9 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
         etNegativeFeedback = findViewById(R.id.feedback);
         btnThumbsDown = findViewById(R.id.rating2);
         btnThumbsUp = findViewById(R.id.rating);
-        gifView = findViewById(R.id.gif);
+        resource_video_view = findViewById(R.id.resource_video_view);
+        resource_image_view = findViewById(R.id.resource_image_view);
+
 
         //Get and display questions using AppExecutor.
         AppExecutors.getInstance().diskIO().execute(() -> {
@@ -92,44 +100,27 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
             }
 
             runOnUiThread(() -> {
-                htmlText = questionsList_all.get(0).getIssue_answer();
+                issue_content = questionsList_all.get(0).getIssue_answer();
                 issue_header = questionsList_all.get(0).getIssue_question();
-                gif_name = questionsList_all.get(0).getResource_id();
-                qandaHeader.setText(issue_header);
-                qandaContent.setText(Html.fromHtml(htmlText, source -> {
-                    String path = Environment.getExternalStoragePublicDirectory("")+"/helpcenter/";
-                    try {
-                        Drawable bmp = Drawable.createFromPath(path);
-                        bmp.setBounds(0, 0, bmp.getIntrinsicWidth(), bmp.getIntrinsicHeight());
-                        return bmp;
-                    } catch (Exception e){
-                        Drawable bmp =  getResources().getDrawable(R.drawable.helpcenter_no_image);
-                        bmp.setBounds(0, 0, 100, 100);
-                        return bmp;
-                    }
-                }, null));
+                issue_resource = questionsList_all.get(0).getResource_id();
 
-                String path = Environment.getExternalStoragePublicDirectory("") + "/helpcenter/" + gif_name;
-                File dir = new File(path);
-                if(dir.exists() && gif_name != null && !gif_name.matches("")) {
-                    Log.d("Dami","Getting1");
-                    try {
-                        gifView.setVideoPath(path);
-                        gifView.invalidate();
-                        //gifView.getHolder().setFixedSize(200,200);
-                        gifView.setOnPreparedListener(mp -> {
-                            mp.setLooping(true);
-                            gifView.start();
-                        });
-                    } catch (Exception e) {
-                        Log.d("Dami","Getting3");
-                        e.printStackTrace();
-                        gifView.setVisibility(View.GONE);
+                qandaHeader.setText(issue_header);
+                qandaContent.setText(Html.fromHtml(issue_content));
+
+                if(!issue_resource.isEmpty()){
+                    String resource_path = Environment.getExternalStorageDirectory().getPath() + Utility.resource_location + issue_resource;
+                    switch (getFileExtension(issue_resource)){
+                        case "gif":
+                        case "mp4":
+                            displayVideoResource(resource_path);
+                            break;
+                        case "jpg":
+                        case "png":
+                            displayImageResource(resource_path);
+                            break;
                     }
-                }else{
-                    Log.d("Dami","Getting2");
-                    gifView.setVisibility(View.GONE);
                 }
+
                 progressDialog.dismiss();
             });
         });
@@ -252,6 +243,46 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
         }
 
         return y;
+    }
+
+    public String getFileExtension(String name){
+        if(!name.isEmpty()){
+            return name.substring(name.length() - 3).toLowerCase();
+        }else{
+            return "";
+        }
+    }
+
+    public void displayVideoResource(String path){
+        File dir = new File(path);
+        if(dir.exists()) {
+            try {
+                resource_video_view.setVisibility(View.VISIBLE);
+                resource_video_view.setVideoPath(path);
+                resource_video_view.invalidate();
+                resource_video_view.setOnPreparedListener(mp -> {
+                    mp.setLooping(true);
+                    resource_video_view.start();
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                resource_video_view.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    public void displayImageResource(String path){
+        File imgFile = new File(path);
+        if(imgFile.exists()){
+            try {
+                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                resource_image_view.setVisibility(View.VISIBLE);
+                resource_image_view.setImageBitmap(myBitmap);
+            }catch (Exception e){
+                e.printStackTrace();
+                resource_image_view.setVisibility(View.GONE);
+            }
+        }
     }
 
 }

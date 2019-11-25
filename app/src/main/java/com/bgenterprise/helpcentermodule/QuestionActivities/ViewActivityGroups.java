@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -87,7 +88,7 @@ public class ViewActivityGroups extends AppCompatActivity {
                     //Save just app_id & unique_question_id.
                     sessionM.SET_KEY_APP_ID(questionsAll.getApp_id());
                     sessionM.SET_UNIQUE_QUESTION_ID(questionsAll.getUnique_question_id());
-                    ViewActivityGroups.this.startActivity(new Intent(ViewActivityGroups.this, ViewIssueAndAnswer.class));
+                    startActivity(new Intent(ViewActivityGroups.this, ViewIssueAndAnswer.class));
                 });
 
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
@@ -115,7 +116,7 @@ public class ViewActivityGroups extends AppCompatActivity {
                     //Save just app_id & unique_question_id.
                     sessionM.SET_KEY_APP_ID(questionsAll.getApp_id());
                     sessionM.SET_UNIQUE_QUESTION_ID(questionsAll.getUnique_question_id());
-                    ViewActivityGroups.this.startActivity(new Intent(ViewActivityGroups.this, ViewIssueAndAnswer.class));
+                    startActivity(new Intent(ViewActivityGroups.this, ViewIssueAndAnswer.class));
                 });
 
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
@@ -147,9 +148,8 @@ public class ViewActivityGroups extends AppCompatActivity {
                 //Initialize and populate the Group activities recycler view.
                 activityGroupAdapter = new ActivityGroupAdapter(ViewActivityGroups.this, issuesList_all, questionsAll -> {
                     //TODO save just app_id & activity_group_id
-                    sessionM.SET_KEY_APP_ID(questionsAll.getApp_id());
                     sessionM.SET_ACTIVITY_GROUP_ID(questionsAll.getActivity_group_id());
-                    ViewActivityGroups.this.startActivity(new Intent(ViewActivityGroups.this, ViewActivities.class));
+                    startActivity(new Intent(ViewActivityGroups.this, ViewActivities.class));
                 });
 
                 RecyclerView.LayoutManager nLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
@@ -182,9 +182,8 @@ public class ViewActivityGroups extends AppCompatActivity {
                 //Initialize and populate the Group activities recycler view.
                 activityGroupAdapter = new ActivityGroupAdapter(ViewActivityGroups.this, issuesList_all, questionsAll -> {
                     //TODO save just app_id & activity_group_id
-                    sessionM.SET_KEY_APP_ID(questionsAll.getApp_id());
                     sessionM.SET_ACTIVITY_GROUP_ID(questionsAll.getActivity_group_id());
-                    ViewActivityGroups.this.startActivity(new Intent(ViewActivityGroups.this, ViewActivities.class));
+                    startActivity(new Intent(ViewActivityGroups.this, ViewActivities.class));
                 });
 
                 RecyclerView.LayoutManager nLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
