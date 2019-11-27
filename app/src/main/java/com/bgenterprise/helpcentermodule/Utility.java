@@ -2,6 +2,8 @@ package com.bgenterprise.helpcentermodule;
 
 import android.Manifest;
 
+import retrofit2.http.Streaming;
+
 public class Utility {
 
     public static final String[] app_language = new String[] {"English", "Hausa"};
@@ -13,4 +15,8 @@ public class Utility {
     };
 
     public static final String resource_location = "/Helpcenter/resources/";
+
+    public static final String resource_location_en = "/Helpcenter/resources/en/";
+
+    public static final String resource_location_ha = "/Helpcenter/resources/ha/";
 }

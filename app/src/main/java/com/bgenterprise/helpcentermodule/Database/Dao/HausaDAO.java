@@ -54,4 +54,10 @@ public interface HausaDAO {
 
     @Query("SELECT * FROM questions_hausa")
     List<QuestionsHausa> getAllQuestions();
+
+    @Query("SELECT * FROM questions_hausa WHERE (positive_feedback_count != 0 OR negative_feedback_count != 0)")
+    List<QuestionsHausa> getQuestionFeedback();
+
+    @Query("UPDATE questions_hausa SET positive_feedback_count = :positive, negative_feedback_count = :negative WHERE unique_question_id = :question_id")
+    void updateSyncedFeedback(String question_id, String positive, String negative);
 }

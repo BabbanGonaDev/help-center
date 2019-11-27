@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -12,6 +13,7 @@ import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.ContactSupportSyncDown;
+import com.bgenterprise.helpcentermodule.Network.ModelClasses.GeneralFeedbackResponse;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.NegativeFeedbackResponse;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsEnglishSyncDown;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsHausaSyncDown;
@@ -21,6 +23,7 @@ import com.bgenterprise.helpcentermodule.QuestionActivities.ViewActivityGroups;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.gson.Gson;
 
@@ -35,6 +38,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -60,17 +64,19 @@ import retrofit2.Response;
 
 
 public class HomePage extends AppCompatActivity {
-
+    CoordinatorLayout cl;
     MaterialButton btn_cancel_resource_sync;
     MaterialTextView mtv_success_text, mtv_fail_text, mtv_progress_text;
-    ProgressBar progressBar;
+    ProgressBar progressBar, loading_progressbar;
     LinearLayoutCompat loading_layout;
     HelpSessionManager sessionM;
     HashMap<String, String> help_details;
     String session_app_lang, session_dao_lang;
     HelpCenterDatabase helpcenterdb;
     Boolean writtenToDisk;
-    List<QuestionsEnglish> resourceList, downloadList;
+    List<QuestionsAll> resourceList, downloadList;
+    List<QuestionsEnglish> english_resource;
+    List<QuestionsHausa> hausa_resource;
     int currentNo, success_count, fail_count;
     private static final int PERMISSIONS_REQUEST_CODE = 4045;
 
@@ -79,6 +85,7 @@ public class HomePage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_home_page);
+        cl = findViewById(R.id.cl);
         MaterialToolbar custom_toolbar = findViewById(R.id.local_toolbar);
         CardView tgl_test_card = findViewById(R.id.tgl_test_card);
         CardView tgl_interview_card = findViewById(R.id.tgl_interview_card);
@@ -90,6 +97,7 @@ public class HomePage extends AppCompatActivity {
         mtv_fail_text = findViewById(R.id.mtv_fail_text);
         loading_layout = findViewById(R.id.loading_layout);
         progressBar = findViewById(R.id.progressBar);
+        loading_progressbar = findViewById(R.id.loading_progress_bar);
 
         setSupportActionBar(custom_toolbar);
         helpcenterdb = HelpCenterDatabase.getInstance(HomePage.this);
@@ -229,16 +237,19 @@ public class HomePage extends AppCompatActivity {
         if(isConnected()) {
             Toast.makeText(HomePage.this, "Beginning syncing process", Toast.LENGTH_LONG).show();
             syncDownQuestionsEnglish();
-            syncDownQuestionsHausa();
             syncUpNegativeFeedback();
+            syncUpEnglishFeedback();
+            syncUpHausaFeedback();
             syncDownContactSupport();
+            syncDownQuestionsHausa();
         }else{
-            //TODO Put snack-bar here with action button to go to data.
-            Toast.makeText(HomePage.this, R.string.helpcenter_check_network, Toast.LENGTH_LONG).show();
+            Snackbar.make(cl, R.string.helpcenter_check_network, Snackbar.LENGTH_INDEFINITE)
+                    .setAction("FIX", view -> HomePage.this.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS))).show();
         }
     }
 
     public void syncDownQuestionsEnglish(){
+        loading_progressbar.setVisibility(View.VISIBLE);
         RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
         Call<List<QuestionsEnglishSyncDown>> call = service.syncDownQuestionsEnglish(help_details.get(HelpSessionManager.KEY_LAST_SYNC_QUESTIONS_ENGLISH));
         call.enqueue(new Callback<List<QuestionsEnglishSyncDown>>() {
@@ -270,7 +281,7 @@ public class HomePage extends AppCompatActivity {
 
                     AppExecutors.getInstance().diskIO().execute(() -> {
                         helpcenterdb.getEnglishDao().InsertFromOnline(question_eng);
-                        runOnUiThread(() -> Toast.makeText(HomePage.this, "Sync down completed",Toast.LENGTH_LONG).show());
+                        runOnUiThread(() -> Toast.makeText(HomePage.this, "English Question pack downloaded",Toast.LENGTH_LONG).show());
                     });
                 }
             }
@@ -314,7 +325,10 @@ public class HomePage extends AppCompatActivity {
 
                     AppExecutors.getInstance().diskIO().execute(() -> {
                         helpcenterdb.getHausaDao().InsertFromOnline(question_hausa);
-                        runOnUiThread(() -> Toast.makeText(HomePage.this, "Sync Completed", Toast.LENGTH_LONG).show());
+                        runOnUiThread(() -> {
+                            Toast.makeText(HomePage.this, "Hausa Question pack downloaded", Toast.LENGTH_LONG).show();
+                            loading_progressbar.setVisibility(View.GONE);
+                        });
                     });
                 }
             }
@@ -322,6 +336,80 @@ public class HomePage extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<QuestionsHausaSyncDown>> call, Throwable t) {
 
+            }
+        });
+    }
+
+    public void syncUpEnglishFeedback(){
+        //Get feedback values of all questions that have been edited.
+        Gson json = new Gson();
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            String feedbackValues= json.toJson(helpcenterdb.getEnglishDao().getQuestionFeedback());
+            runOnUiThread(() -> initEnglishFeedbackSync(feedbackValues));
+        });
+    }
+
+    public void initEnglishFeedbackSync(String values){
+        Log.d("CHECK", values);
+        RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
+        Call<List<GeneralFeedbackResponse>> call = service.syncUpEnglishFeedback(values);
+        call.enqueue(new Callback<List<GeneralFeedbackResponse>>() {
+            @Override
+            public void onResponse(Call<List<GeneralFeedbackResponse>> call, Response<List<GeneralFeedbackResponse>> response) {
+                if(response.isSuccessful()){
+                    List<GeneralFeedbackResponse> responseData = response.body();
+                    try{
+                        for(GeneralFeedbackResponse h: responseData){
+                            AppExecutors.getInstance().diskIO().execute(() -> {
+                                helpcenterdb.getEnglishDao().updateSyncedFeedback(h.getQuestion_id(), h.getPositive_feedback_count(), h.getNegative_feedback_count());
+                            });
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<GeneralFeedbackResponse>> call, Throwable t) {
+                Log.d("CHECK", t.getMessage());
+            }
+        });
+    }
+
+    public void syncUpHausaFeedback(){
+        //Get feedback values of all questions that have been edited.
+        Gson json = new Gson();
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            String feedbackValues= json.toJson(helpcenterdb.getHausaDao().getQuestionFeedback());
+            runOnUiThread(() -> initHausaFeedbackSync(feedbackValues));
+        });
+    }
+
+    public void initHausaFeedbackSync(String values){
+        Log.d("CHECK", values);
+        RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
+        Call<List<GeneralFeedbackResponse>> call = service.syncUpHausaFeedback(values);
+        call.enqueue(new Callback<List<GeneralFeedbackResponse>>() {
+            @Override
+            public void onResponse(Call<List<GeneralFeedbackResponse>> call, Response<List<GeneralFeedbackResponse>> response) {
+                if(response.isSuccessful()){
+                    List<GeneralFeedbackResponse> responseData = response.body();
+                    try{
+                        for(GeneralFeedbackResponse h: responseData){
+                            AppExecutors.getInstance().diskIO().execute(() -> {
+                                helpcenterdb.getHausaDao().updateSyncedFeedback(h.getQuestion_id(), h.getPositive_feedback_count(), h.getNegative_feedback_count());
+                            });
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<GeneralFeedbackResponse>> call, Throwable t) {
+                Log.d("CHECK", t.getMessage());
             }
         });
     }
@@ -399,15 +487,40 @@ public class HomePage extends AppCompatActivity {
     public void syncDownResources(){
         //Get the list of all the questions on the table.
         resourceList = new ArrayList<>();
+        switch (sessionM.getAppLanguage()){
+            case "en":
+                getEnglishResourceList();
+                break;
+            case "ha":
+                getHausaResourceList();
+                break;
+        }
+
+    }
+
+    public void getHausaResourceList(){
+        hausa_resource = new ArrayList<>();
         AppExecutors.getInstance().diskIO().execute(() -> {
-            resourceList = helpcenterdb.getEnglishDao().getAllQuestions();
+            hausa_resource = helpcenterdb.getHausaDao().getAllQuestions();
+            resourceList = convertHausaToAll(hausa_resource);
             runOnUiThread(() -> {
                 initResourceSync(resourceList);
             });
         });
     }
 
-    public void initResourceSync(List<QuestionsEnglish> list){
+    public void getEnglishResourceList(){
+        english_resource = new ArrayList<>();
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            english_resource = helpcenterdb.getEnglishDao().getAllQuestions();
+            resourceList = convertEnglishToAll(english_resource);
+            runOnUiThread(() -> {
+                initResourceSync(resourceList);
+            });
+        });
+    }
+
+    public void initResourceSync(List<QuestionsAll> list){
         //Empty and clear all variables before starting.
         downloadList = new ArrayList<>();
         currentNo = 0;
@@ -420,7 +533,7 @@ public class HomePage extends AppCompatActivity {
 
         if(checkAndRequestPermissions()) {
             //Count the amount to be downloaded, for display to user.
-            for (QuestionsEnglish x : list) {
+            for (QuestionsAll x : list) {
                 if (!resourceExists(x.getResource_id()) && !x.getResource_url().isEmpty()) {
                     //If the resource exists or the link isn't empty, add to the download list.
                     downloadList.add(x);
@@ -434,7 +547,7 @@ public class HomePage extends AppCompatActivity {
                 loading_layout.setVisibility(View.VISIBLE);
                 progressBar.setMax(downloadList.size());
             }
-            for (QuestionsEnglish h : downloadList) {
+            for (QuestionsAll h : downloadList) {
                 //For each individual entry on the list, begin download of the resource.
                 downloadImage(h.getResource_url(), h.getResource_id());
             }
@@ -498,11 +611,24 @@ public class HomePage extends AppCompatActivity {
         });
     }
 
-    public static boolean writeResponseBody(ResponseBody body, String fileName){
+    public boolean writeResponseBody(ResponseBody body, String fileName){
+        //Changed it from 'public static' to just 'public' --> Just noting in case I meet any bugs.
         String storage_state = Environment.getExternalStorageState();
         if(storage_state.equals(Environment.MEDIA_MOUNTED)){
             try{
-                File file = new File(Environment.getExternalStorageDirectory().getPath(), Utility.resource_location);
+                File file;
+                switch (sessionM.getAppLanguage()){
+                    case "en":
+                        file = new File(Environment.getExternalStorageDirectory().getPath(), Utility.resource_location_en);
+                        break;
+                    case "ha":
+                        file = new File(Environment.getExternalStorageDirectory().getPath(), Utility.resource_location_ha);
+                        break;
+                    default:
+                        file = new File(Environment.getExternalStorageDirectory().getPath(), Utility.resource_location);
+                        break;
+                }
+
                 if(!file.exists() && !file.mkdirs()){
                     Log.d("CHECK", "file creation issue");
                 }else{
@@ -556,7 +682,19 @@ public class HomePage extends AppCompatActivity {
 
     public boolean resourceExists(String passedFileName){
         //Check if the picture exists in the assign_assets directory
-        File dir = new File(Environment.getExternalStorageDirectory().getPath(), Utility.resource_location);
+        File dir;
+        switch (sessionM.getAppLanguage()){
+            case "en":
+                dir = new File(Environment.getExternalStorageDirectory().getPath(), Utility.resource_location_en);
+                break;
+            case "ha":
+                dir = new File(Environment.getExternalStorageDirectory().getPath(), Utility.resource_location_ha);
+                break;
+            default:
+                dir = new File(Environment.getExternalStorageDirectory().getPath(), Utility.resource_location);
+                break;
+        }
+
         try{
             dir.mkdirs();
         }catch (Exception e){

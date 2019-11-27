@@ -8,8 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="MyToolbarTheme" parent="Widget.MaterialComponents.Toolbar">
-        <item name="android:textColorSecondary">#FFFFFF</item>
+    <style name="MyToolbarTheme" parent="AppTheme">
+        <item name="android:textColorSecondary">#333333</item>
     </style>
 
 </resources>

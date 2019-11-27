@@ -107,8 +107,24 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
                 qandaHeader.setText(issue_header);
                 qandaContent.setText(Html.fromHtml(issue_content));
 
+                //Get resource path based on app language.
+                String path;
+                switch (sessionM.getAppLanguage()){
+                    case "en":
+                        path = Environment.getExternalStorageDirectory().getPath() + Utility.resource_location_en;
+                        break;
+                    case "ha":
+                        path = Environment.getExternalStorageDirectory().getPath() + Utility.resource_location_ha;
+                        break;
+                    default:
+                        path = Environment.getExternalStorageDirectory().getPath() + Utility.resource_location;
+                        break;
+
+                }
+
+                //Display appropriate view based on resource type.
                 if(!issue_resource.isEmpty()){
-                    String resource_path = Environment.getExternalStorageDirectory().getPath() + Utility.resource_location + issue_resource;
+                    String resource_path = path + issue_resource;
                     switch (getFileExtension(issue_resource)){
                         case "gif":
                         case "mp4":

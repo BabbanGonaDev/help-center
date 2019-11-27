@@ -53,4 +53,10 @@ public interface EnglishDAO {
 
     @Query("SELECT * FROM questions_english")
     List<QuestionsEnglish> getAllQuestions();
+
+    @Query("SELECT * FROM questions_english WHERE (positive_feedback_count != 0 OR negative_feedback_count != 0)")
+    List<QuestionsEnglish> getQuestionFeedback();
+
+    @Query("UPDATE questions_english SET positive_feedback_count = :positive, negative_feedback_count = :negative WHERE unique_question_id = :question_id")
+    void updateSyncedFeedback(String question_id, String positive, String negative);
 }

@@ -1,5 +1,6 @@
 package com.bgenterprise.helpcentermodule.QuestionActivities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -13,10 +14,15 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -27,6 +33,7 @@ import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
 import com.bgenterprise.helpcentermodule.HelpSessionManager;
+import com.bgenterprise.helpcentermodule.HomePage;
 import com.bgenterprise.helpcentermodule.QuestionsAll;
 import com.bgenterprise.helpcentermodule.R;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityIssuesAdapter;
@@ -34,9 +41,12 @@ import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityIssuesAdapter;
 import com.bgenterprise.helpcentermodule.Utility;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class ViewActivityIssues extends AppCompatActivity {
     RecyclerView recyclerView2;
@@ -50,7 +60,7 @@ public class ViewActivityIssues extends AppCompatActivity {
     HelpSessionManager sessionM;
     HashMap<String, String> help_details;
     Dialog myDialog;
-    String passed_activity_id, passed_app_id, passed_staff_id, passed_user_location, whatsapp_message, contact_no, whatsapp_no;
+    String passed_activity_id, passed_app_id, passed_staff_id, passed_user_location, whatsapp_message, contact_no, whatsapp_no, session_app_lang;
     private static final int PERMISSIONS_REQUEST_CODE = 2048;
 
     @Override
@@ -107,6 +117,55 @@ public class ViewActivityIssues extends AppCompatActivity {
             onButtonShowPopupWindowClick(view);
         });
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_issues_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.change_language){
+            changeAppLanguage();
+            return true;
+        }else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void changeAppLanguage(){
+        new MaterialAlertDialogBuilder(ViewActivityIssues.this)
+                .setTitle("Choose App Language")
+                .setSingleChoiceItems(Utility.app_language, -1, (dialogInterface, i) -> {
+                    Toast.makeText(ViewActivityIssues.this, "Language selected: " + Utility.app_language[i], Toast.LENGTH_LONG).show();
+
+                    //Based on language, set the appropriate application language.
+                    String selected_lang = Utility.app_language[i];
+                    switch (selected_lang){
+                        case "English":
+                            sessionM.SET_LANGUAGE("en", "English");
+                            break;
+                        case "Hausa":
+                            sessionM.SET_LANGUAGE("ha", "Hausa");
+                            break;
+                        default:
+                            break;
+                    }
+                    dialogInterface.dismiss();
+                    setAppLanguage();
+                }).show();
+    }
+
+    public void setAppLanguage(){
+        session_app_lang = sessionM.getAppLanguage();
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = new Locale(session_app_lang);
+        res.updateConfiguration(conf, dm);
+        recreate();
     }
 
     public void displayActivityIssuesEnglish(){
@@ -203,20 +262,15 @@ public class ViewActivityIssues extends AppCompatActivity {
                     }
 
                     whatsapp_no = whatsapp_no.replace("+", "").replace(" ", "");
-                    Intent sendIntent = new Intent("android.intent.action.MAIN");
-                    sendIntent.putExtra("jid", whatsapp_no + "@s.whatsapp.net");
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, whatsapp_message);
-                    sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.setPackage("com.whatsapp");
-                    sendIntent.setType("text/plain");
-                    startActivity(sendIntent);
-
-                    /*Intent sendIntent = new Intent(Intent.ACTION_SEND);
-                    sendIntent.setType("text/plain");
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, whatsapp_message);
-                    sendIntent.putExtra("jid", whatsapp_no + "@s.whatsapp.net");
-                    sendIntent.setPackage("com.whatsapp");
-                    startActivity(sendIntent);*/
+                    try {
+                        Intent urlMsg = new Intent(Intent.ACTION_VIEW);
+                        urlMsg.setPackage("com.whatsapp");
+                        urlMsg.setData(Uri.parse("https://wa.me/" + whatsapp_no + "?text=" + URLEncoder.encode(whatsapp_message, "UTF-8")));
+                        startActivity(urlMsg);
+                    } catch (UnsupportedEncodingException e) {
+                        Toast.makeText(this, "Unable to send whatsapp message", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
                 });
             });
         }
