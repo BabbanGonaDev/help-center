@@ -16,7 +16,7 @@ import android.widget.Toast;
 import java.util.Locale;
 
 public class SplashScreen extends AppCompatActivity {
-    String session_app_lang;
+    String session_app_lang, passed_staff_id, passed_user_location;
     HelpSessionManager helpSession;
 
     @Override
@@ -25,6 +25,20 @@ public class SplashScreen extends AppCompatActivity {
         setContentView(R.layout.activity_help_splash_screen);
         helpSession = new HelpSessionManager(SplashScreen.this);
         LinearLayout splashscreen_next = findViewById(R.id.splashscreen_next_layout);
+
+        try{
+            helpSession.CLEAR_SESSION();
+            passed_staff_id = getIntent().getStringExtra("staff_id");
+            passed_user_location = getIntent().getStringExtra("user_location"); //Get this from Access Control.
+
+            if(!passed_staff_id.isEmpty() && !passed_user_location.isEmpty()){
+                helpSession.SET_STAFF_ID(passed_staff_id);
+                helpSession.SET_USER_LOCATION(passed_user_location);
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
         //Create a delay function of 1 second.
         final Handler handler = new Handler();
@@ -41,7 +55,6 @@ public class SplashScreen extends AppCompatActivity {
                     }
                 };insertDB.execute();
             }*/
-            helpSession.CLEAR_SESSION();
             setAppLanguage();
             startActivity(new Intent(SplashScreen.this, HomePage.class));
         }, 750);

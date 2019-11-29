@@ -381,7 +381,7 @@ public class HomePage extends AppCompatActivity {
         //Get feedback values of all questions that have been edited.
         Gson json = new Gson();
         AppExecutors.getInstance().diskIO().execute(() -> {
-            String feedbackValues= json.toJson(helpcenterdb.getHausaDao().getQuestionFeedback());
+            String feedbackValues = json.toJson(helpcenterdb.getHausaDao().getQuestionFeedback());
             runOnUiThread(() -> initHausaFeedbackSync(feedbackValues));
         });
     }
@@ -474,6 +474,7 @@ public class HomePage extends AppCompatActivity {
                     AppExecutors.getInstance().diskIO().execute(() -> {
                         helpcenterdb.getContactDao().InsertFromOnline(contact_support);
                     });
+
                 }
             }
 

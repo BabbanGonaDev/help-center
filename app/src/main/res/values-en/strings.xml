@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Help Center App</string>
+    <string name="helpcenter_app_name">Help Center App</string>
     <string name="helpcenter_test_card_text">TGL\nTest English</string>
     <string name="helpcenter_interview_card_text">TGL\nInterview English</string>
     <string name="helpcenter_mapping_card_text">Field\nMapping English</string>
@@ -21,7 +21,5 @@
     <string name="helpcenter_check_network">Kindly Check Network Connection</string>
     <string name="helpcenter_cancel_operation">Cancel Operation</string>
     <string name="helpcenter_close">Close</string>
-    <string name="kk">llk</string>
-    <string name="dao_name">getEnglishDao</string>
 
 </resources>

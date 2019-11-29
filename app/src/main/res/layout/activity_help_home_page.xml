@@ -117,7 +117,7 @@
             android:elevation="4dp"
             android:fitsSystemWindows="true"
             android:minHeight="?attr/actionBarSize"
-            app:title="@string/app_name"
+            app:title="@string/helpcenter_app_name"
             app:titleTextColor="@android:color/white" />
 
         <ProgressBar

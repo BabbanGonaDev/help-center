@@ -2,7 +2,7 @@
 <resources>
 
     <!--String values for hausa langugage-->
-    <string name="app_name">Help Center App</string>
+    <string name="helpcenter_app_name">Help Center App</string>
     <string name="helpcenter_feedback_appreciate">Thanks for your feedback in Hausa</string>
     <string name="helpcenter_test_card_text">TGL\nTest Hausa</string>
     <string name="helpcenter_interview_card_text">TGL\nInterview Hausa</string>
@@ -23,7 +23,5 @@
     <string name="helpcenter_check_network">Kindly Check Network Connection</string>
     <string name="helpcenter_cancel_operation">Cancel Operation</string>
     <string name="helpcenter_close">Close</string>
-    <string name="kk">llk</string>
-    <string name="dao_name">getHausaDao</string>
 
 </resources>
