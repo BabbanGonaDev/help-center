@@ -82,6 +82,8 @@ public class HomePage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_home_page);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_helpcenter_help_icon);// set drawable icon
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         cl = findViewById(R.id.cl);
         CardView tgl_test_card = findViewById(R.id.tgl_test_card);
         CardView tgl_interview_card = findViewById(R.id.tgl_interview_card);

@@ -53,7 +53,7 @@
                 android:visibility="gone"
                 app:srcCompat="@drawable/helpcenter_no_image" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/ratingheader"
@@ -99,28 +99,40 @@
             </LinearLayout>
 
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/feedback"
-                    android:inputType="text"
-                    android:hint="Please tell us why it wasn't helpful"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginTop="20dp"
-                    android:visibility="gone"
-                    >
-                    <requestFocus />
-                </EditText>
+            <LinearLayout
+                android:id="@+id/negativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/submitfeedback"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:text="SUBMIT"
-                android:textAlignment="center"
-                android:visibility="gone"
-                android:layout_marginBottom="20dp"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/input_negative_reason"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Tell us how to help you better"
+                    app:hintAnimationEnabled="true"
+                    app:hintEnabled="true">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/atv_negative_reason"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/submitfeedback"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginBottom="20dp"
+                    android:text="SUBMIT"
+                    android:textAlignment="center" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>

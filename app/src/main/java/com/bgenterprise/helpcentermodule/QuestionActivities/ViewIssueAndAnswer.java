@@ -8,6 +8,8 @@ import android.os.Environment;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,6 +29,7 @@ import com.bgenterprise.helpcentermodule.QuestionsAll;
 import com.bgenterprise.helpcentermodule.R;
 import com.bgenterprise.helpcentermodule.Utility;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.io.File;
@@ -39,14 +42,11 @@ import java.util.Locale;
 
 public class ViewIssueAndAnswer extends AppCompatActivity {
 
-    MaterialTextView qandaContent;
-    MaterialTextView qandaHeader;
-    TextView tvRatingHeader;
-    EditText etNegativeFeedback;
-    MaterialButton btnThumbsDown;
-    MaterialButton btnThumbsUp;
-    MaterialButton btnSubmitNegativeFeedback;
-    LinearLayout layoutRatingSection;
+    MaterialTextView qandaContent, qandaHeader, tvRatingHeader;
+    MaterialButton btnThumbsDown, btnThumbsUp, btnSubmitNegativeFeedback;
+    TextInputLayout input_negative_reason;
+    AutoCompleteTextView atv_negative_reason;
+    LinearLayout layoutRatingSection, negativeLayout;
     ProgressDialog progressDialog;
     VideoView resource_video_view;
     AppCompatImageView resource_image_view;
@@ -78,8 +78,10 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
         qandaHeader = findViewById(R.id.qandaHeader);
         btnSubmitNegativeFeedback = findViewById(R.id.submitfeedback);
         layoutRatingSection = findViewById(R.id.ratingsection);
+        negativeLayout = findViewById(R.id.negativeLayout);
+        input_negative_reason = findViewById(R.id.input_negative_reason);
+        atv_negative_reason = findViewById(R.id.atv_negative_reason);
         tvRatingHeader = findViewById(R.id.ratingheader);
-        etNegativeFeedback = findViewById(R.id.feedback);
         btnThumbsDown = findViewById(R.id.rating2);
         btnThumbsUp = findViewById(R.id.rating);
         resource_video_view = findViewById(R.id.resource_video_view);
@@ -189,24 +191,32 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
             runOnUiThread(() -> {
                 layoutRatingSection.setVisibility(View.GONE);
                 tvRatingHeader.setVisibility(View.GONE);
-                etNegativeFeedback.setVisibility(View.VISIBLE);
                 btnSubmitNegativeFeedback.setVisibility(View.VISIBLE);
+                negativeLayout.setVisibility(View.VISIBLE);
+
+                //Populate reasons for thumbs down.
+                ArrayAdapter<String> negAdapter =
+                        new ArrayAdapter<>(ViewIssueAndAnswer.this,
+                                R.layout.dropdown_menu_popup_item,
+                                Utility.negative_reason_en);
+                atv_negative_reason.setAdapter(negAdapter);
+                atv_negative_reason.requestFocus();
             });
         });
     }
 
     public void negativeFeedback(){
         //Insert into db, only display string in log to ensure right data
+        negativeLayout.setVisibility(View.GONE);
         String feedback_date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        String result = etNegativeFeedback.getText().toString();
-        String feedback_result = "APP_ID: " + "\n" + help_details.get(HelpSessionManager.KEY_APP_ID) + "\n" +
+        String result = atv_negative_reason.getText().toString();
+        /*String feedback_result = "APP_ID: " + "\n" + help_details.get(HelpSessionManager.KEY_APP_ID) + "\n" +
                 "QUESTION_ID: "+"\n" + help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID) + "\n" +
                 "FEEDBACK: "+"\n" + result + "\n" +
                 "DATE: "+"\n" + feedback_date + "\n" +
                 "SYNC_STATUS: " + "\n" + " - ";
         Log.d("CHECK", feedback_result);
-        btnSubmitNegativeFeedback.setVisibility(View.GONE);
-        etNegativeFeedback.setVisibility(View.GONE);
+        */
 
         AppExecutors.getInstance().diskIO().execute(() -> {
             //Insert into negative feedback here.
