@@ -21,19 +21,17 @@
             android:exported="true" />
         <activity android:name=".QuestionActivities.ViewIssueAndAnswer" />
         <activity android:name=".QuestionActivities.ViewActivities" />
-        <activity
-            android:name=".HomePage"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
+        <activity android:name=".HomePage"/>
         <activity android:name=".QuestionActivities.ViewActivityGroups" />
         <activity
             android:name=".SplashScreen"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
         <activity android:name=".MainActivity">
-            <!--<intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
         </activity>
 
         <meta-data

@@ -1,15 +1,14 @@
 package com.bgenterprise.helpcentermodule.QuestionActivities;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.os.Bundle;
-import android.widget.Toast;
 
 import com.bgenterprise.helpcentermodule.AppExecutors;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
@@ -19,7 +18,6 @@ import com.bgenterprise.helpcentermodule.HelpSessionManager;
 import com.bgenterprise.helpcentermodule.QuestionsAll;
 import com.bgenterprise.helpcentermodule.R;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityAdapter;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;

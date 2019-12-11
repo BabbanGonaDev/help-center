@@ -1,8 +1,5 @@
 package com.bgenterprise.helpcentermodule;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -11,7 +8,8 @@ import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Locale;
 

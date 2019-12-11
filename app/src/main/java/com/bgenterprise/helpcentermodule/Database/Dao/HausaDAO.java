@@ -9,7 +9,6 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
-import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
 
 import java.util.List;
 

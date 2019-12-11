@@ -21,7 +21,12 @@
         android:layout_gravity="bottom"
         android:layout_margin="15dp"
         android:text="@string/helpcenter_contact_us_text"
+        android:textAlignment="center" />
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/mtv_app_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:textAlignment="center" />
 
 </FrameLayout>

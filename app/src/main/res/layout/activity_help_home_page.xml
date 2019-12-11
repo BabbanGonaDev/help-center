@@ -108,18 +108,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/local_toolbar"
-            style="@style/MyToolbarTheme"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#050150"
-            android:elevation="4dp"
-            android:fitsSystemWindows="true"
-            android:minHeight="?attr/actionBarSize"
-            app:title="@string/helpcenter_app_name"
-            app:titleTextColor="@android:color/white" />
-
         <ProgressBar
             android:id="@+id/loading_progress_bar"
             style="?android:attr/progressBarStyleHorizontal"
@@ -351,6 +339,12 @@
                     </com.google.android.material.card.MaterialCardView>
 
                 </LinearLayout>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/mtv_app_version"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center" />
 
                 <!--<androidx.gridlayout.widget.GridLayout
                 android:id="@+id/grid1"

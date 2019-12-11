@@ -44,5 +44,11 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             android:textSize="18sp"
             android:textStyle="italic" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/mtv_app_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center" />
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

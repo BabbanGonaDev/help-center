@@ -1,35 +1,6 @@
 package com.bgenterprise.helpcentermodule;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.LinearLayoutCompat;
-import androidx.cardview.widget.CardView;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import com.bgenterprise.helpcentermodule.Database.Tables.ContactSupport;
-import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
-import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
-import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
-import com.bgenterprise.helpcentermodule.Network.ModelClasses.ContactSupportSyncDown;
-import com.bgenterprise.helpcentermodule.Network.ModelClasses.GeneralFeedbackResponse;
-import com.bgenterprise.helpcentermodule.Network.ModelClasses.NegativeFeedbackResponse;
-import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsEnglishSyncDown;
-import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsHausaSyncDown;
-import com.bgenterprise.helpcentermodule.Network.RetrofitApiCalls;
-import com.bgenterprise.helpcentermodule.Network.RetrofitClient;
-import com.bgenterprise.helpcentermodule.QuestionActivities.ViewActivityGroups;
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textview.MaterialTextView;
-import com.google.gson.Gson;
-
-import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -46,6 +17,32 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
+import com.bgenterprise.helpcentermodule.Database.Tables.ContactSupport;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
+import com.bgenterprise.helpcentermodule.Network.ModelClasses.ContactSupportSyncDown;
+import com.bgenterprise.helpcentermodule.Network.ModelClasses.GeneralFeedbackResponse;
+import com.bgenterprise.helpcentermodule.Network.ModelClasses.NegativeFeedbackResponse;
+import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsEnglishSyncDown;
+import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsHausaSyncDown;
+import com.bgenterprise.helpcentermodule.Network.RetrofitApiCalls;
+import com.bgenterprise.helpcentermodule.Network.RetrofitClient;
+import com.bgenterprise.helpcentermodule.QuestionActivities.ViewActivityGroups;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textview.MaterialTextView;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -66,7 +63,7 @@ import retrofit2.Response;
 public class HomePage extends AppCompatActivity {
     CoordinatorLayout cl;
     MaterialButton btn_cancel_resource_sync;
-    MaterialTextView mtv_success_text, mtv_fail_text, mtv_progress_text;
+    MaterialTextView mtv_success_text, mtv_fail_text, mtv_progress_text, mtv_app_version;
     ProgressBar progressBar, loading_progressbar;
     LinearLayoutCompat loading_layout;
     HelpSessionManager sessionM;
@@ -86,7 +83,6 @@ public class HomePage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_home_page);
         cl = findViewById(R.id.cl);
-        MaterialToolbar custom_toolbar = findViewById(R.id.local_toolbar);
         CardView tgl_test_card = findViewById(R.id.tgl_test_card);
         CardView tgl_interview_card = findViewById(R.id.tgl_interview_card);
         CardView field_mapping_card = findViewById(R.id.field_mapping_card);
@@ -95,14 +91,15 @@ public class HomePage extends AppCompatActivity {
         mtv_progress_text = findViewById(R.id.mtv_progress_text);
         mtv_success_text = findViewById(R.id.mtv_success_text);
         mtv_fail_text = findViewById(R.id.mtv_fail_text);
+        mtv_app_version = findViewById(R.id.mtv_app_version);
         loading_layout = findViewById(R.id.loading_layout);
         progressBar = findViewById(R.id.progressBar);
         loading_progressbar = findViewById(R.id.loading_progress_bar);
 
-        setSupportActionBar(custom_toolbar);
         helpcenterdb = HelpCenterDatabase.getInstance(HomePage.this);
         sessionM = new HelpSessionManager(HomePage.this);
         help_details = sessionM.getHelpDetails();
+        mtv_app_version.setText("\u00A9" + "BG Enterprise Systems v" + BuildConfig.VERSION_NAME);
 
         tgl_test_card.setOnClickListener(view -> {
             sessionM.SET_KEY_APP_ID("tgl_test");

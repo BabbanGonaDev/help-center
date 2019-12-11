@@ -1,12 +1,8 @@
 package com.bgenterprise.helpcentermodule.QuestionActivities;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -23,7 +19,6 @@ import com.bgenterprise.helpcentermodule.QuestionsAll;
 import com.bgenterprise.helpcentermodule.R;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityGroupAdapter;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.FAQAdapter;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;

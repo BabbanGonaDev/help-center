@@ -1,15 +1,5 @@
 package com.bgenterprise.helpcentermodule.QuestionActivities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -27,19 +17,28 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bgenterprise.helpcentermodule.AppExecutors;
 import com.bgenterprise.helpcentermodule.BuildConfig;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
 import com.bgenterprise.helpcentermodule.HelpSessionManager;
-import com.bgenterprise.helpcentermodule.HomePage;
 import com.bgenterprise.helpcentermodule.QuestionsAll;
 import com.bgenterprise.helpcentermodule.R;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityIssuesAdapter;
-
 import com.bgenterprise.helpcentermodule.Utility;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -51,6 +50,7 @@ import java.util.Locale;
 public class ViewActivityIssues extends AppCompatActivity {
     RecyclerView recyclerView2;
     Button contactUs;
+    MaterialTextView mtv_app_version;
     public List<QuestionsEnglish> questionsList_en;
     public List<QuestionsHausa> questionsList_ha;
     public List<QuestionsAll> questionsList_all;
@@ -77,6 +77,7 @@ public class ViewActivityIssues extends AppCompatActivity {
         recyclerView2 = findViewById(R.id.recyclerView2);
         contactUs = findViewById(R.id.contactUs);
         myDialog = new Dialog(this);
+        mtv_app_version = findViewById(R.id.mtv_app_version);
 
         //Receive intent call from external apps.
         try{
@@ -100,6 +101,7 @@ public class ViewActivityIssues extends AppCompatActivity {
         //Get the values from the shared prefs now.
         help_details = sessionM.getHelpDetails();
 
+        mtv_app_version.setText("\u00A9" + "BG Enterprise Systems v" + BuildConfig.VERSION_NAME);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading....");
         progressDialog.show();
