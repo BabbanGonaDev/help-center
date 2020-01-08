@@ -24,12 +24,10 @@ public class HelpSessionManager {
     public static final String KEY_UNIQUE_QUESTION_ID = "unique_question_id";
     public static final String KEY_ACTIVITY_ISSUE = "activity_issue";
     public static final String KEY_STAFF_ID = "staff_id";
-    public static final String KEY_DAO_LANG = "dao_language";
     public static final String KEY_APP_LANG = "app_language";
     public static final String KEY_USER_LOCATION = "user_location";
     public static final String KEY_LAST_SYNC_DATE = "last_sync_date";
     public static final String KEY_LAST_SYNC_QUESTIONS_ENGLISH = "last_sync_questions_english";
-    public static final String KEY_LAST_SYNC_QUESTIONS_HAUSA = "last_sync_questions_hausa";
 
 
     public HelpSessionManager(Context context) {
@@ -73,9 +71,8 @@ public class HelpSessionManager {
         editor.commit();
     }
 
-    public void SET_LANGUAGE(String app_lang, String dao_lang){
+    public void SET_LANGUAGE(String app_lang){
         editor.putString(KEY_APP_LANG, app_lang);
-        editor.putString(KEY_DAO_LANG, dao_lang);
         editor.commit();
     }
 
@@ -93,21 +90,12 @@ public class HelpSessionManager {
         editor.commit();
     }
 
-    public void SET_LAST_SYNC_QUESTIONS_HAUSA(String value){
-        editor.putString(KEY_LAST_SYNC_QUESTIONS_HAUSA, value);
-        editor.commit();
-    }
-
     public Boolean getImportStatus(){
         return prefs.getBoolean(KEY_IMPORT_CSV, false);
     }
 
     public String getAppLanguage(){
         return prefs.getString(KEY_APP_LANG, "en");
-    }
-
-    public String getDaoLanguange(){
-        return prefs.getString(KEY_DAO_LANG, "English");
     }
 
     public HashMap<String, String> getHelpDetails(){
@@ -121,8 +109,8 @@ public class HelpSessionManager {
         help.put(KEY_STAFF_ID, prefs.getString(KEY_STAFF_ID, ""));
         help.put(KEY_LAST_SYNC_DATE, prefs.getString(KEY_LAST_SYNC_DATE, ""));
         help.put(KEY_USER_LOCATION, prefs.getString(KEY_USER_LOCATION, "Lagos"));
+        help.put(KEY_APP_LANG, prefs.getString(KEY_APP_LANG, "en"));
         help.put(KEY_LAST_SYNC_QUESTIONS_ENGLISH, prefs.getString(KEY_LAST_SYNC_QUESTIONS_ENGLISH, "2019-11-04 00:00:00"));
-        help.put(KEY_LAST_SYNC_QUESTIONS_HAUSA, prefs.getString(KEY_LAST_SYNC_QUESTIONS_HAUSA, "2019-11-04 00:00:00"));
 
         return help;
     }

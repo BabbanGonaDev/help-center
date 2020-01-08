@@ -4,7 +4,6 @@ import com.bgenterprise.helpcentermodule.Network.ModelClasses.ContactSupportSync
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.GeneralFeedbackResponse;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.NegativeFeedbackResponse;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsEnglishSyncDown;
-import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsHausaSyncDown;
 
 import java.util.List;
 
@@ -19,19 +18,12 @@ import retrofit2.http.Url;
 
 public interface RetrofitApiCalls {
 
-    @GET("sync_down_questions_english.php")
+    @GET("sync_down_questions.php")
     Call<List<QuestionsEnglishSyncDown>> syncDownQuestionsEnglish(@Query("last_sync_down_questions_english") String last_sync_down);
 
-    @GET("sync_down_questions_hausa.php")
-    Call<List<QuestionsHausaSyncDown>> syncDownQuestionsHausa(@Query("last_sync_down_questions_hausa") String last_sync_down);
-
     @FormUrlEncoded
-    @POST("sync_up_feedback_english.php")
+    @POST("sync_up_feedback.php")
     Call<List<GeneralFeedbackResponse>> syncUpEnglishFeedback(@Field("english_feedback_list") String english_feedback_list);
-
-    @FormUrlEncoded
-    @POST("sync_up_feedback_hausa.php")
-    Call<List<GeneralFeedbackResponse>> syncUpHausaFeedback(@Field("hausa_feedback_list") String hausa_feedback_list);
 
     @FormUrlEncoded
     @POST("sync_up_negative_feedback.php")

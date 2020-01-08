@@ -11,8 +11,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
 
-    private static final String BASE_URL = "http://apps.babbangona.com/helpcenter-api/";
-    /*private static final String BASE_URL = "http://192.168.137.1/helpcenter-api/";*/
+    //private static final String BASE_URL = "http://apps.babbangona.com/helpcenter-api/";
+    private static final String BASE_URL = "http://172.168.1.86/helpcenter-api/";
 
     private static  Retrofit retrofit = null;
 

@@ -14,10 +14,6 @@ public class Utility {
 
     public static final String resource_location = "/Helpcenter/resources/";
 
-    public static final String resource_location_en = "/Helpcenter/resources/en/";
-
-    public static final String resource_location_ha = "/Helpcenter/resources/ha/";
-
     public static final String[] negative_reason_en = new String[] {"My First negative reason",
         "My second negative reason",
         "My third negative reason",

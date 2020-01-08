@@ -30,20 +30,20 @@ public interface EnglishDAO {
     @Delete
     void DeleteIssue(QuestionsEnglish questionsEnglishT);
 
-    @Query("SELECT * FROM questions_english WHERE app_id = :appID GROUP BY activity_group_id")
-    List<QuestionsEnglish> getActivityGroups(String appID);
+    @Query("SELECT * FROM questions_english WHERE app_id = :appID AND language_id = :languageId GROUP BY activity_group_id")
+    List<QuestionsEnglish> getActivityGroups(String appID, String languageId);
 
-    @Query("SELECT * FROM questions_english WHERE activity_group_id = :groupId GROUP BY activity_id")
-    List<QuestionsEnglish> getActivities(String groupId);
+    @Query("SELECT * FROM questions_english WHERE activity_group_id = :groupId AND language_id = :languageId GROUP BY activity_id")
+    List<QuestionsEnglish> getActivities(String groupId, String languageId);
 
-    @Query("SELECT * FROM questions_english WHERE activity_id = :activityID")
-    List<QuestionsEnglish> getActivityQuestions(String activityID);
+    @Query("SELECT * FROM questions_english WHERE activity_id = :activityID AND language_id = :languageId")
+    List<QuestionsEnglish> getActivityQuestions(String activityID, String languageId);
 
-    @Query("SELECT * FROM questions_english WHERE unique_question_id = :questionID")
-    List<QuestionsEnglish> getAllQuestionSolution (String questionID);
+    @Query("SELECT * FROM questions_english WHERE unique_question_id = :questionID AND language_id = :languageId")
+    List<QuestionsEnglish> getAllQuestionSolution (String questionID, String languageId);
 
-    @Query("SELECT * FROM questions_english WHERE app_id = :appID ORDER BY faq_status DESC LIMIT 3")
-    List<QuestionsEnglish> getAllFAQQuestions(String appID);
+    @Query("SELECT * FROM questions_english WHERE app_id = :appID AND language_id = :languageId ORDER BY faq_status DESC LIMIT 3")
+    List<QuestionsEnglish> getAllFAQQuestions(String appID, String languageId);
 
     @Query("UPDATE questions_english SET positive_feedback_count = positive_feedback_count + 1 WHERE unique_question_id = :questionID")
     void updateThumbsUp(String questionID);

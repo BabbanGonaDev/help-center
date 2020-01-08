@@ -31,9 +31,7 @@ import com.bgenterprise.helpcentermodule.AppExecutors;
 import com.bgenterprise.helpcentermodule.BuildConfig;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
-import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
 import com.bgenterprise.helpcentermodule.HelpSessionManager;
-import com.bgenterprise.helpcentermodule.QuestionsAll;
 import com.bgenterprise.helpcentermodule.R;
 import com.bgenterprise.helpcentermodule.RecyclerAdapters.ActivityIssuesAdapter;
 import com.bgenterprise.helpcentermodule.Utility;
@@ -51,9 +49,7 @@ public class ViewActivityIssues extends AppCompatActivity {
     RecyclerView recyclerView2;
     Button contactUs;
     MaterialTextView mtv_app_version;
-    public List<QuestionsEnglish> questionsList_en;
-    public List<QuestionsHausa> questionsList_ha;
-    public List<QuestionsAll> questionsList_all;
+    public List<QuestionsEnglish> questionsList;
     ActivityIssuesAdapter adapter;
     HelpCenterDatabase helpCenterDb;
     ProgressDialog progressDialog;
@@ -68,9 +64,7 @@ public class ViewActivityIssues extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_view_activity_issues);
         getSupportActionBar().setTitle("View Activity Issues");
-        questionsList_en = new ArrayList<>();
-        questionsList_ha = new ArrayList<>();
-        questionsList_all = new ArrayList<>();
+        questionsList = new ArrayList<>();
         helpCenterDb = HelpCenterDatabase.getInstance(ViewActivityIssues.this);
         sessionM = new HelpSessionManager(ViewActivityIssues.this);
 
@@ -105,16 +99,7 @@ public class ViewActivityIssues extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading....");
         progressDialog.show();
-
-        switch (sessionM.getAppLanguage()){
-            case "en":
-                displayActivityIssuesEnglish();
-                break;
-            case "ha":
-                displayActivityIssuesHausa();
-                break;
-        }
-
+        displayActivityIssuesEnglish();
         contactUs.setOnClickListener(view -> {
             onButtonShowPopupWindowClick(view);
         });
@@ -147,10 +132,10 @@ public class ViewActivityIssues extends AppCompatActivity {
                     String selected_lang = Utility.app_language[i];
                     switch (selected_lang){
                         case "English":
-                            sessionM.SET_LANGUAGE("en", "English");
+                            sessionM.SET_LANGUAGE("en");
                             break;
                         case "Hausa":
-                            sessionM.SET_LANGUAGE("ha", "Hausa");
+                            sessionM.SET_LANGUAGE("ha");
                             break;
                         default:
                             break;
@@ -173,50 +158,19 @@ public class ViewActivityIssues extends AppCompatActivity {
     public void displayActivityIssuesEnglish(){
         //Get the Activity Issues using AppExecutors.
         AppExecutors.getInstance().diskIO().execute(() -> {
-            questionsList_en = helpCenterDb.getEnglishDao().getActivityQuestions(help_details.get(HelpSessionManager.KEY_ACTIVITY_ID));
+            questionsList = helpCenterDb.getEnglishDao().getActivityQuestions(help_details.get(HelpSessionManager.KEY_ACTIVITY_ID), help_details.get(HelpSessionManager.KEY_APP_LANG));
 
-            if(questionsList_en == null || questionsList_en.isEmpty()){
+            if(questionsList == null || questionsList.isEmpty()){
                 Log.d("CHECK:", "List is very empty");
                 finish();
                 startActivity(new Intent(ViewActivityIssues.this, QuestionNotFound.class));
             }
 
             runOnUiThread(() -> {
-                questionsList_all = convertEnglishToAll(questionsList_en);
-                adapter = new ActivityIssuesAdapter(ViewActivityIssues.this, questionsList_all, questionsAll -> {
+                adapter = new ActivityIssuesAdapter(ViewActivityIssues.this, questionsList, questionsEnglish -> {
                     //Save only unique_question_id.
-                    sessionM.SET_UNIQUE_QUESTION_ID(questionsAll.getUnique_question_id());
-                    startActivity(new Intent(ViewActivityIssues.this, ViewIssueAndAnswer.class));
-                });
-
-                RecyclerView.LayoutManager vLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
-                recyclerView2.setLayoutManager(vLayoutManager);
-                recyclerView2.setItemAnimator(new DefaultItemAnimator());
-                recyclerView2.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-                recyclerView2.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-                progressDialog.dismiss();
-            });
-        });
-    }
-
-    public void displayActivityIssuesHausa(){
-        //Get the Activity Issues using AppExecutors.
-        AppExecutors.getInstance().diskIO().execute(() -> {
-            questionsList_ha = helpCenterDb.getHausaDao().getActivityQuestions(help_details.get(HelpSessionManager.KEY_ACTIVITY_ID));
-
-            if(questionsList_ha == null || questionsList_ha.isEmpty()){
-                Log.d("CHECK:", "List is very empty");
-                finish();
-                startActivity(new Intent(ViewActivityIssues.this, QuestionNotFound.class));
-            }
-
-            runOnUiThread(() -> {
-                questionsList_all = convertHausaToAll(questionsList_ha);
-                adapter = new ActivityIssuesAdapter(ViewActivityIssues.this, questionsList_all, questionsAll -> {
-                    //Save only unique_question_id.
-                    sessionM.SET_UNIQUE_QUESTION_ID(questionsAll.getUnique_question_id());
-                    startActivity(new Intent(ViewActivityIssues.this, ViewIssueAndAnswer.class));
+                    sessionM.SET_UNIQUE_QUESTION_ID(questionsEnglish.getUnique_question_id());
+                    ViewActivityIssues.this.startActivity(new Intent(ViewActivityIssues.this, ViewIssueAndAnswer.class));
                 });
 
                 RecyclerView.LayoutManager vLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
@@ -321,43 +275,4 @@ public class ViewActivityIssues extends AppCompatActivity {
         return true;
     }
 
-    public List<QuestionsAll> convertHausaToAll(List<QuestionsHausa> qHausa){
-        List<QuestionsAll> y = new ArrayList<>();
-        for(QuestionsHausa x: qHausa){
-            y.add(new QuestionsAll(x.getUnique_question_id(),
-                    x.getApp_id(),
-                    x.getActivity_group_id(),
-                    x.getActivity_id(),
-                    x.getActivity_name(),
-                    x.getResource_id(),
-                    x.getResource_url(),
-                    x.getIssue_question(),
-                    x.getIssue_answer(),
-                    x.getPositive_feedback_count(),
-                    x.getNegative_feedback_count(),
-                    x.getFaq_status()));
-        }
-
-        return y;
-    }
-
-    public List<QuestionsAll> convertEnglishToAll(List<QuestionsEnglish> qEnglish){
-        List<QuestionsAll> y = new ArrayList<>();
-        for(QuestionsEnglish x: qEnglish){
-            y.add(new QuestionsAll(x.getUnique_question_id(),
-                    x.getApp_id(),
-                    x.getActivity_group_id(),
-                    x.getActivity_id(),
-                    x.getActivity_name(),
-                    x.getResource_id(),
-                    x.getResource_url(),
-                    x.getIssue_question(),
-                    x.getIssue_answer(),
-                    x.getPositive_feedback_count(),
-                    x.getNegative_feedback_count(),
-                    x.getFaq_status()));
-        }
-
-        return y;
-    }
 }

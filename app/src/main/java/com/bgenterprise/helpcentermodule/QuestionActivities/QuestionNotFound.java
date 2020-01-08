@@ -74,10 +74,10 @@ public class QuestionNotFound extends AppCompatActivity {
                     String selected_lang = Utility.app_language[i];
                     switch (selected_lang){
                         case "English":
-                            sessionM.SET_LANGUAGE("en", "English");
+                            sessionM.SET_LANGUAGE("en");
                             break;
                         case "Hausa":
-                            sessionM.SET_LANGUAGE("ha", "Hausa");
+                            sessionM.SET_LANGUAGE("ha");
                             break;
                         default:
                             break;

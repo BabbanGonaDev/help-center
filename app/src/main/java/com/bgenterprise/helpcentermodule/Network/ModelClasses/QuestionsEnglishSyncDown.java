@@ -13,6 +13,10 @@ public class QuestionsEnglishSyncDown {
     @Expose
     private String app_id;
 
+    @SerializedName("language_id")
+    @Expose
+    private String language_id;
+
     @SerializedName("activity_group_id")
     @Expose
     private String activity_group_id;
@@ -52,9 +56,10 @@ public class QuestionsEnglishSyncDown {
     public QuestionsEnglishSyncDown() {
     }
 
-    public QuestionsEnglishSyncDown(String unique_question_id, String app_id, String activity_group_id, String activity_id, String activity_name, String resource_id, String resource_url, String issue_question, String issue_answer, String faq_status, String last_sync_time) {
+    public QuestionsEnglishSyncDown(String unique_question_id, String app_id, String language_id, String activity_group_id, String activity_id, String activity_name, String resource_id, String resource_url, String issue_question, String issue_answer, String faq_status, String last_sync_time) {
         this.unique_question_id = unique_question_id;
         this.app_id = app_id;
+        this.language_id = language_id;
         this.activity_group_id = activity_group_id;
         this.activity_id = activity_id;
         this.activity_name = activity_name;
@@ -72,6 +77,10 @@ public class QuestionsEnglishSyncDown {
 
     public String getApp_id() {
         return app_id;
+    }
+
+    public String getLanguage_id() {
+        return language_id;
     }
 
     public String getActivity_group_id() {

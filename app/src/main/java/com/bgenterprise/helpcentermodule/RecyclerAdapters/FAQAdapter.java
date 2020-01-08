@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bgenterprise.helpcentermodule.QuestionsAll;
+import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.R;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -19,9 +19,9 @@ public class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.FAQViewHolder> {
 
     private Context context;
     private final OnItemClickListener listener;
-    private List<QuestionsAll> faqList;
+    private List<QuestionsEnglish> faqList;
 
-    public FAQAdapter(Context context, List<QuestionsAll> faqList, OnItemClickListener listener) {
+    public FAQAdapter(Context context, List<QuestionsEnglish> faqList, OnItemClickListener listener) {
         this.context = context;
         this.faqList = faqList;
         this.listener = listener;
@@ -36,7 +36,7 @@ public class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.FAQViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull FAQViewHolder holder, int position) {
-        QuestionsAll issue = faqList.get(position);
+        QuestionsEnglish issue = faqList.get(position);
         holder.mcv_FAQ_headline.setText(issue.getIssue_question());
     }
 
@@ -46,7 +46,7 @@ public class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.FAQViewHolder> {
     }
 
     public interface OnItemClickListener{
-        void onClick(QuestionsAll issuesList);
+        void onClick(QuestionsEnglish issuesList);
     }
 
     public class FAQViewHolder extends RecyclerView.ViewHolder{

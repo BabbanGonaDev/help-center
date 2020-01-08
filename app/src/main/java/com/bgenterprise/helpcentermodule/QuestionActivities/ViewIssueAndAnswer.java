@@ -6,13 +6,10 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -23,9 +20,7 @@ import com.bgenterprise.helpcentermodule.AppExecutors;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.NegativeFeedback;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
-import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsHausa;
 import com.bgenterprise.helpcentermodule.HelpSessionManager;
-import com.bgenterprise.helpcentermodule.QuestionsAll;
 import com.bgenterprise.helpcentermodule.R;
 import com.bgenterprise.helpcentermodule.Utility;
 import com.google.android.material.button.MaterialButton;
@@ -52,9 +47,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
     AppCompatImageView resource_image_view;
     HelpSessionManager sessionM;
     HelpCenterDatabase helpCenterDb;
-    public List<QuestionsEnglish> questionsList_en;
-    public List<QuestionsHausa> questionsList_ha;
-    public List<QuestionsAll> questionsList_all;
+    public List<QuestionsEnglish> questionsList;
     HashMap<String, String> help_details;
     String issue_content, issue_header, issue_resource;
 
@@ -63,9 +56,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_view_issue_and_answer);
         getSupportActionBar().setTitle("View Answer");
-        questionsList_en = new ArrayList<>();
-        questionsList_ha = new ArrayList<>();
-        questionsList_all = new ArrayList<>();
+        questionsList = new ArrayList<>();
         sessionM = new HelpSessionManager(ViewIssueAndAnswer.this);
         helpCenterDb = HelpCenterDatabase.getInstance(ViewIssueAndAnswer.this);
         help_details = sessionM.getHelpDetails();
@@ -90,39 +81,18 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
 
         //Get and display questions using AppExecutor.
         AppExecutors.getInstance().diskIO().execute(() -> {
-            switch (sessionM.getAppLanguage()){
-                case "en":
-                    questionsList_en = helpCenterDb.getEnglishDao().getAllQuestionSolution(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
-                    questionsList_all = convertEnglishToAll(questionsList_en);
-                    break;
-                case "ha":
-                    questionsList_ha = helpCenterDb.getHausaDao().getAllQuestionSolution(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
-                    questionsList_all = convertHausaToAll(questionsList_ha);
-                    break;
-            }
+            questionsList = helpCenterDb.getEnglishDao().getAllQuestionSolution(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID), help_details.get(HelpSessionManager.KEY_APP_LANG));
 
             runOnUiThread(() -> {
-                issue_content = questionsList_all.get(0).getIssue_answer();
-                issue_header = questionsList_all.get(0).getIssue_question();
-                issue_resource = questionsList_all.get(0).getResource_id();
+                issue_content = questionsList.get(0).getIssue_answer();
+                issue_header = questionsList.get(0).getIssue_question();
+                issue_resource = questionsList.get(0).getResource_id();
 
                 qandaHeader.setText(issue_header);
                 qandaContent.setText(Html.fromHtml(issue_content));
 
                 //Get resource path based on app language.
-                String path;
-                switch (sessionM.getAppLanguage()){
-                    case "en":
-                        path = Environment.getExternalStorageDirectory().getPath() + Utility.resource_location_en;
-                        break;
-                    case "ha":
-                        path = Environment.getExternalStorageDirectory().getPath() + Utility.resource_location_ha;
-                        break;
-                    default:
-                        path = Environment.getExternalStorageDirectory().getPath() + Utility.resource_location;
-                        break;
-
-                }
+                String path = Environment.getExternalStorageDirectory().getPath() + Utility.resource_location;
 
                 //Display appropriate view based on resource type.
                 if(!issue_resource.isEmpty()){
@@ -159,14 +129,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
     public void ratingUp(){
         //Thumbs Up
         AppExecutors.getInstance().diskIO().execute(() -> {
-            switch (sessionM.getAppLanguage()){
-                case "en":
-                    helpCenterDb.getEnglishDao().updateThumbsUp(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
-                    break;
-                case "ha":
-                    helpCenterDb.getHausaDao().updateThumbsUp(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
-                    break;
-            }
+            helpCenterDb.getEnglishDao().updateThumbsUp(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
 
             runOnUiThread(() -> {
                 Toast.makeText(ViewIssueAndAnswer.this,R.string.helpcenter_feedback_appreciate, Toast.LENGTH_SHORT).show();
@@ -179,14 +142,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
     public void ratingDown(){
         //Thumbs Down
         AppExecutors.getInstance().diskIO().execute(() -> {
-            switch (sessionM.getAppLanguage()){
-                case "en":
-                    helpCenterDb.getEnglishDao().updateThumbsDown(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
-                    break;
-                case "ha":
-                    helpCenterDb.getHausaDao().updateThumbsDown(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
-                    break;
-            }
+            helpCenterDb.getEnglishDao().updateThumbsDown(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
 
             runOnUiThread(() -> {
                 layoutRatingSection.setVisibility(View.GONE);
@@ -229,46 +185,6 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
 
             runOnUiThread(() -> Toast.makeText(ViewIssueAndAnswer.this, R.string.helpcenter_feedback_appreciate, Toast.LENGTH_LONG).show());
         });
-    }
-
-    public List<QuestionsAll> convertHausaToAll(List<QuestionsHausa> qHausa){
-        List<QuestionsAll> y = new ArrayList<>();
-        for(QuestionsHausa x: qHausa){
-            y.add(new QuestionsAll(x.getUnique_question_id(),
-                    x.getApp_id(),
-                    x.getActivity_group_id(),
-                    x.getActivity_id(),
-                    x.getActivity_name(),
-                    x.getResource_id(),
-                    x.getResource_url(),
-                    x.getIssue_question(),
-                    x.getIssue_answer(),
-                    x.getPositive_feedback_count(),
-                    x.getNegative_feedback_count(),
-                    x.getFaq_status()));
-        }
-
-        return y;
-    }
-
-    public List<QuestionsAll> convertEnglishToAll(List<QuestionsEnglish> qEnglish){
-        List<QuestionsAll> y = new ArrayList<>();
-        for(QuestionsEnglish x: qEnglish){
-            y.add(new QuestionsAll(x.getUnique_question_id(),
-                    x.getApp_id(),
-                    x.getActivity_group_id(),
-                    x.getActivity_id(),
-                    x.getActivity_name(),
-                    x.getResource_id(),
-                    x.getResource_url(),
-                    x.getIssue_question(),
-                    x.getIssue_answer(),
-                    x.getPositive_feedback_count(),
-                    x.getNegative_feedback_count(),
-                    x.getFaq_status()));
-        }
-
-        return y;
     }
 
     public String getFileExtension(String name){
