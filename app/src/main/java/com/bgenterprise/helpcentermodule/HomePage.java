@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.ContactSupport;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
+import com.bgenterprise.helpcentermodule.Network.HelpCenterSync;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.ContactSupportSyncDown;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.GeneralFeedbackResponse;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.NegativeFeedbackResponse;
@@ -231,17 +232,14 @@ public class HomePage extends AppCompatActivity {
         //For the syncing function, we download all languages to the phone, then switch the tables based on shared pref language.
         if(isConnected()) {
             Toast.makeText(HomePage.this, "Beginning syncing process", Toast.LENGTH_LONG).show();
-            syncDownQuestionsEnglish();
-            syncUpNegativeFeedback();
-            syncUpEnglishFeedback();
-            syncDownContactSupport();
+            startService(new Intent(this, HelpCenterSync.class));
         }else{
             Snackbar.make(cl, R.string.helpcenter_check_network, Snackbar.LENGTH_INDEFINITE)
                     .setAction("FIX", view -> HomePage.this.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS))).show();
         }
     }
 
-    public void syncDownQuestionsEnglish(){
+    /*public void syncDownQuestionsEnglish(){
         loading_progressbar.setVisibility(View.VISIBLE);
         RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
         Call<List<QuestionsEnglishSyncDown>> call = service.syncDownQuestionsEnglish(help_details.get(HelpSessionManager.KEY_LAST_SYNC_QUESTIONS_ENGLISH));
@@ -292,11 +290,11 @@ public class HomePage extends AppCompatActivity {
         Gson json = new Gson();
         AppExecutors.getInstance().diskIO().execute(() -> {
             String feedbackValues= json.toJson(helpcenterdb.getEnglishDao().getQuestionFeedback());
-            runOnUiThread(() -> initEnglishFeedbackSync(feedbackValues));
+            runOnUiThread(() -> initFeedbackSync(feedbackValues));
         });
     }
 
-    public void initEnglishFeedbackSync(String values){
+    public void initFeedbackSync(String values){
         Log.d("CHECK", values);
         //This function syncs up the values of the feedback for the questions in the app.
         RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
@@ -395,7 +393,7 @@ public class HomePage extends AppCompatActivity {
                 Toast.makeText(HomePage.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
         });
-    }
+    }*/
 
     public void syncDownResources(){
         //Get the list of all the questions on the table.
