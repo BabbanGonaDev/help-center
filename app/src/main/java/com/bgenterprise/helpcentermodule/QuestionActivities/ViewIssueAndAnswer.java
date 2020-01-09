@@ -166,13 +166,6 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
         negativeLayout.setVisibility(View.GONE);
         String feedback_date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         String result = atv_negative_reason.getText().toString();
-        /*String feedback_result = "APP_ID: " + "\n" + help_details.get(HelpSessionManager.KEY_APP_ID) + "\n" +
-                "QUESTION_ID: "+"\n" + help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID) + "\n" +
-                "FEEDBACK: "+"\n" + result + "\n" +
-                "DATE: "+"\n" + feedback_date + "\n" +
-                "SYNC_STATUS: " + "\n" + " - ";
-        Log.d("CHECK", feedback_result);
-        */
 
         AppExecutors.getInstance().diskIO().execute(() -> {
             //Insert into negative feedback here.

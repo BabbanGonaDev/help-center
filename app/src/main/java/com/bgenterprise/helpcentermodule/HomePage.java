@@ -66,11 +66,10 @@ public class HomePage extends AppCompatActivity {
     LinearLayoutCompat loading_layout;
     HelpSessionManager sessionM;
     HashMap<String, String> help_details;
-    String session_app_lang, session_dao_lang;
+    String session_app_lang;
     HelpCenterDatabase helpcenterdb;
     Boolean writtenToDisk;
     List<QuestionsEnglish> resourceList, downloadList;
-    List<QuestionsEnglish> english_resource;
     int currentNo, success_count, fail_count;
     private static final int PERMISSIONS_REQUEST_CODE = 4045;
 
@@ -140,7 +139,7 @@ public class HomePage extends AppCompatActivity {
 
     }
 
-    public boolean checkAndRequestPermissions(){
+   public boolean checkAndRequestPermissions(){
         //Check which permissions are granted
         List<String> listPermissionsNeeded = new ArrayList<>();
         for(String perm : Utility.appPermissions){
@@ -385,6 +384,7 @@ public class HomePage extends AppCompatActivity {
 
                     AppExecutors.getInstance().diskIO().execute(() -> {
                         helpcenterdb.getContactDao().InsertFromOnline(contact_support);
+                        runOnUiThread(() -> loading_progressbar.setVisibility(View.GONE));
                     });
 
                 }
