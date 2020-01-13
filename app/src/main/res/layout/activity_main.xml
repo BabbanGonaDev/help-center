@@ -18,6 +18,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:onClick="moveToNextPage"
-            android:text="Help Center" />
+            android:text="@string/helpcenter_app_name" />
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -35,7 +35,7 @@ public class QuestionNotFound extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         sessionM = new HelpSessionManager(QuestionNotFound.this);
         mtv_app_version = findViewById(R.id.mtv_app_version);
-        mtv_app_version.setText("\u00A9" + "BG Enterprise Systems v" + BuildConfig.VERSION_NAME);
+        mtv_app_version.setText("\u00A9" + "BG Help Center v" + BuildConfig.VERSION_NAME);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class QuestionNotFound extends AppCompatActivity {
         new MaterialAlertDialogBuilder(QuestionNotFound.this)
                 .setTitle("Choose App Language")
                 .setSingleChoiceItems(Utility.app_language, -1, (dialogInterface, i) -> {
-                    Toast.makeText(QuestionNotFound.this, "Language selected: " + Utility.app_language[i], Toast.LENGTH_LONG).show();
+                    Toast.makeText(QuestionNotFound.this, R.string.helpcenter_selected_language_toast + Utility.app_language[i], Toast.LENGTH_LONG).show();
 
                     //Based on language, set the appropriate application language.
                     String selected_lang = Utility.app_language[i];

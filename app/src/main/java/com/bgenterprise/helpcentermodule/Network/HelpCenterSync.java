@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import com.bgenterprise.helpcentermodule.AppExecutors;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.Database.Tables.ContactSupport;
+import com.bgenterprise.helpcentermodule.Database.Tables.NegativeDropdown;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.HelpSessionManager;
 import com.bgenterprise.helpcentermodule.HomePage;
@@ -33,7 +34,7 @@ public class HelpCenterSync extends Service {
     HelpSessionManager sessionM;
     HashMap<String, String> help_details;
     HelpCenterDatabase helpcenterdb;
-    int x = 0;
+    int x;
 
 
     @Nullable
@@ -54,10 +55,13 @@ public class HelpCenterSync extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         //Trigger the sync functions here.
         //For the syncing function, we download all languages to the phone, then switch the tables based on shared pref language.
+        x = 0;
+
         syncDownQuestionsEnglish();
         syncUpNegativeFeedback();
         syncUpEnglishFeedback();
         syncDownContactSupport();
+        syncDownNegativeDropdown();
 
         return START_STICKY;
     }
@@ -108,7 +112,7 @@ public class HelpCenterSync extends Service {
 
             @Override
             public void onFailure(Call<List<QuestionsEnglishSyncDown>> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Help Center Questions: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -224,15 +228,40 @@ public class HelpCenterSync extends Service {
 
             @Override
             public void onFailure(Call<List<ContactSupportSyncDown>> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Contact support: " + t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Help Center Contact Support: " + t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void syncDownNegativeDropdown(){
+        RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
+        Call<List<NegativeDropdown>> call = service.syncDownNegativeDropdown();
+        call.enqueue(new Callback<List<NegativeDropdown>>() {
+            @Override
+            public void onResponse(Call<List<NegativeDropdown>> call, Response<List<NegativeDropdown>> response) {
+                if(response.isSuccessful()){
+                    List<NegativeDropdown> syncData = response.body();
+
+                    AppExecutors.getInstance().diskIO().execute(() -> {
+                        helpcenterdb.getDropdownDao().InsertDropdown(syncData);
+                    });
+
+                    checkServiceStatus(1);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<NegativeDropdown>> call, Throwable t) {
+
             }
         });
     }
 
     public void checkServiceStatus(int value){
         //TODO --> Not sure if this is working yet....
-        x = x + value;
-        if(value == 4){
+        x += value;
+        Log.d("CHECK", String.valueOf(x));
+        if(x == 5){
             Log.d("CHECK", "Value: " + x + " Stopping the service here.");
             Toast.makeText(getApplicationContext(), "Syncing Help-center Complete", Toast.LENGTH_LONG).show();
             stopSelf();

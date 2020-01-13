@@ -62,7 +62,7 @@
                     android:layout_weight="4"
                     android:fontFamily="@font/roboto"
                     android:onClick="RedirectToHomepage"
-                    android:text="BG Help Center"
+                    android:text="@string/helpcenter_app_name"
                     android:textAlignment="center"
                     android:textColor="#050150"
                     android:textSize="24sp"

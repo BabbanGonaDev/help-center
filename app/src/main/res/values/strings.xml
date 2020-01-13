@@ -22,5 +22,12 @@
     <string name="helpcenter_check_network">Kindly Check Network Connection</string>
     <string name="helpcenter_cancel_operation">Cancel Operation</string>
     <string name="helpcenter_close">Close</string>
+    <string name="helpcenter_selected_language_toast">Language selected: </string>
+    <string name="helpcenter_syncing_toast">Syncing Help Center Database…</string>
+    <string name="helpcenter_resources_download_toast">Total resources to be downloaded:</string>
+    <string name="helpcenter_whatsapp_install_prompt">Kindly install WhatsApp</string>
+    <string name="helpcenter_whatsapp_contact_error">WhatsApp Contact not found</string>
+    <string name="helpcenter_whatsapp_unable_to_send">Unable to send WhatsApp message</string>
+    <string name="helpcenter_negative_dropdown_hint">Tell us how to serve you better</string>
 
 </resources>

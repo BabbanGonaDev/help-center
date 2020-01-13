@@ -1,5 +1,6 @@
 package com.bgenterprise.helpcentermodule.Network;
 
+import com.bgenterprise.helpcentermodule.Database.Tables.NegativeDropdown;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.ContactSupportSyncDown;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.GeneralFeedbackResponse;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.NegativeFeedbackResponse;
@@ -35,4 +36,7 @@ public interface RetrofitApiCalls {
     //Removed the @Streaming, so that resources don't get "half" downloaded and un-use-able due to bad network.
     @GET
     Call<ResponseBody> downloadFileWithDynamicUrl(@Url String fileUrl);
+
+    @GET("sync_down_negative_dropdown.php")
+    Call<List<NegativeDropdown>> syncDownNegativeDropdown();
 }

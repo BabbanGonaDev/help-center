@@ -8,12 +8,14 @@ import androidx.room.RoomDatabase;
 
 import com.bgenterprise.helpcentermodule.Database.Dao.ContactDAO;
 import com.bgenterprise.helpcentermodule.Database.Dao.EnglishDAO;
+import com.bgenterprise.helpcentermodule.Database.Dao.NegativeDropdownDAO;
 import com.bgenterprise.helpcentermodule.Database.Dao.NegativeFeedbackDAO;
 import com.bgenterprise.helpcentermodule.Database.Tables.ContactSupport;
+import com.bgenterprise.helpcentermodule.Database.Tables.NegativeDropdown;
 import com.bgenterprise.helpcentermodule.Database.Tables.NegativeFeedback;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 
-@Database(entities = {QuestionsEnglish.class, ContactSupport.class, NegativeFeedback.class}, version = 1, exportSchema = false)
+@Database(entities = {QuestionsEnglish.class, ContactSupport.class, NegativeFeedback.class, NegativeDropdown.class}, version = 1, exportSchema = false)
 public abstract class HelpCenterDatabase extends RoomDatabase {
     private static HelpCenterDatabase INSTANCE;
 
@@ -21,6 +23,7 @@ public abstract class HelpCenterDatabase extends RoomDatabase {
     public abstract EnglishDAO getEnglishDao();
     public abstract ContactDAO getContactDao();
     public abstract NegativeFeedbackDAO getFeedbackDao();
+    public abstract NegativeDropdownDAO getDropdownDao();
 
 
     //Initialization and creation of database and instance.

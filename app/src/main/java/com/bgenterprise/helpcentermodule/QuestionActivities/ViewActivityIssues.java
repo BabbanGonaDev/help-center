@@ -95,7 +95,7 @@ public class ViewActivityIssues extends AppCompatActivity {
         //Get the values from the shared prefs now.
         help_details = sessionM.getHelpDetails();
 
-        mtv_app_version.setText("\u00A9" + "BG Enterprise Systems v" + BuildConfig.VERSION_NAME);
+        mtv_app_version.setText("\u00A9" + "BG Help Center v" + BuildConfig.VERSION_NAME);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading....");
         progressDialog.show();
@@ -126,7 +126,7 @@ public class ViewActivityIssues extends AppCompatActivity {
         new MaterialAlertDialogBuilder(ViewActivityIssues.this)
                 .setTitle("Choose App Language")
                 .setSingleChoiceItems(Utility.app_language, -1, (dialogInterface, i) -> {
-                    Toast.makeText(ViewActivityIssues.this, "Language selected: " + Utility.app_language[i], Toast.LENGTH_LONG).show();
+                    Toast.makeText(ViewActivityIssues.this, R.string.helpcenter_selected_language_toast + Utility.app_language[i], Toast.LENGTH_LONG).show();
 
                     //Based on language, set the appropriate application language.
                     String selected_lang = Utility.app_language[i];
@@ -207,14 +207,14 @@ public class ViewActivityIssues extends AppCompatActivity {
                 "Version: " + BuildConfig.VERSION_NAME;
 
         if(!isAppInstalled("com.whatsapp")){
-            Toast.makeText(this, "Kindly install WhatsApp", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.helpcenter_whatsapp_install_prompt, Toast.LENGTH_SHORT).show();
         }else {
 
             AppExecutors.getInstance().diskIO().execute(() -> {
                 whatsapp_no = helpCenterDb.getContactDao().getWhatsappNumber(help_details.get(HelpSessionManager.KEY_USER_LOCATION));
                 runOnUiThread(() -> {
                     if(whatsapp_no.isEmpty()){
-                        Toast.makeText(this, "Whatsapp Contact not found", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, R.string.helpcenter_whatsapp_contact_error, Toast.LENGTH_LONG).show();
                     }
 
                     whatsapp_no = whatsapp_no.replace("+", "").replace(" ", "");
@@ -224,7 +224,7 @@ public class ViewActivityIssues extends AppCompatActivity {
                         urlMsg.setData(Uri.parse("https://wa.me/" + whatsapp_no + "?text=" + URLEncoder.encode(whatsapp_message, "UTF-8")));
                         startActivity(urlMsg);
                     } catch (UnsupportedEncodingException e) {
-                        Toast.makeText(this, "Unable to send whatsapp message", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, R.string.helpcenter_whatsapp_unable_to_send, Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                 });

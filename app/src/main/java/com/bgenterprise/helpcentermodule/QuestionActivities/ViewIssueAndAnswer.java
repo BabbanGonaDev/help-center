@@ -18,6 +18,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 
 import com.bgenterprise.helpcentermodule.AppExecutors;
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
+import com.bgenterprise.helpcentermodule.Database.Tables.NegativeDropdown;
 import com.bgenterprise.helpcentermodule.Database.Tables.NegativeFeedback;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.HelpSessionManager;
@@ -48,6 +49,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
     HelpSessionManager sessionM;
     HelpCenterDatabase helpCenterDb;
     public List<QuestionsEnglish> questionsList;
+    public List<String> negativeList;
     HashMap<String, String> help_details;
     String issue_content, issue_header, issue_resource;
 
@@ -57,6 +59,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
         setContentView(R.layout.activity_help_view_issue_and_answer);
         getSupportActionBar().setTitle("View Answer");
         questionsList = new ArrayList<>();
+        negativeList = new ArrayList<>();
         sessionM = new HelpSessionManager(ViewIssueAndAnswer.this);
         helpCenterDb = HelpCenterDatabase.getInstance(ViewIssueAndAnswer.this);
         help_details = sessionM.getHelpDetails();
@@ -143,6 +146,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
         //Thumbs Down
         AppExecutors.getInstance().diskIO().execute(() -> {
             helpCenterDb.getEnglishDao().updateThumbsDown(help_details.get(HelpSessionManager.KEY_UNIQUE_QUESTION_ID));
+            negativeList = helpCenterDb.getDropdownDao().getNegativeReason(help_details.get(HelpSessionManager.KEY_APP_LANG));
 
             runOnUiThread(() -> {
                 layoutRatingSection.setVisibility(View.GONE);
@@ -154,7 +158,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
                 ArrayAdapter<String> negAdapter =
                         new ArrayAdapter<>(ViewIssueAndAnswer.this,
                                 R.layout.dropdown_menu_popup_item,
-                                Utility.negative_reason_en);
+                                negativeList);
                 atv_negative_reason.setAdapter(negAdapter);
                 atv_negative_reason.requestFocus();
             });

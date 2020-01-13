@@ -98,7 +98,7 @@ public class HomePage extends AppCompatActivity {
         helpcenterdb = HelpCenterDatabase.getInstance(HomePage.this);
         sessionM = new HelpSessionManager(HomePage.this);
         help_details = sessionM.getHelpDetails();
-        mtv_app_version.setText("\u00A9" + "BG Enterprise Systems v" + BuildConfig.VERSION_NAME);
+        mtv_app_version.setText("\u00A9" + "BG Help Center v" + BuildConfig.VERSION_NAME);
 
         tgl_test_card.setOnClickListener(view -> {
             sessionM.SET_KEY_APP_ID("tgl_test");
@@ -193,7 +193,7 @@ public class HomePage extends AppCompatActivity {
         new MaterialAlertDialogBuilder(HomePage.this)
                 .setTitle("Choose App Language")
                 .setSingleChoiceItems(Utility.app_language, -1, (dialogInterface, i) -> {
-                    Toast.makeText(HomePage.this, "Language selected: " + Utility.app_language[i], Toast.LENGTH_LONG).show();
+                    Toast.makeText(HomePage.this, R.string.helpcenter_selected_language_toast + " " + Utility.app_language[i], Toast.LENGTH_LONG).show();
 
                     //Based on language, set the appropriate application language.
                     String selected_lang = Utility.app_language[i];
@@ -229,9 +229,8 @@ public class HomePage extends AppCompatActivity {
      */
 
     public void sync(){
-        //For the syncing function, we download all languages to the phone, then switch the tables based on shared pref language.
         if(isConnected()) {
-            Toast.makeText(HomePage.this, "Beginning syncing process", Toast.LENGTH_LONG).show();
+            Toast.makeText(HomePage.this, R.string.helpcenter_syncing_toast, Toast.LENGTH_LONG).show();
             startService(new Intent(this, HelpCenterSync.class));
         }else{
             Snackbar.make(cl, R.string.helpcenter_check_network, Snackbar.LENGTH_INDEFINITE)
@@ -239,161 +238,6 @@ public class HomePage extends AppCompatActivity {
         }
     }
 
-    /*public void syncDownQuestionsEnglish(){
-        loading_progressbar.setVisibility(View.VISIBLE);
-        RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
-        Call<List<QuestionsEnglishSyncDown>> call = service.syncDownQuestionsEnglish(help_details.get(HelpSessionManager.KEY_LAST_SYNC_QUESTIONS_ENGLISH));
-        call.enqueue(new Callback<List<QuestionsEnglishSyncDown>>() {
-            @Override
-            public void onResponse(Call<List<QuestionsEnglishSyncDown>> call, Response<List<QuestionsEnglishSyncDown>> response) {
-                if(response.isSuccessful()){
-                    List<QuestionsEnglishSyncDown> syncData = response.body();
-                    List<QuestionsEnglish> question_eng = new ArrayList<>();
-
-                    try {
-                        for (QuestionsEnglishSyncDown x : syncData) {
-                            question_eng.add(new QuestionsEnglish(x.getUnique_question_id(),
-                                    x.getApp_id(),
-                                    x.getLanguage_id(),
-                                    x.getActivity_group_id(),
-                                    x.getActivity_id(),
-                                    x.getActivity_name(),
-                                    x.getResource_id(),
-                                    x.getResource_url(),
-                                    x.getIssue_question(),
-                                    x.getIssue_answer(),
-                                    0,
-                                    0,
-                                    Integer.parseInt(x.getFaq_status())));
-                            sessionM.SET_LAST_SYNC_QUESTIONS_ENGLISH(x.getLast_sync_time());
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-
-                    AppExecutors.getInstance().diskIO().execute(() -> {
-                        helpcenterdb.getEnglishDao().InsertFromOnline(question_eng);
-                        runOnUiThread(() -> Toast.makeText(HomePage.this, "Question pack downloaded" ,Toast.LENGTH_LONG).show());
-                    });
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<QuestionsEnglishSyncDown>> call, Throwable t) {
-                Toast.makeText(HomePage.this, t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    public void syncUpEnglishFeedback(){
-        //Get feedback values of all questions that have been edited.
-        Gson json = new Gson();
-        AppExecutors.getInstance().diskIO().execute(() -> {
-            String feedbackValues= json.toJson(helpcenterdb.getEnglishDao().getQuestionFeedback());
-            runOnUiThread(() -> initFeedbackSync(feedbackValues));
-        });
-    }
-
-    public void initFeedbackSync(String values){
-        Log.d("CHECK", values);
-        //This function syncs up the values of the feedback for the questions in the app.
-        RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
-        Call<List<GeneralFeedbackResponse>> call = service.syncUpEnglishFeedback(values);
-        call.enqueue(new Callback<List<GeneralFeedbackResponse>>() {
-            @Override
-            public void onResponse(Call<List<GeneralFeedbackResponse>> call, Response<List<GeneralFeedbackResponse>> response) {
-                if(response.isSuccessful()){
-                    List<GeneralFeedbackResponse> responseData = response.body();
-                    try{
-                        for(GeneralFeedbackResponse h: responseData){
-                            AppExecutors.getInstance().diskIO().execute(() -> {
-                                helpcenterdb.getEnglishDao().updateSyncedFeedback(h.getQuestion_id(), h.getPositive_feedback_count(), h.getNegative_feedback_count());
-                            });
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<GeneralFeedbackResponse>> call, Throwable t) {
-                Log.d("CHECK", t.getMessage());
-            }
-        });
-    }
-
-    public void syncUpNegativeFeedback(){
-        //Get unsynced etNegativeFeedback then call function to sync up using retrofit
-        Gson json = new Gson();
-        AppExecutors.getInstance().diskIO().execute(() -> {
-            String unsyncedNegativeFeedback = json.toJson(helpcenterdb.getFeedbackDao().unsyncedNegativeFeedback());
-            runOnUiThread(() -> initNegativeFeedbackSync(unsyncedNegativeFeedback));
-        });
-    }
-
-    public void initNegativeFeedbackSync(String unsynced){
-        RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
-        Call<List<NegativeFeedbackResponse>> call = service.syncUpNegativeFeedback(unsynced);
-        call.enqueue(new Callback<List<NegativeFeedbackResponse>>() {
-            @Override
-            public void onResponse(Call<List<NegativeFeedbackResponse>> call, Response<List<NegativeFeedbackResponse>> response) {
-                if(response.isSuccessful()){
-                    List<NegativeFeedbackResponse> responseData = response.body();
-                    try{
-                        for(NegativeFeedbackResponse z: responseData){
-                            AppExecutors.getInstance().diskIO().execute(() -> {
-                                helpcenterdb.getFeedbackDao().updateSyncStatus(z.getStaff_id(), z.getApp_id(), z.getSync_status());
-                            });
-                            Toast.makeText(HomePage.this, "Sync Up Completed",Toast.LENGTH_LONG).show();
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<NegativeFeedbackResponse>> call, Throwable t) {
-
-            }
-        });
-    }
-
-    public void syncDownContactSupport(){
-        RetrofitApiCalls service = RetrofitClient.getApiClient().create(RetrofitApiCalls.class);
-        Call<List<ContactSupportSyncDown>> call = service.syncDownContactSupport();
-        call.enqueue(new Callback<List<ContactSupportSyncDown>>() {
-            @Override
-            public void onResponse(Call<List<ContactSupportSyncDown>> call, Response<List<ContactSupportSyncDown>> response) {
-                if(response.isSuccessful()){
-                    List<ContactSupportSyncDown> syncData = response.body();
-                    List<ContactSupport> contact_support = new ArrayList<>();
-
-                    try{
-                        for(ContactSupportSyncDown j: syncData){
-                            contact_support.add(new ContactSupport(j.getLocation(),
-                                    j.getWhatsapp_number(),
-                                    j.getPhone_number()));
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-
-                    AppExecutors.getInstance().diskIO().execute(() -> {
-                        helpcenterdb.getContactDao().InsertFromOnline(contact_support);
-                        runOnUiThread(() -> loading_progressbar.setVisibility(View.GONE));
-                    });
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<ContactSupportSyncDown>> call, Throwable t) {
-                Toast.makeText(HomePage.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }*/
 
     public void syncDownResources(){
         //Get the list of all the questions on the table.
@@ -431,7 +275,7 @@ public class HomePage extends AppCompatActivity {
             }
 
             //Now download the list.
-            Toast.makeText(HomePage.this, "Total resources to be downloaded: " + downloadList.size(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(HomePage.this, R.string.helpcenter_resources_download_toast + " " + downloadList.size(), Toast.LENGTH_SHORT).show();
             if(!downloadList.isEmpty()){
                 //If the download list isn't empty, then display progress bar.
                 loading_layout.setVisibility(View.VISIBLE);

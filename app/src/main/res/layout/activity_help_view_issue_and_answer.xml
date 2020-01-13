@@ -111,7 +111,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="Tell us how to help you better"
+                    android:hint="@string/helpcenter_negative_dropdown_hint"
                     app:hintAnimationEnabled="true"
                     app:hintEnabled="true">
 
