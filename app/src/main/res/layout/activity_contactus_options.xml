@@ -19,20 +19,24 @@
             android:text="@string/helpcenter_choose" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/phoneCall"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:id="@+id/phoneCall"
-            android:text="@string/helpcenter_phone_call" />
+            android:text="@string/helpcenter_phone_call"
+            app:icon="@drawable/ic_helpcenter_phone_call"
+            app:iconGravity="textStart" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/whatsappcall"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:id="@+id/whatsappcall"
-            android:text="@string/helpcenter_whatsapp" />
+            android:text="@string/helpcenter_whatsapp"
+            app:icon="@drawable/ic_helpcenter_whatsapp"
+            app:iconGravity="textStart" />
 
     </LinearLayout>
 

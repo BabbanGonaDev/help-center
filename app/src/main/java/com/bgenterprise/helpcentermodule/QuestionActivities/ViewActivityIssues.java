@@ -56,7 +56,7 @@ public class ViewActivityIssues extends AppCompatActivity {
     HelpSessionManager sessionM;
     HashMap<String, String> help_details;
     Dialog myDialog;
-    String passed_activity_id, passed_app_id, passed_staff_id, passed_user_location, whatsapp_message, contact_no, whatsapp_no, session_app_lang;
+    String passed_activity_id, passed_app_id, passed_staff_id, passed_user_location, passed_app_language, whatsapp_message, contact_no, whatsapp_no, session_app_lang;
     private static final int PERMISSIONS_REQUEST_CODE = 2048;
 
     @Override
@@ -78,12 +78,14 @@ public class ViewActivityIssues extends AppCompatActivity {
             passed_activity_id = getIntent().getStringExtra("activity_id");
             passed_app_id = getIntent().getStringExtra("app_id");
             passed_staff_id = getIntent().getStringExtra("staff_id");
+            passed_app_language = getIntent().getStringExtra("app_language");
             passed_user_location = getIntent().getStringExtra("user_location"); //Get this from Access Control.
 
-            if(!passed_activity_id.isEmpty() && !passed_app_id.isEmpty() && !passed_staff_id.isEmpty()){
+            if(!passed_activity_id.isEmpty() && !passed_app_id.isEmpty() && !passed_staff_id.isEmpty() && !passed_app_language.isEmpty()){
                 sessionM.SET_ACTIVITY_ID(passed_activity_id);
                 sessionM.SET_KEY_APP_ID(passed_app_id);
                 sessionM.SET_STAFF_ID(passed_staff_id);
+                sessionM.SET_LANGUAGE(passed_app_language);
                 sessionM.SET_USER_LOCATION(passed_user_location);
             }
 
