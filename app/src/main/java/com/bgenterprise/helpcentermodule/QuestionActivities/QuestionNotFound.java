@@ -46,16 +46,16 @@ public class QuestionNotFound extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            case R.id.change_language:
-                changeAppLanguage();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if(item.getItemId() == android.R.id.home){
+            finish();
+            return true;
+        }else if(item.getItemId() == R.id.change_language){
+            changeAppLanguage();
+            return true;
+        }else{
+            return super.onOptionsItemSelected(item);
         }
+
     }
 
     @Override
