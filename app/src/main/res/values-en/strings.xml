@@ -28,5 +28,6 @@
     <string name="helpcenter_whatsapp_contact_error">WhatsApp Contact not found</string>
     <string name="helpcenter_whatsapp_unable_to_send">Unable to send WhatsApp message</string>
     <string name="helpcenter_negative_dropdown_hint">Tell us how to serve you better</string>
+    <string name="helpcenter_id_card_text">Input\nDistribution</string>
 
 </resources>

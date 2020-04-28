@@ -126,7 +126,8 @@ public class HelpCenterSync extends Service {
         });
     }
 
-    public void initFeedbackSync(String values){
+    public void initFeedbackSync(String values)
+    {
         Log.d("CHECK", values);
         Log.d("CHECK", "We have started initGeneralFeedbackSync");
         //This function syncs up the values of the feedback for the questions in the app.

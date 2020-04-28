@@ -6,6 +6,7 @@
     <string name="helpcenter_interview_card_text">TGL\nInterview</string>
     <string name="helpcenter_mapping_card_text">Field\nMapping</string>
     <string name="helpcenter_tfm_card_text">Trust Group Formation</string>
+    <string name="helpcenter_id_card_text">Input\nDistribution</string>
     <string name="helpcenter_text">Help Center</string>
     <string name="helpcenter_activity_group_faq_headline">MOST COMMON ISSUES:</string>
     <string name="helpcenter_activity_group_activity_issues_headline">I NEED HELP WITH:</string>

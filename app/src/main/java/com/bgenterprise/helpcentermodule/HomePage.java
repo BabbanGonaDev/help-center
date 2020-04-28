@@ -83,7 +83,7 @@ public class HomePage extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         cl = findViewById(R.id.cl);
         CardView tgl_test_card = findViewById(R.id.tgl_test_card);
-        CardView tgl_interview_card = findViewById(R.id.tgl_interview_card);
+        CardView id_card = findViewById(R.id.id_card);
         CardView field_mapping_card = findViewById(R.id.field_mapping_card);
         CardView tfm_card = findViewById(R.id.tfm_card);
         btn_cancel_resource_sync = findViewById(R.id.btn_cancel_resource_sync);
@@ -107,8 +107,8 @@ public class HomePage extends AppCompatActivity {
             }
         });
 
-        tgl_interview_card.setOnClickListener(view -> {
-            sessionM.SET_KEY_APP_ID("tgl_interview");
+        id_card.setOnClickListener(view -> {
+            sessionM.SET_KEY_APP_ID("id");
             if(checkAndRequestPermissions()){
                 startActivity(new Intent(HomePage.this, ViewActivityGroups.class));
             }
