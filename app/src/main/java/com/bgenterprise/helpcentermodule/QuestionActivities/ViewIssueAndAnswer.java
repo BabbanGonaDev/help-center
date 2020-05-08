@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class ViewIssueAndAnswer extends AppCompatActivity {
 
@@ -95,7 +96,7 @@ public class ViewIssueAndAnswer extends AppCompatActivity {
                 qandaContent.setText(Html.fromHtml(issue_content));
 
                 //Get resource path based on app language.
-                String path = Environment.getExternalStorageDirectory().getPath() + Utility.resource_location;
+                String path = Objects.requireNonNull(getExternalFilesDir(null)).getPath() + Utility.resource_location;
 
                 //Display appropriate view based on resource type.
                 if(!issue_resource.isEmpty()){

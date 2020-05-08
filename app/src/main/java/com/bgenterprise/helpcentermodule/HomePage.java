@@ -1,5 +1,7 @@
 package com.bgenterprise.helpcentermodule;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -7,6 +9,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
@@ -24,6 +27,7 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
@@ -52,6 +56,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -73,6 +78,11 @@ public class HomePage extends AppCompatActivity {
     List<QuestionsEnglish> resourceList, downloadList;
     int currentNo, success_count, fail_count;
     private static final int PERMISSIONS_REQUEST_CODE = 4045;
+    private static final String CHANNEL_ID = "HELP_CENTER";
+    private static final int NOTIFICATION_ID = 32;
+    private NotificationCompat.Builder builder;
+    private NotificationManager mNotifyManager;
+    private int CURRENT;
 
 
     @Override
@@ -98,6 +108,7 @@ public class HomePage extends AppCompatActivity {
         helpcenterdb = HelpCenterDatabase.getInstance(HomePage.this);
         sessionM = new HelpSessionManager(HomePage.this);
         help_details = sessionM.getHelpDetails();
+        mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mtv_app_version.setText("\u00A9" + "BG Help Center v" + BuildConfig.VERSION_NAME);
 
         tgl_test_card.setOnClickListener(view -> {
@@ -140,7 +151,7 @@ public class HomePage extends AppCompatActivity {
 
     }
 
-   public boolean checkAndRequestPermissions(){
+    public boolean checkAndRequestPermissions(){
         //Check which permissions are granted
         List<String> listPermissionsNeeded = new ArrayList<>();
         for(String perm : Utility.appPermissions){
@@ -278,8 +289,9 @@ public class HomePage extends AppCompatActivity {
             Toast.makeText(HomePage.this, R.string.helpcenter_resources_download_toast + " " + downloadList.size(), Toast.LENGTH_SHORT).show();
             if(!downloadList.isEmpty()){
                 //If the download list isn't empty, then display progress bar.
-                loading_layout.setVisibility(View.VISIBLE);
-                progressBar.setMax(downloadList.size());
+                /*loading_layout.setVisibility(View.VISIBLE);
+                progressBar.setMax(downloadList.size());*/
+                setNotification();
             }
             for (QuestionsEnglish h : downloadList) {
                 //For each individual entry on the list, begin download of the resource.
@@ -319,11 +331,13 @@ public class HomePage extends AppCompatActivity {
                             Log.d("CHECK", "File download was a success ? ---> " + writtenToDisk);
                             if(writtenToDisk){
                                 //If true, log as success and increase sync count.
-                                updateSyncProgress();
+                                //updateSyncProgress();
+                                sendNotification(1);
                                 updateSuccessCount();
                             }else{
                                 //If false, log as fail and increase sync count.
-                                updateSyncProgress();
+                                //updateSyncProgress();
+                                sendNotification(1);
                                 updateFailCount();
 
                             }
@@ -339,7 +353,8 @@ public class HomePage extends AppCompatActivity {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.d("CHECK", t.getLocalizedMessage());
                 Toast.makeText(HomePage.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                updateSyncProgress();
+                //updateSyncProgress();
+                sendNotification(1);
                 updateFailCount();
             }
         });
@@ -350,7 +365,7 @@ public class HomePage extends AppCompatActivity {
         String storage_state = Environment.getExternalStorageState();
         if(storage_state.equals(Environment.MEDIA_MOUNTED)){
             try{
-                File file = new File(Environment.getExternalStorageDirectory().getPath(), Utility.resource_location);
+                File file = new File(Objects.requireNonNull(getExternalFilesDir(null)).getPath(), Utility.resource_location);
 
                 if(!file.exists() && !file.mkdirs()){
                     Log.d("CHECK", "file creation issue");
@@ -405,7 +420,7 @@ public class HomePage extends AppCompatActivity {
 
     public boolean resourceExists(String passedFileName){
         //Check if the picture exists in the assign_assets directory
-        File dir = new File(Environment.getExternalStorageDirectory().getPath(), Utility.resource_location);
+        File dir = new File(Objects.requireNonNull(getExternalFilesDir(null)).getPath(), Utility.resource_location);
 
         try{
             dir.mkdirs();
@@ -429,7 +444,7 @@ public class HomePage extends AppCompatActivity {
         return false;
     }
 
-    public void updateSyncProgress(){
+    /*public void updateSyncProgress(){
         ++currentNo;
         mtv_progress_text.setText(currentNo + "/" + downloadList.size() + " resources downloaded.");
         progressBar.setProgress(currentNo);
@@ -437,16 +452,52 @@ public class HomePage extends AppCompatActivity {
         if(currentNo >= downloadList.size()){
             btn_cancel_resource_sync.setText(R.string.helpcenter_close);
         }
-    }
+    }*/
 
     public void updateSuccessCount(){
         ++success_count;
-        mtv_success_text.setText("Success: " + success_count);
+        //mtv_success_text.setText("Success: " + success_count);
     }
 
     public void updateFailCount(){
         ++fail_count;
-        mtv_fail_text.setText("Failed: " + fail_count);
+        //mtv_fail_text.setText("Failed: " + fail_count);
+    }
+
+    private void createNotificationChannel(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel help_channel = new NotificationChannel(
+                    CHANNEL_ID, "Download Resources Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+
+            if(mNotifyManager != null){
+                mNotifyManager.createNotificationChannel(help_channel);
+            }
+        }
+    }
+
+    private void setNotification(){
+        createNotificationChannel();
+        builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_helpcenter_help_icon)
+                .setContentTitle("Downloading Resources")
+                .setContentText("Downloading resources for help center content.")
+                .setProgress(0,0,true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+    }
+
+    private void sendNotification(int count){
+        CURRENT += count;
+
+        if(CURRENT == downloadList.size()){
+            //Show result
+            builder.setProgress(0,0,false)
+                    .setContentText("Success: " + success_count + " " + "Failed: " + fail_count);
+        }else{
+            builder.setProgress(downloadList.size(), CURRENT, false);
+        }
+
+        mNotifyManager.notify(NOTIFICATION_ID, builder.build());
     }
 
 }
