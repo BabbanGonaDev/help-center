@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -15,7 +14,6 @@ import com.bgenterprise.helpcentermodule.Database.Tables.ContactSupport;
 import com.bgenterprise.helpcentermodule.Database.Tables.NegativeDropdown;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.HelpSessionManager;
-import com.bgenterprise.helpcentermodule.HomePage;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.ContactSupportSyncDown;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.GeneralFeedbackResponse;
 import com.bgenterprise.helpcentermodule.Network.ModelClasses.NegativeFeedbackResponse;
@@ -143,6 +141,7 @@ public class HelpCenterSync extends Service {
                             AppExecutors.getInstance().diskIO().execute(() -> {
                                 helpcenterdb.getEnglishDao().updateSyncedFeedback(h.getQuestion_id(), h.getPositive_feedback_count(), h.getNegative_feedback_count());
                             });
+
                         }
                     }catch (Exception e){
                         e.printStackTrace();
