@@ -16,7 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".QuestionActivities.QuestionNotFound" />
+        <activity
+            android:name=".QuestionActivities.QuestionNotFound"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".QuestionActivities.ViewActivityIssues"
             android:exported="true"
