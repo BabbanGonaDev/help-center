@@ -54,29 +54,31 @@
                 app:srcCompat="@drawable/helpcenter_no_image" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/ratingheader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/ratingheader"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="20dp"
                 android:text="@string/helpcenter_answer_feedback_question"
                 android:textAlignment="center"
-                android:layout_marginTop="15dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline1"
                 android:textSize="18sp"
-                android:layout_marginBottom="20dp"/>
+                android:visibility="gone" />
 
             <LinearLayout
+                android:id="@+id/ratingsection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/ratingsection"
+                android:layout_marginBottom="20dp"
                 android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
+                android:visibility="gone">
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:text="@string/helpcenter_yes"
-                    android:id="@+id/rating"
                     app:backgroundTint="#4CAF50"
                     app:icon="@drawable/ic_helpcenter_thumbs_up" />
 
@@ -88,11 +90,11 @@
                     android:visibility="invisible" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/rating2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:text="@string/helpcenter_no"
-                    android:id="@+id/rating2"
                     app:backgroundTint="#F44336"
                     app:icon="@drawable/ic_helpcenter_thumbs_down" />
 
@@ -126,10 +128,9 @@
                     android:id="@+id/submitfeedback"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
                     android:layout_marginBottom="20dp"
-                    android:text="SUBMIT"
-                    android:textAlignment="center" />
+                    android:gravity="center"
+                    android:text="SUBMIT" />
 
             </LinearLayout>
 

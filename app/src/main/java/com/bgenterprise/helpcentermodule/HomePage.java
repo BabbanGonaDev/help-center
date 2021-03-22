@@ -31,13 +31,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
-import com.bgenterprise.helpcentermodule.Database.Tables.ContactSupport;
 import com.bgenterprise.helpcentermodule.Database.Tables.QuestionsEnglish;
 import com.bgenterprise.helpcentermodule.Network.HelpCenterSync;
-import com.bgenterprise.helpcentermodule.Network.ModelClasses.ContactSupportSyncDown;
-import com.bgenterprise.helpcentermodule.Network.ModelClasses.GeneralFeedbackResponse;
-import com.bgenterprise.helpcentermodule.Network.ModelClasses.NegativeFeedbackResponse;
-import com.bgenterprise.helpcentermodule.Network.ModelClasses.QuestionsEnglishSyncDown;
 import com.bgenterprise.helpcentermodule.Network.RetrofitApiCalls;
 import com.bgenterprise.helpcentermodule.Network.RetrofitClient;
 import com.bgenterprise.helpcentermodule.QuestionActivities.ViewActivityGroups;
@@ -45,7 +40,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textview.MaterialTextView;
-import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -109,7 +103,7 @@ public class HomePage extends AppCompatActivity {
         sessionM = new HelpSessionManager(HomePage.this);
         help_details = sessionM.getHelpDetails();
         mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mtv_app_version.setText("\u00A9" + "BG Help Center v" + BuildConfig.VERSION_NAME);
+        mtv_app_version.setText("\u00A9" + "Faiida Gesse Help Center v" + BuildConfig.VERSION_NAME);
 
         tgl_test_card.setOnClickListener(view -> {
             sessionM.SET_KEY_APP_ID("tgl_test");

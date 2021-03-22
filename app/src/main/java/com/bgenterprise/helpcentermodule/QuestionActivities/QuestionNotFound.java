@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bgenterprise.helpcentermodule.BuildConfig;
-import com.bgenterprise.helpcentermodule.Database.HelpCenterDatabase;
 import com.bgenterprise.helpcentermodule.HelpSessionManager;
 import com.bgenterprise.helpcentermodule.R;
 import com.bgenterprise.helpcentermodule.Utility;
@@ -35,7 +34,7 @@ public class QuestionNotFound extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         sessionM = new HelpSessionManager(QuestionNotFound.this);
         mtv_app_version = findViewById(R.id.mtv_app_version);
-        mtv_app_version.setText("\u00A9" + "BG Help Center v" + BuildConfig.VERSION_NAME);
+        mtv_app_version.setText("\u00A9" + "Faiida Gesse Help Center v" + BuildConfig.VERSION_NAME);
     }
 
     @Override

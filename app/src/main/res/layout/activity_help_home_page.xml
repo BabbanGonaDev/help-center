@@ -344,7 +344,8 @@
                     android:id="@+id/mtv_app_version"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"
+                    android:visibility="invisible" />
 
                 <!--<androidx.gridlayout.widget.GridLayout
                 android:id="@+id/grid1"

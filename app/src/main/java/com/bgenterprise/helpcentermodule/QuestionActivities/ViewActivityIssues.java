@@ -97,7 +97,7 @@ public class ViewActivityIssues extends AppCompatActivity {
         //Get the values from the shared prefs now.
         help_details = sessionM.getHelpDetails();
 
-        mtv_app_version.setText("\u00A9" + "BG Help Center v" + BuildConfig.VERSION_NAME);
+        mtv_app_version.setText("\u00A9" + "Faiida Geese Help Center v" + BuildConfig.VERSION_NAME);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading....");
         progressDialog.show();
