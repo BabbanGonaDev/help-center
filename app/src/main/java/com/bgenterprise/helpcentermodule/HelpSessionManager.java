@@ -108,7 +108,7 @@ public class HelpSessionManager {
         help.put(KEY_ACTIVITY_ISSUE, prefs.getString(KEY_ACTIVITY_ISSUE, ""));
         help.put(KEY_STAFF_ID, prefs.getString(KEY_STAFF_ID, ""));
         help.put(KEY_LAST_SYNC_DATE, prefs.getString(KEY_LAST_SYNC_DATE, ""));
-        help.put(KEY_USER_LOCATION, prefs.getString(KEY_USER_LOCATION, "Lagos"));
+        help.put(KEY_USER_LOCATION, prefs.getString(KEY_USER_LOCATION, "Senegal"));
         help.put(KEY_APP_LANG, prefs.getString(KEY_APP_LANG, "en"));
         help.put(KEY_LAST_SYNC_QUESTIONS_ENGLISH, prefs.getString(KEY_LAST_SYNC_QUESTIONS_ENGLISH, "2019-11-04 00:00:00"));
 
